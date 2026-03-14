@@ -8,21 +8,18 @@
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+  import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   const firebaseConfig = {
     apiKey:"AIzaSyCAZzq6EuUiDAYcjkX0GcVHxOGyPdDhOP8",
     authDomain:"art104-module05-p1-p2.firebaseapp.com",
     projectId:"art104-module05-p1-p2",
-    storageBucket:"art104-module05-p1-p2.firebasestorage.app",
     messagingSenderId:"28080752760",
     appId:"1:28080752760:web:679459f972adc7d29b458d",
     measurementId:"G-89SGWTR711"
   };
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
-  const storage = getStorage(app);
-  window._fb = { db, storage, doc, setDoc, onSnapshot, ref, uploadBytes, getDownloadURL, deleteObject };
+  window._fb = { db, doc, setDoc, getDoc, deleteDoc, collection, query, where, getDocs, onSnapshot };
   window.dispatchEvent(new Event('firebase-ready'));
 </script>
 
@@ -215,6 +212,41 @@ details[open] .ctx-box summary::before{content:'▾';}
 .export-bar{position:sticky;bottom:0;background:var(--bark);padding:.75rem 3rem;display:flex;gap:1rem;align-items:center;justify-content:flex-end;border-top:2px solid var(--clay);z-index:100;}
 .export-bar>span{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--leaf);letter-spacing:.1em;flex:1;}
 
+/* PRESENTATION MODAL */
+.pres-day-btn{
+  border:2px solid var(--leaf);border-radius:8px;padding:.9rem;text-align:center;
+  cursor:pointer;transition:all .18s;color:var(--moss);background:var(--mist);
+  font-size:.8rem;
+}
+.pres-day-btn:hover{background:var(--leaf);}
+.pres-day-selected{background:var(--moss)!important;color:var(--cream)!important;border-color:var(--moss)!important;}
+.scheme-swatch{
+  width:72px;border:2px solid transparent;border-radius:7px;overflow:hidden;
+  cursor:pointer;transition:all .18s;
+}
+.scheme-swatch>div:first-child{height:38px;}
+.scheme-swatch.selected{border-color:var(--moss);box-shadow:0 0 0 2px var(--moss);}
+.swatch-label{
+  font-family:'DM Mono',monospace;font-size:.58rem;text-align:center;
+  padding:.25rem 0;background:#f5f5f5;color:#555;
+}
+.layout-opt{
+  cursor:pointer;border:2px solid transparent;border-radius:7px;overflow:hidden;
+  transition:all .18s;width:100px;
+}
+.layout-opt.selected{border-color:var(--moss);box-shadow:0 0 0 2px var(--moss);}
+.layout-preview{height:60px;display:flex;flex-direction:column;overflow:hidden;}
+.layout-label{
+  font-family:'DM Mono',monospace;font-size:.58rem;text-align:center;
+  padding:.25rem 0;background:#f5f5f5;color:#555;
+}
+.font-opt{
+  border:2px solid var(--mist);border-radius:7px;padding:.6rem .8rem;
+  cursor:pointer;min-width:90px;text-align:center;transition:all .18s;background:white;
+}
+.font-opt.selected{border-color:var(--moss);background:var(--mist);}
+.font-opt:hover:not(.selected){border-color:var(--leaf);}
+
 /* CONFIG OVERLAY / PW MODAL */
 .config-overlay{position:fixed;inset:0;background:rgba(43,42,37,.85);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;}
 .config-box{background:white;border-radius:10px;padding:2rem;max-width:520px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.35);}
@@ -294,15 +326,13 @@ details[open] .ctx-box summary::before{content:'▾';}
   <div class="upload-banner-inner">
     <span style="font-size:1.2rem;flex-shrink:0;">📎</span>
     <div>
-      <strong>File uploads:</strong> All upload buttons accept <strong>any file type</strong> — images (JPG, PNG, GIF, WebP, SVG), PDFs, Word docs, PowerPoints, videos, and more.
-      &nbsp;|&nbsp; <strong>Max size: 25 MB per file.</strong> &nbsp;|&nbsp;
-      Files are stored in Firebase Storage and shared with your whole group in real time.
-      Image files will show a preview thumbnail; other file types will show a file icon with a link to open them.
-      &nbsp;|&nbsp; <strong>Make sure you are logged into Firebase and your Storage rules allow writes</strong> — if uploads fail, check the browser console for the error.
+      <strong>File uploads are stored directly in Firestore — no Firebase Storage needed, completely free.</strong>
+      &nbsp;|&nbsp; Accepts any image file type (JPG, PNG, GIF, WebP, SVG).
+      &nbsp;|&nbsp; <strong>Max size: 700 KB per image</strong> (images are automatically compressed in the browser before saving).
+      &nbsp;|&nbsp; Files are shared with your whole group in real time.
     </div>
   </div>
 </div>
-
 <!-- SETUP PANEL -->
 <div class="setup-panel">
   <div>
@@ -1017,7 +1047,188 @@ details[open] .ctx-box summary::before{content:'▾';}
 <!-- EXPORT BAR -->
 <div class="export-bar" id="export-bar" style="display:none;">
   <span id="export-label">Select a group to begin.</span>
-  <button class="btn btn-export" onclick="exportPDF()">⬇ Export as PDF</button>
+  <button class="btn" style="background:#4a6741;color:white;" onclick="exportPDF()">⬇ Plain PDF</button>
+  <button class="btn btn-export" onclick="openPresentationModal()">🎞 Export Presentation</button>
+</div>
+
+<!-- PRESENTATION BUILDER MODAL -->
+<div id="pres-modal" style="display:none;position:fixed;inset:0;background:rgba(30,28,25,.88);z-index:300;overflow-y:auto;padding:2rem 1rem;">
+  <div style="max-width:720px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 16px 60px rgba(0,0,0,.4);">
+
+    <!-- Modal Header -->
+    <div style="background:var(--moss);color:var(--cream);padding:1.2rem 1.8rem;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--leaf);margin-bottom:.2rem;">MODULE 05</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;">Presentation Export</div>
+      </div>
+      <button onclick="closePresentationModal()" style="background:rgba(255,255,255,.15);border:none;color:var(--cream);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;">✕</button>
+    </div>
+
+    <!-- Modal Body -->
+    <div style="padding:1.8rem;">
+
+      <!-- Which day -->
+      <div style="margin-bottom:1.4rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:.63rem;letter-spacing:.12em;text-transform:uppercase;color:var(--fern);margin-bottom:.6rem;">Which Presentation?</div>
+        <div style="display:flex;gap:.7rem;">
+          <label style="flex:1;cursor:pointer;">
+            <input type="radio" name="pres-day" value="day1" checked style="display:none;">
+            <div class="pres-day-btn pres-day-selected" id="pres-day1-btn" onclick="selectPresDay('day1')">
+              <div style="font-size:1.1rem;margin-bottom:.2rem;">📋</div>
+              <div style="font-family:'DM Mono',monospace;font-size:.65rem;font-weight:500;">Day 1</div>
+              <div style="font-size:.7rem;color:inherit;opacity:.8;margin-top:.15rem;">Theme · Articles · Artists</div>
+            </div>
+          </label>
+          <label style="flex:1;cursor:pointer;">
+            <input type="radio" name="pres-day" value="day2" style="display:none;">
+            <div class="pres-day-btn" id="pres-day2-btn" onclick="selectPresDay('day2')">
+              <div style="font-size:1.1rem;margin-bottom:.2rem;">🎨</div>
+              <div style="font-family:'DM Mono',monospace;font-size:.65rem;font-weight:500;">Day 2</div>
+              <div style="font-size:.7rem;color:inherit;opacity:.8;margin-top:.15rem;">Speculative Artwork</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Color scheme -->
+      <div style="margin-bottom:1.4rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:.63rem;letter-spacing:.12em;text-transform:uppercase;color:var(--fern);margin-bottom:.6rem;">Color Scheme</div>
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap;" id="scheme-swatches">
+          <div class="scheme-swatch selected" data-scheme="forest" onclick="selectScheme('forest')" title="Forest">
+            <div style="display:flex;height:100%;">
+              <div style="flex:1;background:#3d5a2e;"></div>
+              <div style="flex:1;background:#f5f0e8;"></div>
+              <div style="flex:1;background:#a8c896;"></div>
+            </div>
+            <div class="swatch-label">Forest</div>
+          </div>
+          <div class="scheme-swatch" data-scheme="ocean" onclick="selectScheme('ocean')" title="Ocean">
+            <div style="display:flex;height:calc(100% - 20px);">
+              <div style="flex:1;background:#1a3a5c;"></div>
+              <div style="flex:1;background:#e8f4f8;"></div>
+              <div style="flex:1;background:#7ab8d4;"></div>
+            </div>
+            <div class="swatch-label">Ocean</div>
+          </div>
+          <div class="scheme-swatch" data-scheme="earth" onclick="selectScheme('earth')" title="Earth">
+            <div style="display:flex;height:calc(100% - 20px);">
+              <div style="flex:1;background:#6b4226;"></div>
+              <div style="flex:1;background:#fdf6ec;"></div>
+              <div style="flex:1;background:#d4a76a;"></div>
+            </div>
+            <div class="swatch-label">Earth</div>
+          </div>
+          <div class="scheme-swatch" data-scheme="slate" onclick="selectScheme('slate')" title="Slate">
+            <div style="display:flex;height:calc(100% - 20px);">
+              <div style="flex:1;background:#2c3e50;"></div>
+              <div style="flex:1;background:#f0f3f6;"></div>
+              <div style="flex:1;background:#95a5b5;"></div>
+            </div>
+            <div class="swatch-label">Slate</div>
+          </div>
+          <div class="scheme-swatch" data-scheme="dusk" onclick="selectScheme('dusk')" title="Dusk">
+            <div style="display:flex;height:calc(100% - 20px);">
+              <div style="flex:1;background:#4a2060;"></div>
+              <div style="flex:1;background:#f8f0ff;"></div>
+              <div style="flex:1;background:#b07fd4;"></div>
+            </div>
+            <div class="swatch-label">Dusk</div>
+          </div>
+          <div class="scheme-swatch" data-scheme="chalk" onclick="selectScheme('chalk')" title="Chalk">
+            <div style="display:flex;height:calc(100% - 20px);">
+              <div style="flex:1;background:#222;"></div>
+              <div style="flex:1;background:#fafafa;"></div>
+              <div style="flex:1;background:#e05a2b;"></div>
+            </div>
+            <div class="swatch-label">Chalk</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layout style -->
+      <div style="margin-bottom:1.4rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:.63rem;letter-spacing:.12em;text-transform:uppercase;color:var(--fern);margin-bottom:.6rem;">Slide Layout Style</div>
+        <div style="display:flex;gap:.7rem;flex-wrap:wrap;">
+          <div class="layout-opt selected" id="layout-clean" onclick="selectLayout('clean')">
+            <div class="layout-preview" style="background:#f5f0e8;">
+              <div style="background:#3d5a2e;height:22%;width:100%;"></div>
+              <div style="padding:.2rem .3rem;">
+                <div style="background:#dde8d5;height:6px;width:70%;border-radius:2px;margin:.15rem 0;"></div>
+                <div style="background:#e8e4da;height:4px;width:90%;border-radius:2px;margin:.1rem 0;"></div>
+                <div style="background:#e8e4da;height:4px;width:80%;border-radius:2px;margin:.1rem 0;"></div>
+              </div>
+            </div>
+            <div class="layout-label">Clean</div>
+          </div>
+          <div class="layout-opt" id="layout-bold" onclick="selectLayout('bold')">
+            <div class="layout-preview" style="background:#3d5a2e;">
+              <div style="padding:.3rem;">
+                <div style="background:rgba(255,255,255,.9);height:8px;width:60%;border-radius:2px;margin-bottom:.2rem;"></div>
+                <div style="background:rgba(255,255,255,.4);height:4px;width:85%;border-radius:2px;"></div>
+              </div>
+              <div style="background:#f5f0e8;margin:.2rem;border-radius:2px;padding:.2rem;flex:1;">
+                <div style="background:#ddd;height:4px;width:90%;border-radius:1px;margin:.1rem 0;"></div>
+                <div style="background:#ddd;height:4px;width:75%;border-radius:1px;margin:.1rem 0;"></div>
+              </div>
+            </div>
+            <div class="layout-label">Bold</div>
+          </div>
+          <div class="layout-opt" id="layout-editorial" onclick="selectLayout('editorial')">
+            <div class="layout-preview" style="background:#fafafa;display:flex;flex-direction:row;">
+              <div style="width:35%;background:#3d5a2e;"></div>
+              <div style="flex:1;padding:.25rem .3rem;">
+                <div style="background:#ddd;height:6px;width:80%;border-radius:2px;margin:.1rem 0;"></div>
+                <div style="background:#eee;height:3px;width:95%;border-radius:1px;margin:.08rem 0;"></div>
+                <div style="background:#eee;height:3px;width:85%;border-radius:1px;margin:.08rem 0;"></div>
+              </div>
+            </div>
+            <div class="layout-label">Editorial</div>
+          </div>
+          <div class="layout-opt" id="layout-minimal" onclick="selectLayout('minimal')">
+            <div class="layout-preview" style="background:#fff;border:1px solid #eee;">
+              <div style="height:3px;background:#3d5a2e;width:100%;"></div>
+              <div style="padding:.25rem .3rem;">
+                <div style="background:#333;height:7px;width:50%;border-radius:1px;margin:.15rem 0;"></div>
+                <div style="background:#ddd;height:3px;width:90%;border-radius:1px;margin:.08rem 0;"></div>
+                <div style="background:#ddd;height:3px;width:75%;border-radius:1px;margin:.08rem 0;"></div>
+              </div>
+            </div>
+            <div class="layout-label">Minimal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Font pairing -->
+      <div style="margin-bottom:1.8rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:.63rem;letter-spacing:.12em;text-transform:uppercase;color:var(--fern);margin-bottom:.6rem;">Font Pairing</div>
+        <div style="display:flex;gap:.7rem;flex-wrap:wrap;">
+          <div class="font-opt selected" id="font-playfair" onclick="selectFont('playfair')">
+            <div style="font-family:'Playfair Display',serif;font-size:.95rem;line-height:1.1;">Aa</div>
+            <div style="font-family:'DM Mono',monospace;font-size:.55rem;margin-top:.2rem;color:#888;">Playfair + Mono</div>
+          </div>
+          <div class="font-opt" id="font-slab" onclick="selectFont('slab')">
+            <div style="font-family:Georgia,serif;font-size:.95rem;line-height:1.1;font-weight:700;">Aa</div>
+            <div style="font-family:'DM Mono',monospace;font-size:.55rem;margin-top:.2rem;color:#888;">Georgia + Sans</div>
+          </div>
+          <div class="font-opt" id="font-modern" onclick="selectFont('modern')">
+            <div style="font-family:'DM Sans',sans-serif;font-size:.95rem;line-height:1.1;font-weight:600;">Aa</div>
+            <div style="font-family:'DM Mono',monospace;font-size:.55rem;margin-top:.2rem;color:#888;">DM Sans + Mono</div>
+          </div>
+          <div class="font-opt" id="font-humanist" onclick="selectFont('humanist')">
+            <div style="font-family:Optima,Candara,sans-serif;font-size:.95rem;line-height:1.1;font-weight:600;">Aa</div>
+            <div style="font-family:'DM Mono',monospace;font-size:.55rem;margin-top:.2rem;color:#888;">Humanist + Mono</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display:flex;gap:.8rem;justify-content:flex-end;border-top:1px solid #eee;padding-top:1.2rem;">
+        <button class="btn" style="background:#ddd;color:var(--peat);" onclick="closePresentationModal()">Cancel</button>
+        <button class="btn" style="background:#4a6741;color:white;" onclick="previewPresentation()">👁 Preview First Slide</button>
+        <button class="btn btn-export" onclick="buildAndPrintPresentation()">🖨 Export PDF Slides</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1027,6 +1238,7 @@ let unsubscribe    = null;
 let fbReady        = false;
 let imageRegistry  = {};
 let sketchRegistry = [];
+let timelineCache  = []; // [{year, event, imgKey}] — mirrors __timeline Firestore field
 const fieldTimers  = {};
 let focusedField   = null;
 
@@ -1092,6 +1304,7 @@ function buildAllBullets() {
 let tlImageRegistry = {}; // { 'tl-img-0': [{url,path,caption}], ... }
 
 function buildTimelineRows(rows) {
+  timelineCache = rows; // keep cache in sync
   document.getElementById('timeline-rows').innerHTML = '';
   rows.forEach((r,i) => addTimelineRow(r.year, r.event, i));
   rebuildVisTimeline();
@@ -1109,12 +1322,12 @@ function addTimelineRow(year='', event='', index=null) {
   div.innerHTML = `
     <div class="tl-year-wrap">
       <input type="text" data-field-id="${yId}" placeholder="Year" value="${esc(year)}"
-        oninput="saveField('${yId}',this.value);rebuildVisTimeline()">
+        oninput="saveField('${yId}',this.value);saveTimelineField();rebuildVisTimeline()">
     </div>
     <div style="flex:1;display:flex;flex-direction:column;gap:.35rem;">
       <textarea data-field-id="${eId}" rows="2" style="width:100%"
         placeholder="Milestone / event description…"
-        oninput="saveField('${eId}',this.value);rebuildVisTimeline()">${esc(event)}</textarea>
+        oninput="saveField('${eId}',this.value);saveTimelineField();rebuildVisTimeline()">${esc(event)}</textarea>
       <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
         <input type="file" class="img-file-input" id="file-${imgKey}" accept="*/*" multiple
           onchange="handleTlImageUpload('${imgKey}',this)">
@@ -1141,64 +1354,11 @@ function saveTimelineField() {
     const e = row.querySelector('[data-field-id^="tl-event"]');
     tl.push({ year: y?y.value:'', event: e?e.value:'', imgKey:`tl-img-${row.dataset.tlIndex}` });
   });
+  timelineCache = tl;
   saveField('__timeline', tl);
 }
 
-// Upload image for a specific timeline row
-async function handleTlImageUpload(imgKey, input) {
-  if (!input.files.length || !currentGroup) return;
-  if (!tlImageRegistry[imgKey]) tlImageRegistry[imgKey] = [];
-  const { storage, ref, uploadBytes, getDownloadURL } = window._fb;
-  const idx = parseInt(imgKey.replace('tl-img-',''));
-  const validTlFiles = Array.from(input.files).filter(f => {
-    if (f.size > MAX_FILE_BYTES) {
-      alert(`"${f.name}" is ${(f.size/1024/1024).toFixed(1)} MB — exceeds the ${MAX_FILE_MB}MB limit.`);
-      return false;
-    }
-    return true;
-  });
-  for (const file of validTlFiles) {
-    const path = `art104-mod05/group${currentGroup}/timeline/${Date.now()}_${file.name}`;
-    try {
-      const r = ref(storage, path);
-      await uploadBytes(r, file);
-      const url = await getDownloadURL(r);
-      tlImageRegistry[imgKey].push({ url, path, name:file.name, type:file.type, isImage:isImageType(file) });
-      renderTlImgPreview(idx, imgKey);
-      rebuildVisTimeline();
-      saveField('__tlImages', tlImageRegistry);
-    } catch(e) { setSyncStatus('error','Timeline upload failed: '+e.message); }
-  }
-  input.value = '';
-}
-
-function renderTlImgPreview(idx, imgKey) {
-  const wrap = document.getElementById(`tl-img-preview-${idx}`);
-  if (!wrap) return;
-  wrap.innerHTML = '';
-  (tlImageRegistry[imgKey]||[]).forEach((img,i) => {
-    const el = document.createElement('div');
-    el.style.cssText = 'position:relative;';
-    el.innerHTML = `<img src="${img.url}" style="width:50px;height:50px;object-fit:cover;border-radius:4px;border:1px solid var(--leaf);">
-      <button onclick="deleteTlImage('${imgKey}',${i})" style="position:absolute;top:-4px;right:-4px;background:#c00;color:white;border:none;border-radius:50%;width:16px;height:16px;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>`;
-    wrap.appendChild(el);
-  });
-}
-
-async function deleteTlImage(imgKey, i) {
-  const imgs = tlImageRegistry[imgKey];
-  if (!imgs) return;
-  const img = imgs[i];
-  if (img?.path) {
-    const { storage, ref, deleteObject } = window._fb;
-    try { await deleteObject(ref(storage, img.path)); } catch(e) {}
-  }
-  imgs.splice(i,1);
-  const idx = parseInt(imgKey.replace('tl-img-',''));
-  renderTlImgPreview(idx, imgKey);
-  rebuildVisTimeline();
-  saveField('__tlImages', tlImageRegistry);
-}
+// Upload image for a specific timeline row — handled by new Firestore-based function below
 
 // Build the visual timeline from current row data
 function rebuildVisTimeline() {
@@ -1294,6 +1454,11 @@ function loadGroup() {
   currentGroup = sel;
   const { db, doc, onSnapshot } = window._fb;
   setSyncStatus('saving','Loading…');
+  // Load files first (base64 images from separate collection)
+  loadFilesFromFirestore().then(() => {
+    setSyncStatus('saving', 'Loading text data…');
+  }).catch(e => console.warn('File load error:', e));
+  // Then subscribe to text data
   unsubscribe = onSnapshot(doc(db,'art104-mod05',`group${sel}`), snap => {
     if (snap.exists()) applyRemoteData(snap.data());
     showUI();
@@ -1315,27 +1480,11 @@ function applyRemoteData(data) {
   });
   // Timeline rows
   if (data['__timeline'] && !focusedField?.startsWith('tl-')) {
+    timelineCache = data['__timeline'];
     buildTimelineRows(data['__timeline']);
   }
-  // Timeline images
-  if (data['__tlImages']) {
-    tlImageRegistry = data['__tlImages'];
-    document.querySelectorAll('.timeline-entry').forEach(row => {
-      const imgKey = `tl-img-${row.dataset.tlIndex}`;
-      renderTlImgPreview(parseInt(row.dataset.tlIndex), imgKey);
-    });
-    rebuildVisTimeline();
-  }
-  // Images
-  if (data['__images']) {
-    imageRegistry = data['__images'];
-    Object.entries(imageRegistry).forEach(([key,imgs]) => renderImageGrid(key,imgs));
-  }
-  // Sketches
-  if (data['__sketches']) {
-    sketchRegistry = data['__sketches'];
-    renderSketchGrid();
-  }
+  // Images, sketches and timeline images are loaded separately via loadFilesFromFirestore()
+  // and are NOT stored in the main group document — nothing to do here for files.
   // Theme chips
   const themeEl = document.getElementById('technology');
   if (themeEl) syncThemeChips(themeEl.value);
@@ -1393,7 +1542,13 @@ function submitClear() {
     return;
   }
   closePwModal();
-  const { db, doc, setDoc } = window._fb;
+  const { db, doc, setDoc, collection, query, where, getDocs, deleteDoc } = window._fb;
+  // Delete all file docs for this group
+  const q = query(collection(db, FILES_COLL), where('group','==',`group${sel}`));
+  getDocs(q).then(snap => {
+    snap.forEach(d => deleteDoc(doc(db, FILES_COLL, d.id)));
+  }).catch(e => console.warn('File delete error:', e));
+  // Reset text doc
   setDoc(doc(db,'art104-mod05',`group${sel}`),{_cleared:Date.now()})
     .then(() => {
       imageRegistry={}; sketchRegistry=[]; tlImageRegistry={};
@@ -1405,179 +1560,356 @@ function submitClear() {
     .catch(e => setSyncStatus('error',e.message));
 }
 
-// ── IMAGE UPLOAD ──────────────────────────────────────
-const MAX_FILE_MB = 25;
-const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
+// ── FILE UPLOAD — FIRESTORE BASE64 (no Firebase Storage needed) ──────────────
+// Images are compressed in the browser then stored as base64 in their own
+// Firestore documents under the collection "art104-mod05-files".
+// Document ID format: group{N}_{fieldKey}_{timestamp}
+// This keeps each file under Firestore's 1MB document limit.
+
+const MAX_IMG_PX  = 1200;   // max width/height after resize
+const MAX_B64_KB  = 700;    // warn if base64 still large after compress
+const JPEG_Q_INIT = 0.82;   // initial JPEG quality
+const FILES_COLL  = 'art104-mod05-files';
 
 function isImageType(file) {
   return file.type.startsWith('image/');
 }
 
-function fileIcon(file) {
-  const t = file.type || '';
-  if (t.startsWith('image/'))     return '🖼';
-  if (t === 'application/pdf')    return '📄';
-  if (t.includes('word') || file.name.endsWith('.doc') || file.name.endsWith('.docx')) return '📝';
-  if (t.includes('presentation') || file.name.endsWith('.pptx')) return '📊';
-  if (t.includes('spreadsheet') || file.name.endsWith('.xlsx')) return '📋';
-  if (t.includes('zip') || t.includes('compressed')) return '🗜';
-  if (t.startsWith('video/'))     return '🎬';
-  if (t.startsWith('audio/'))     return '🎵';
+function fileIcon(f) {
+  const t = (f&&f.type)||''; const n = (f&&f.name)||'';
+  if (t.startsWith('image/'))  return '🖼';
+  if (t==='application/pdf')   return '📄';
+  if (t.includes('word')||n.endsWith('.docx')) return '📝';
+  if (t.includes('presentation')||n.endsWith('.pptx')) return '📊';
+  if (t.startsWith('video/'))  return '🎬';
+  if (t.startsWith('audio/'))  return '🎵';
   return '📎';
 }
 
-async function handleImageUpload(fieldKey, input) {
-  if (!input.files.length || !currentGroup) { if(!currentGroup) alert('Load a group first.'); return; }
-  if (!imageRegistry[fieldKey]) imageRegistry[fieldKey] = [];
-  const { storage, ref, uploadBytes, getDownloadURL } = window._fb;
-  const grid = document.getElementById('grid-'+fieldKey);
+// Compress + resize an image File → base64 JPEG string
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = e => { img.src = e.target.result; };
+    img.onload = () => {
+      let { width: w, height: h } = img;
+      if (w > MAX_IMG_PX || h > MAX_IMG_PX) {
+        if (w > h) { h = Math.round(h * MAX_IMG_PX / w); w = MAX_IMG_PX; }
+        else       { w = Math.round(w * MAX_IMG_PX / h); h = MAX_IMG_PX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
 
-  const files = Array.from(input.files);
-  // Check file sizes before uploading
-  const oversized = files.filter(f => f.size > MAX_FILE_BYTES);
-  if (oversized.length) {
-    alert(`The following file(s) exceed the ${MAX_FILE_MB}MB limit and will be skipped:\n` +
-      oversized.map(f => `• ${f.name} (${(f.size/1024/1024).toFixed(1)} MB)`).join('\n'));
-  }
-  const validFiles = files.filter(f => f.size <= MAX_FILE_BYTES);
-  if (!validFiles.length) { input.value=''; return; }
-
-  validFiles.forEach(() => {
-    const ph = document.createElement('div');
-    ph.className='img-thumb';
-    ph.innerHTML='<div class="img-uploading">Uploading…</div>';
-    grid.appendChild(ph);
+      // Try to compress down to target
+      let quality = JPEG_Q_INIT;
+      let b64 = canvas.toDataURL('image/jpeg', quality);
+      while (b64.length > MAX_B64_KB * 1024 * 1.37 && quality > 0.3) {
+        quality -= 0.08;
+        b64 = canvas.toDataURL('image/jpeg', quality);
+      }
+      resolve(b64);
+    };
+    img.onerror = reject;
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
   });
+}
 
-  for (const file of validFiles) {
-    const path = `art104-mod05/group${currentGroup}/${fieldKey}/${Date.now()}_${file.name}`;
-    try {
-      const r = ref(storage, path);
-      await uploadBytes(r, file);
-      const url = await getDownloadURL(r);
-      imageRegistry[fieldKey].push({url, path, caption:'', name:file.name, type:file.type, isImage:isImageType(file)});
-      const phs = grid.querySelectorAll('.img-uploading');
-      if (phs.length) phs[0].closest('.img-thumb').remove();
-    } catch(e) {
-      const phs = grid.querySelectorAll('.img-uploading');
-      if (phs.length) phs[0].closest('.img-thumb').remove();
-      setSyncStatus('error','Upload failed: '+e.message);
-      console.error(e);
+// Save a file to its own Firestore doc, return the doc ID
+async function saveFileToFirestore(file, fieldKey, existingId) {
+  const { db, doc, setDoc, collection } = window._fb;
+  const id = existingId || `group${currentGroup}_${fieldKey}_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+  const docRef = doc(db, FILES_COLL, id);
+
+  let b64, type, name;
+  name = file.name;
+  type = file.type;
+
+  if (isImageType(file)) {
+    b64 = await compressImage(file);
+  } else {
+    // For non-images, store as base64 directly (size warning)
+    b64 = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+    if (b64.length > 900 * 1024) {
+      throw new Error(`File "${file.name}" is too large after encoding (${(b64.length/1024).toFixed(0)} KB). Please keep files under ~650 KB for non-image files, or convert images to JPG first.`);
     }
   }
+
+  await setDoc(docRef, {
+    group: `group${currentGroup}`,
+    fieldKey,
+    name,
+    type,
+    b64,
+    caption: '',
+    savedAt: Date.now()
+  });
+  return id;
+}
+
+// Load all file docs for this group from Firestore
+async function loadFilesFromFirestore() {
+  const { db, collection, query, where, getDocs } = window._fb;
+  const q = query(collection(db, FILES_COLL), where('group','==',`group${currentGroup}`));
+  const snap = await getDocs(q);
+  // Rebuild registries from stored docs
+  imageRegistry   = {};
+  tlImageRegistry  = {};
+  sketchRegistry   = [];
+
+  snap.forEach(d => {
+    const data = d.data();
+    const entry = {
+      id: d.id,
+      url: data.b64,       // base64 IS the url for display
+      b64: data.b64,
+      name: data.name,
+      type: data.type,
+      caption: data.caption||'',
+      isImage: (data.type||'').startsWith('image/'),
+      savedAt: data.savedAt
+    };
+    const fk = data.fieldKey;
+    if (fk === '__sketches') {
+      // sketch entries are stored individually; title/author in b64 doc
+      sketchRegistry.push({ ...entry, title: data.title||'', author: data.author||'' });
+    } else if (fk && fk.startsWith('tl-img-')) {
+      if (!tlImageRegistry[fk]) tlImageRegistry[fk] = [];
+      tlImageRegistry[fk].push(entry);
+    } else if (fk) {
+      if (!imageRegistry[fk]) imageRegistry[fk] = [];
+      imageRegistry[fk].push(entry);
+    }
+  });
+
+  // Sort sketches by savedAt
+  sketchRegistry.sort((a,b) => (a.savedAt||0)-(b.savedAt||0));
+
+  // Re-render everything
+  Object.entries(imageRegistry).forEach(([key,imgs]) => renderImageGrid(key, imgs));
+  Object.entries(tlImageRegistry).forEach(([key,imgs]) => {
+    const idx = parseInt(key.replace('tl-img-',''));
+    renderTlImgPreview(idx, key);
+  });
+  rebuildVisTimeline();
+  renderSketchGrid();
+}
+
+// ── handleImageUpload — compress + save to Firestore ─────────────────────────
+async function handleImageUpload(fieldKey, input) {
+  if (!input.files.length) return;
+  if (!currentGroup) { alert('Load a group first.'); return; }
+  if (!imageRegistry[fieldKey]) imageRegistry[fieldKey] = [];
+
+  const grid = document.getElementById('grid-'+fieldKey);
+  const files = Array.from(input.files);
+
+  for (const file of files) {
+    // Show uploading placeholder
+    const ph = document.createElement('div');
+    ph.className = 'img-thumb';
+    ph.innerHTML = '<div class="img-uploading">Saving…</div>';
+    grid.appendChild(ph);
+
+    try {
+      const id  = await saveFileToFirestore(file, fieldKey);
+      const b64 = imageRegistry[fieldKey].find(x=>x.id===id)?.b64;
+      // read back from Firestore to get the stored b64
+      const { db, doc, getDoc } = window._fb;
+      const snap = await getDoc(doc(db, FILES_COLL, id));
+      const data = snap.data();
+      imageRegistry[fieldKey].push({
+        id, url: data.b64, b64: data.b64,
+        name: data.name, type: data.type,
+        caption: '', isImage: (data.type||'').startsWith('image/')
+      });
+      ph.remove();
+    } catch(e) {
+      ph.remove();
+      console.error(e);
+      alert(`Upload failed for "${file.name}":\n${e.message}`);
+    }
+  }
+
   renderImageGrid(fieldKey, imageRegistry[fieldKey]);
-  saveField('__images', imageRegistry);
-  input.value='';
+  input.value = '';
 }
 
 function renderImageGrid(fieldKey, imgs) {
   const grid = document.getElementById('grid-'+fieldKey);
   if (!grid) return;
-  grid.innerHTML='';
+  grid.innerHTML = '';
   imgs.forEach((img,i) => {
     const t = document.createElement('div');
-    t.className='img-thumb';
-    t.style='flex-direction:column;height:auto;aspect-ratio:unset;';
-    const isImg = img.isImage !== false && (img.type||'').startsWith('image/') || (!img.type && img.url && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(img.url));
+    t.className = 'img-thumb';
+    t.style = 'flex-direction:column;height:auto;aspect-ratio:unset;';
+    const isImg = img.isImage || (img.type||'').startsWith('image/') || (img.url||'').startsWith('data:image');
     const previewHtml = isImg
       ? `<img src="${img.url}" alt="" style="width:100%;height:100%;object-fit:cover;">`
       : `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:.3rem;padding:.5rem;">
-           <span style="font-size:2rem;">${fileIcon({type:img.type||'',name:img.name||''})}</span>
+           <span style="font-size:2rem;">${fileIcon(img)}</span>
            <span style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--soil);text-align:center;word-break:break-all;max-width:90px;">${esc(img.name||'file')}</span>
-           <a href="${img.url}" target="_blank" style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--fern);text-decoration:underline;">open ↗</a>
+           <a href="${img.url}" download="${esc(img.name||'file')}" style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--fern);text-decoration:underline;">download ↓</a>
          </div>`;
-    t.innerHTML=`
+    t.innerHTML = `
       <div style="position:relative;width:100%;aspect-ratio:1;overflow:hidden;border-radius:4px 4px 0 0;background:var(--mist);">
         ${previewHtml}
-        <button class="img-del" onclick="deleteImage('${fieldKey}',${i})">✕ remove</button>
+        <button class="img-del" onclick="deleteImage('${fieldKey}',${i})">✕</button>
       </div>
       <div class="img-caption-row">
-        <input type="text" placeholder="Add caption…" value="${esc(img.caption||'')}"
-          data-field-id="img-caption-${fieldKey}-${i}"
+        <input type="text" placeholder="Caption…" value="${esc(img.caption||'')}"
+          data-field-id="img-cap-${fieldKey}-${i}"
           oninput="updateCaption('${fieldKey}',${i},this.value)">
       </div>`;
     grid.appendChild(t);
   });
   const cnt = document.getElementById('count-'+fieldKey);
-  if (cnt) cnt.textContent = imgs.length+' file(s) uploaded';
+  if (cnt) cnt.textContent = imgs.length + ' file(s)';
 }
 
-function updateCaption(fieldKey,idx,val) {
-  if (imageRegistry[fieldKey]?.[idx]) {
-    imageRegistry[fieldKey][idx].caption=val;
-    saveField('__images',imageRegistry);
+async function updateCaption(fieldKey, idx, val) {
+  const img = imageRegistry[fieldKey]?.[idx];
+  if (!img) return;
+  img.caption = val;
+  if (img.id) {
+    const { db, doc, setDoc } = window._fb;
+    await setDoc(doc(db, FILES_COLL, img.id), { caption: val }, { merge: true });
   }
 }
 
-async function deleteImage(fieldKey,idx) {
-  if (!confirm('Remove this image?')) return;
-  const img = imageRegistry[fieldKey][idx];
-  if (img?.path) {
-    const { storage, ref, deleteObject } = window._fb;
-    try { await deleteObject(ref(storage,img.path)); } catch(e) {}
+async function deleteImage(fieldKey, idx) {
+  if (!confirm('Remove this file?')) return;
+  const img = imageRegistry[fieldKey]?.[idx];
+  if (img?.id) {
+    const { db, doc, deleteDoc } = window._fb;
+    try { await deleteDoc(doc(db, FILES_COLL, img.id)); } catch(e) { console.warn(e); }
   }
-  imageRegistry[fieldKey].splice(idx,1);
+  imageRegistry[fieldKey].splice(idx, 1);
   renderImageGrid(fieldKey, imageRegistry[fieldKey]);
-  saveField('__images',imageRegistry);
 }
 
-// ── SKETCH UPLOAD ─────────────────────────────────────
+// ── TIMELINE IMAGE UPLOAD ─────────────────────────────────────────────────────
+async function handleTlImageUpload(imgKey, input) {
+  if (!input.files.length || !currentGroup) return;
+  if (!tlImageRegistry[imgKey]) tlImageRegistry[imgKey] = [];
+  const idx = parseInt(imgKey.replace('tl-img-',''));
+
+  for (const file of Array.from(input.files)) {
+    const ph = document.createElement('div');
+    ph.style.cssText='width:50px;height:50px;border-radius:4px;background:var(--mist);display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--fern);';
+    ph.textContent='…';
+    const wrap = document.getElementById(`tl-img-preview-${idx}`);
+    if (wrap) wrap.appendChild(ph);
+    try {
+      const id = await saveFileToFirestore(file, imgKey);
+      const { db, doc, getDoc } = window._fb;
+      const snap = await getDoc(doc(db, FILES_COLL, id));
+      const data = snap.data();
+      tlImageRegistry[imgKey].push({
+        id, url: data.b64, name: data.name, type: data.type,
+        isImage: (data.type||'').startsWith('image/')
+      });
+      ph.remove();
+      renderTlImgPreview(idx, imgKey);
+      rebuildVisTimeline();
+    } catch(e) {
+      ph.remove();
+      console.error(e);
+      alert(`Timeline upload failed: ${e.message}`);
+    }
+  }
+  input.value = '';
+}
+
+function renderTlImgPreview(idx, imgKey) {
+  const wrap = document.getElementById(`tl-img-preview-${idx}`);
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  (tlImageRegistry[imgKey]||[]).forEach((img,i) => {
+    const el = document.createElement('div');
+    el.style.cssText = 'position:relative;';
+    const isImg = img.isImage || (img.url||'').startsWith('data:image');
+    el.innerHTML = isImg
+      ? `<img src="${img.url}" style="width:50px;height:50px;object-fit:cover;border-radius:4px;border:1px solid var(--leaf);">
+         <button onclick="deleteTlImage('${imgKey}',${i})" style="position:absolute;top:-4px;right:-4px;background:#c00;color:white;border:none;border-radius:50%;width:16px;height:16px;font-size:9px;cursor:pointer;">✕</button>`
+      : `<div style="width:50px;height:50px;border-radius:4px;border:1px solid var(--leaf);background:var(--mist);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">${fileIcon(img)}</div>
+         <button onclick="deleteTlImage('${imgKey}',${i})" style="position:absolute;top:-4px;right:-4px;background:#c00;color:white;border:none;border-radius:50%;width:16px;height:16px;font-size:9px;cursor:pointer;">✕</button>`;
+    wrap.appendChild(el);
+  });
+}
+
+async function deleteTlImage(imgKey, i) {
+  const imgs = tlImageRegistry[imgKey];
+  if (!imgs) return;
+  const img = imgs[i];
+  if (img?.id) {
+    const { db, doc, deleteDoc } = window._fb;
+    try { await deleteDoc(doc(db, FILES_COLL, img.id)); } catch(e) {}
+  }
+  imgs.splice(i,1);
+  const idx = parseInt(imgKey.replace('tl-img-',''));
+  renderTlImgPreview(idx, imgKey);
+  rebuildVisTimeline();
+}
+
+// ── SKETCH UPLOAD ─────────────────────────────────────────────────────────────
 async function handleSketchUpload(input) {
   if (!input.files.length || !currentGroup) return;
-  const MAX=15, remaining=MAX-sketchRegistry.length;
-  if (remaining<=0) { alert('Maximum of 15 sketches reached.'); return; }
-
-  const allFiles = Array.from(input.files);
-  const oversized = allFiles.filter(f => f.size > MAX_FILE_BYTES);
-  if (oversized.length) {
-    alert(`The following file(s) exceed the ${MAX_FILE_MB}MB limit and will be skipped:\n` +
-      oversized.map(f => `• ${f.name} (${(f.size/1024/1024).toFixed(1)} MB)`).join('\n'));
-  }
-  const files = allFiles.filter(f => f.size <= MAX_FILE_BYTES).slice(0,remaining);
-  if (!files.length) { input.value=''; return; }
-
-  const { storage, ref, uploadBytes, getDownloadURL } = window._fb;
+  const MAX = 15;
+  if (sketchRegistry.length >= MAX) { alert('Maximum of 15 sketches reached.'); return; }
+  const remaining = MAX - sketchRegistry.length;
+  const files = Array.from(input.files).slice(0, remaining);
   const grid = document.getElementById('sketch-grid');
-  files.forEach(() => {
-    const ph=document.createElement('div');ph.className='sketch-uploading-card';ph.textContent='Uploading…';
-    grid.appendChild(ph);
-  });
+
   for (const file of files) {
-    const path=`art104-mod05/group${currentGroup}/sketches/${Date.now()}_${file.name}`;
+    const ph = document.createElement('div');
+    ph.className = 'sketch-uploading-card';
+    ph.textContent = 'Saving…';
+    grid.appendChild(ph);
     try {
-      const r=ref(storage,path);
-      await uploadBytes(r,file);
-      const url=await getDownloadURL(r);
-      sketchRegistry.push({url,path,title:'',author:'',type:file.type,name:file.name,isImage:isImageType(file)});
-      const phs=grid.querySelectorAll('.sketch-uploading-card');
-      if (phs.length) phs[0].remove();
+      const id = await saveFileToFirestore(file, '__sketches');
+      const { db, doc, getDoc } = window._fb;
+      const snap = await getDoc(doc(db, FILES_COLL, id));
+      const data = snap.data();
+      sketchRegistry.push({
+        id, url: data.b64, name: data.name, type: data.type,
+        title:'', author:'', isImage: (data.type||'').startsWith('image/'),
+        savedAt: data.savedAt
+      });
+      ph.remove();
     } catch(e) {
-      const phs=grid.querySelectorAll('.sketch-uploading-card');
-      if (phs.length) phs[0].remove();
-      setSyncStatus('error','Sketch upload failed: '+e.message);
+      ph.remove();
+      console.error(e);
+      alert(`Sketch upload failed: ${e.message}`);
     }
   }
   renderSketchGrid();
-  saveField('__sketches',sketchRegistry);
-  input.value='';
+  input.value = '';
 }
 
 function renderSketchGrid() {
-  const grid=document.getElementById('sketch-grid');
+  const grid = document.getElementById('sketch-grid');
   if (!grid) return;
-  grid.innerHTML='';
+  grid.innerHTML = '';
   sketchRegistry.forEach((sk,i) => {
-    const card=document.createElement('div');
-    card.className='sketch-card';
-    const isImg = sk.isImage !== false && (sk.type||'').startsWith('image/') || (!sk.type && sk.url && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(sk.url));
+    const card = document.createElement('div');
+    card.className = 'sketch-card';
+    const isImg = sk.isImage || (sk.url||'').startsWith('data:image');
     const preview = isImg
       ? `<img src="${sk.url}" alt="sketch ${i+1}">`
       : `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:.4rem;padding:.5rem;background:var(--mist);">
-           <span style="font-size:2.2rem;">${fileIcon({type:sk.type||'',name:sk.name||''})}</span>
+           <span style="font-size:2.2rem;">${fileIcon(sk)}</span>
            <span style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--soil);text-align:center;word-break:break-all;">${esc(sk.name||'file')}</span>
-           <a href="${sk.url}" target="_blank" style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--fern);">open ↗</a>
          </div>`;
-    card.innerHTML=`
+    card.innerHTML = `
       <div class="sketch-img-wrap">${preview}</div>
       <div class="sketch-meta">
         <input type="text" placeholder="Title / description…" value="${esc(sk.title||'')}"
@@ -1588,34 +1920,32 @@ function renderSketchGrid() {
       <button class="sketch-del" onclick="deleteSketch(${i})">✕ remove</button>`;
     grid.appendChild(card);
   });
-  const cnt=document.getElementById('sketch-count');
-  if (cnt) cnt.textContent=`${sketchRegistry.length} / 15 files uploaded`;
+  const cnt = document.getElementById('sketch-count');
+  if (cnt) cnt.textContent = `${sketchRegistry.length} / 15 sketches`;
 }
 
-function updateSketch(idx,field,val) {
-  if (sketchRegistry[idx]) { sketchRegistry[idx][field]=val; saveField('__sketches',sketchRegistry); }
+async function updateSketch(idx, field, val) {
+  const sk = sketchRegistry[idx];
+  if (!sk) return;
+  sk[field] = val;
+  if (sk.id) {
+    const { db, doc, setDoc } = window._fb;
+    await setDoc(doc(db, FILES_COLL, sk.id), { [field]: val }, { merge: true });
+  }
 }
 
 async function deleteSketch(idx) {
   if (!confirm('Remove this sketch?')) return;
-  const sk=sketchRegistry[idx];
-  if (sk?.path) {
-    const { storage, ref, deleteObject } = window._fb;
-    try { await deleteObject(ref(storage,sk.path)); } catch(e) {}
+  const sk = sketchRegistry[idx];
+  if (sk?.id) {
+    const { db, doc, deleteDoc } = window._fb;
+    try { await deleteDoc(doc(db, FILES_COLL, sk.id)); } catch(e) {}
   }
-  sketchRegistry.splice(idx,1);
+  sketchRegistry.splice(idx, 1);
   renderSketchGrid();
-  saveField('__sketches',sketchRegistry);
 }
 
-// ── TAB + EXPORT ──────────────────────────────────────
-function switchDay(day,btn) {
-  document.querySelectorAll('.day-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.day-tab').forEach(b=>b.classList.remove('active'));
-  document.getElementById(day).classList.add('active');
-  btn.classList.add('active');
-}
-
+// ── PLAIN PDF EXPORT (print page as-is) ──────────────
 function exportPDF() {
   document.querySelectorAll('.day-panel').forEach(p=>p.classList.add('active'));
   window.print();
@@ -1625,6 +1955,461 @@ function exportPDF() {
     document.querySelectorAll('.day-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
   }, 1500);
 }
+
+function switchDay(day,btn) {
+  document.querySelectorAll('.day-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.day-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(day).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── PRESENTATION BUILDER ──────────────────────────────
+
+let presDay='day1', presScheme='forest', presLayout='clean', presFont='playfair';
+
+const SCHEMES={
+  forest:{accent:'#3d5a2e',accentDark:'#2a3e1f',accentLight:'#7a9e6a',bg:'#f5f0e8',surface:'#fff',text:'#2b2a25',subtext:'#6b5544',tag:'#a8c896',tagText:'#2a3e1f'},
+  ocean: {accent:'#1a3a5c',accentDark:'#0d2236',accentLight:'#7ab8d4',bg:'#e8f4f8',surface:'#fff',text:'#1a2a3a',subtext:'#4a6a8a',tag:'#b8d8e8',tagText:'#1a3a5c'},
+  earth: {accent:'#6b4226',accentDark:'#4a2e18',accentLight:'#d4a76a',bg:'#fdf6ec',surface:'#fff',text:'#3a2a1a',subtext:'#8a6040',tag:'#e8c898',tagText:'#6b4226'},
+  slate: {accent:'#2c3e50',accentDark:'#1a2838',accentLight:'#95a5b5',bg:'#f0f3f6',surface:'#fff',text:'#2c3e50',subtext:'#6a7a8a',tag:'#c5d0da',tagText:'#2c3e50'},
+  dusk:  {accent:'#4a2060',accentDark:'#2e1040',accentLight:'#b07fd4',bg:'#f8f0ff',surface:'#fff',text:'#2a1040',subtext:'#7050a0',tag:'#d4b8f0',tagText:'#4a2060'},
+  chalk: {accent:'#222',   accentDark:'#000',   accentLight:'#e05a2b',bg:'#fafafa', surface:'#fff',text:'#1a1a1a',subtext:'#555',   tag:'#f0c0a0',tagText:'#222'},
+};
+const FONTS={
+  playfair:{heading:"'Playfair Display',Georgia,serif",     body:"'DM Mono','Courier New',monospace", import:"https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Mono:wght@400;500&display=swap"},
+  slab:    {heading:"Georgia,'Times New Roman',serif",       body:"'DM Sans',Arial,sans-serif",        import:"https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap"},
+  modern:  {heading:"'DM Sans',Arial,sans-serif",            body:"'DM Mono','Courier New',monospace", import:"https://fonts.googleapis.com/css2?family=DM+Sans:wght@600;700&family=DM+Mono:wght@400&display=swap"},
+  humanist:{heading:"Optima,Candara,'DM Sans',sans-serif",   body:"'DM Sans',Arial,sans-serif",        import:"https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap"},
+};
+
+function openPresentationModal(){if(!currentGroup){alert('Load a group first.');return;}document.getElementById('pres-modal').style.display='block';}
+function closePresentationModal(){document.getElementById('pres-modal').style.display='none';}
+function selectPresDay(d){presDay=d;document.getElementById('pres-day1-btn').className='pres-day-btn'+(d==='day1'?' pres-day-selected':'');document.getElementById('pres-day2-btn').className='pres-day-btn'+(d==='day2'?' pres-day-selected':'');}
+function selectScheme(s){presScheme=s;document.querySelectorAll('.scheme-swatch').forEach(el=>el.classList.toggle('selected',el.dataset.scheme===s));}
+function selectLayout(l){presLayout=l;['clean','bold','editorial','minimal'].forEach(o=>document.getElementById('layout-'+o).classList.toggle('selected',o===l));}
+function selectFont(f){presFont=f;['playfair','slab','modern','humanist'].forEach(o=>document.getElementById('font-'+o).classList.toggle('selected',o===f));}
+
+// ── Data helpers ──────────────────────────────────────
+function val(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+function bulletVals(cid){return Array.from(document.querySelectorAll('#'+cid+' [data-field-id]')).map(e=>e.value.trim()).filter(Boolean);}
+function imgsFor(fk){return(imageRegistry[fk]||[]).filter(i=>i.url);}
+function sketchImgs(){return sketchRegistry.filter(s=>s.url);}
+function tlImgsFor(ik){return(tlImageRegistry[ik]||[]).filter(i=>i.url);}
+
+function getTimeline(){
+  if(timelineCache&&timelineCache.some(r=>r.year||r.event))
+    return timelineCache.map(r=>({yr:(r.year||'').trim(),evt:(r.event||'').trim(),imgs:tlImgsFor(r.imgKey||'')})).filter(r=>r.yr||r.evt);
+  const rows=[];
+  document.querySelectorAll('.timeline-entry').forEach(row=>{
+    const y=row.querySelector('[data-field-id^="tl-year"]'),e=row.querySelector('[data-field-id^="tl-event"]'),idx=row.dataset.tlIndex;
+    const yr=y?y.value.trim():'',evt=e?e.value.trim():'';
+    if(yr||evt)rows.push({yr,evt,imgs:tlImgsFor('tl-img-'+idx)});
+  });
+  return rows;
+}
+
+// ── HTML escape ───────────────────────────────────────
+function escH(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+// ── Inline author label — appears ABOVE the content it belongs to ────────────
+// authored(nameFieldId, htmlContent) wraps content with a name badge only when
+// both the name and the content are non-empty.
+function authored(nameFieldId, htmlContent) {
+  if (!htmlContent) return '';
+  const name = val(nameFieldId);
+  const badge = name ? '<div class="sl-by">&#9998;&nbsp;'+escH(name)+'</div>' : '';
+  return badge + htmlContent;
+}
+// authored for slide-level owner (no content, just puts name at top of slide)
+function slideOwner(nameFieldId) {
+  const name = val(nameFieldId);
+  return name ? '<div class="sl-by sl-by-owner">&#9998;&nbsp;'+escH(name)+'</div>' : '';
+}
+// authored for multiple answer blocks on the same slide — each gets its own badge
+function byLines(...ids) {
+  // legacy — not used in new code but kept so nothing breaks
+  const names=[...new Set(ids.map(id=>val(id)).filter(Boolean))];
+  return names.length ? '<div class="sl-by">&#9998; '+names.map(escH).join(' &middot; ')+'</div>' : '';
+}
+
+// ── Slide body helpers ────────────────────────────────
+function imgRowHTML(imgs){
+  if(!imgs||!imgs.length)return '';
+  const n=imgs.length,h=n<=1?160:n<=2?145:n<=3?120:n<=4?105:85,mw=n<=1?300:n<=2?240:n<=3?190:n<=4?160:130;
+  return '<div class="sl-imgs">'+imgs.slice(0,6).map(i=>'<div class="sl-img-wrap"><img src="'+i.url+'" alt="'+escH(i.caption||i.name||'')+'" style="height:'+h+'px;max-width:'+mw+'px;">'+(i.caption?'<div class="sl-img-cap">'+escH(i.caption)+'</div>':'')+'</div>').join('')+'</div>';
+}
+function paraH(t){return t?'<p class="sl-para">'+escH(t)+'</p>':'';}
+function blistH(arr){const f=arr.filter(Boolean);return f.length?'<ul class="sl-bullets">'+f.map(i=>'<li>'+escH(i)+'</li>').join('')+'</ul>':'';}
+function kvH(l,t){return t?'<div class="sl-kv"><span class="sl-kv-label">'+l+'</span><span class="sl-kv-val">'+escH(t)+'</span></div>':'';}
+function tagH(t){return '<div class="sl-section-tag">'+t+'</div>';}
+
+// ── Build Day 1 slides ────────────────────────────────
+function buildDay1Slides(){
+  const gn=val('group-name-input'),th=val('technology'),tl=getTimeline(),slides=[];
+
+  // Cover
+  slides.push({_cover:true,title:'MODULE 05\nNature/Ecology/\nEnvironment/Biology',sub:(gn?gn+' \u00b7 ':'')+('Group '+currentGroup)+(th?' \u00b7 '+th:'')});
+
+  // Slide 1 — Theme Overview
+  slides.push({
+    title:'Theme Overview', sub:th||'', by:'',
+    body: slideOwner('s1-owner')
+        + tagH('Part 1 \u00b7 Slide 1 \u00b7 Theme Summary')
+        + blistH(bulletVals('tech-bullets')),
+    imgs:imgsFor('tech-overview'),
+  });
+
+  // Slide 2 — Timeline
+  const tlBody=tl.length
+    ? tagH('Timeline')+tl.map(r=>'<div class="sl-kv"><span class="sl-kv-label">'+escH(r.yr)+'</span><span class="sl-kv-val">'+escH(r.evt)+'</span></div>').join('')
+    : tagH('Timeline')+'<p class="sl-para sl-muted">No timeline entries yet.</p>';
+  slides.push({
+    title:'Theme Timeline', sub:'', by:'',
+    body: slideOwner('s2-owner') + tlBody,
+    imgs:tl.flatMap(r=>r.imgs).slice(0,4),
+  });
+
+  // Slide 3 — Article 1 Themes
+  slides.push({
+    title:'Article 1 \u00b7 Key Themes & Ideas', sub:val('art1-cite'), by:'',
+    body: slideOwner('art1-owners')
+        + tagH('Part 2 \u00b7 Slide 3 \u00b7 20 pts')
+        + authored('art1-themes-name', paraH(val('art1-themes'))+blistH(bulletVals('art1-theme-bullets'))),
+    imgs:imgsFor('art1'),
+  });
+
+  // Slide 4 — Article 1 Response + Interdisciplinary
+  slides.push({
+    title:'Article 1 \u00b7 Response & Interdisciplinary', sub:val('art1-cite'), by:'',
+    body: slideOwner('art1-owners')
+        + tagH('Personal Response \u00b7 20 pts')
+        + authored('art1-response-name', paraH(val('art1-response'))+blistH(bulletVals('art1-resp-bullets')))
+        + (val('art1-interdis') ? tagH('Interdisciplinary \u00b7 2.5 pts')
+            + authored('art1-interdis-name', paraH(val('art1-interdis'))+blistH(bulletVals('art1-interdis-bullets'))) : ''),
+    imgs:[],
+  });
+
+  // Slide 5 — Article 2 Themes
+  slides.push({
+    title:'Article 2 \u00b7 Key Themes & Ideas', sub:val('art2-cite'), by:'',
+    body: slideOwner('art2-owners')
+        + tagH('Part 2 \u00b7 Slide 4 \u00b7 20 pts')
+        + authored('art2-themes-name', paraH(val('art2-themes'))+blistH(bulletVals('art2-theme-bullets'))),
+    imgs:imgsFor('art2'),
+  });
+
+  // Slide 6 — Article 2 Response + Interdisciplinary
+  slides.push({
+    title:'Article 2 \u00b7 Response & Interdisciplinary', sub:val('art2-cite'), by:'',
+    body: slideOwner('art2-owners')
+        + tagH('Personal Response \u00b7 20 pts')
+        + authored('art2-response-name', paraH(val('art2-response'))+blistH(bulletVals('art2-resp-bullets')))
+        + (val('art2-interdis') ? tagH('Interdisciplinary \u00b7 2.5 pts')
+            + authored('art2-interdis-name', paraH(val('art2-interdis'))+blistH(bulletVals('art2-interdis-bullets'))) : ''),
+    imgs:[],
+  });
+
+  // Slide 7 — Artist 1
+  slides.push({
+    title:'Artist 1', sub:val('a1-name'), by:'',
+    body: slideOwner('a1-owner')
+        + tagH('Part 3 \u00b7 Slide 5')
+        + authored('a1-concepts-name', kvH('Digital Media Concepts',val('a1-concepts'))+kvH('DM Art History',val('a1-history')))
+        + authored('a1-reality-name',  kvH('Nature/Ecology Concepts',val('a1-reality')))
+        + authored('a1-tech-name',     kvH('Technology',val('a1-tech'))),
+    imgs:imgsFor('a1-art'),
+  });
+
+  // Slide 8 — Artist 1 Personal Response
+  slides.push({
+    title:'Artist 1 \u00b7 Personal Response', sub:val('a1-name'), by:'',
+    body: slideOwner('a1-owner')
+        + tagH('Personal Response \u00b7 10 pts')
+        + authored('a1-personal-name', paraH(val('a1-personal'))),
+    imgs:[],
+  });
+
+  // Slide 9 — Artist 2
+  slides.push({
+    title:'Artist 2', sub:val('a2-name'), by:'',
+    body: slideOwner('a2-owner')
+        + tagH('Part 3 \u00b7 Slide 6')
+        + authored('a2-concepts-name', kvH('Digital Media Concepts',val('a2-concepts'))+kvH('DM Art History',val('a2-history')))
+        + authored('a2-reality-name',  kvH('Nature/Ecology Concepts',val('a2-reality')))
+        + authored('a2-tech-name',     kvH('Technology',val('a2-tech'))),
+    imgs:imgsFor('a2-art'),
+  });
+
+  // Slide 10 — Artist 2 Personal Response
+  slides.push({
+    title:'Artist 2 \u00b7 Personal Response', sub:val('a2-name'), by:'',
+    body: slideOwner('a2-owner')
+        + tagH('Personal Response \u00b7 20 pts')
+        + authored('a2-personal-name', paraH(val('a2-personal'))),
+    imgs:[],
+  });
+
+  return slides;
+}
+
+// ── Build Day 2 slides ────────────────────────────────
+function buildDay2Slides(){
+  const gn=val('group-name-input'),th=val('technology'),slides=[],allSk=sketchImgs();
+
+  // Cover
+  slides.push({_cover:true,title:'Speculative Artwork\nIdea Presentation',sub:(gn?gn+' \u00b7 ':'')+('Group '+currentGroup)+(th?' \u00b7 '+th:'')});
+
+  // Slide 1 — Sketches
+  slides.push({
+    title:'Sketches & Idea Generation', sub:'Slide 1 \u2014 by group members', by:'',
+    body: slideOwner('sp-sketch-owners')
+        + tagH('Part 4 \u00b7 Slide 1')
+        + authored('sp-sketch-desc-name', paraH(val('sp-sketch-desc'))),
+    imgs:allSk.slice(0,4),
+  });
+  for(let s=4;s<allSk.length;s+=4)
+    slides.push({title:'Sketches (cont.)',sub:'',by:'',body:tagH('Sketch Gallery continued'),imgs:allSk.slice(s,s+4)});
+
+  // Slide 2 — AI Brainstorming
+  slides.push({
+    title:'AI-Generated Brainstorming', sub:'Slide 2 \u2014 for reference only', by:'',
+    body: slideOwner('sp-ai-owners')
+        + tagH('Part 4 \u00b7 Slide 2')
+        + authored('sp-ai-desc-name', paraH(val('sp-ai-desc'))),
+    imgs:imgsFor('sp-ai'),
+  });
+
+  // Slide 3 — Final Artwork
+  slides.push({
+    title:'Final Idea Drawing / Rendering', sub:'Slide 3 \u2014 by group, NOT AI', by:'',
+    body: slideOwner('sp-final-owners')
+        + tagH('Part 4 \u00b7 Slide 3')
+        + authored('sp-final-desc-name', paraH(val('sp-final-desc'))),
+    imgs:imgsFor('sp-final'),
+  });
+
+  // Slide 4 — Digital Media Concepts
+  // Each kv block gets its own author if the writer is specified
+  slides.push({
+    title:'Digital Media Concepts', sub:'Slide 4 \u00b7 10 pts', by:'',
+    body: slideOwner('sp-tech-owner')
+        + tagH('Part 4 \u00b7 Slide 4')
+        + authored('sp-tech-tech-name',
+            kvH('Technologies',val('sp-tech-tech'))
+            +kvH('Key Themes',val('sp-tech-themes'))
+            +kvH('Formal Elements',val('sp-tech-formal'))
+            +kvH('DM Art History',val('sp-tech-history'))),
+    imgs:[],
+  });
+
+  // Slide 5 — Nature/Ecology Concepts
+  slides.push({
+    title:'Nature/Ecology/Environment/Biology Concepts', sub:'Slide 5 \u00b7 15 pts', by:'',
+    body: slideOwner('sp-reality-owner')
+        + tagH('Part 4 \u00b7 Slide 5')
+        + authored('sp-reality-text-name', paraH(val('sp-reality-text'))+blistH(bulletVals('sp-reality-bullets'))),
+    imgs:imgsFor('sp-reality'),
+  });
+
+  // Slide 6 — Artist Connections
+  slides.push({
+    title:'Artist Connections', sub:'Slide 6 \u00b7 15 pts', by:'',
+    body: slideOwner('sp-artists-owner')
+        + tagH('Part 4 \u00b7 Slide 6')
+        + (val('sp-artist1-name')
+            ? tagH('Artist 1 \u2014 '+escH(val('sp-artist1-name')))
+              + authored('sp-artist1-conn-name', paraH(val('sp-artist1-connection'))) : '')
+        + (val('sp-artist2-name')
+            ? tagH('Artist 2 \u2014 '+escH(val('sp-artist2-name')))
+              + authored('sp-artist2-conn-name', paraH(val('sp-artist2-connection'))) : ''),
+    imgs:[],
+  });
+
+  // Slide 7 — Personal Response
+  slides.push({
+    title:'Personal Response & Connections', sub:'Slide 7 \u00b7 10 pts', by:'',
+    body: slideOwner('sp-personal-owner')
+        + tagH('Part 4 \u00b7 Slide 7')
+        + authored('sp-personal-text-name', paraH(val('sp-personal-text'))+blistH(bulletVals('sp-personal-bullets'))),
+    imgs:[],
+  });
+
+  return slides;
+}
+
+// ── Build final HTML ──────────────────────────────────
+// Key design decisions to fix both bugs:
+// 1. No overflow:hidden on body — content flows naturally, long slides paginate
+// 2. Larger fonts throughout — easier to read in PDF
+// 3. Each layout is structurally unique — sidebar, dark header, minimal line, etc.
+function buildFinalHTML(slides){
+  const sc=SCHEMES[presScheme]||SCHEMES.forest;
+  const fp=FONTS[presFont]||FONTS.playfair;
+  const lay=presLayout||'clean';
+  const tot=slides.length;
+
+  function makeSlide(sl,num){
+    if(sl._cover){
+      const lines=sl.title.split('\n');
+      return '<div class="slide slide-cover"><div class="cover-inner">'
+        +'<div class="cover-eyebrow">Art 104 \u00b7 Module 05</div>'
+        +'<div class="cover-title">'+lines.map(l=>escH(l)).join('<br>')+'</div>'
+        +'<div class="cover-sub">'+escH(sl.sub||'')+'</div>'
+        +'<div class="cover-rule"></div>'
+        +'<div class="cover-group">Group '+currentGroup+'</div>'
+        +'</div></div>';
+    }
+    const body=sl.body+imgRowHTML(sl.imgs||[]);
+    const n=num+' / '+tot;
+    if(lay==='clean')return(
+      '<div class="slide">'
+      +'<div class="sl-hdr-clean">'
+        +'<div class="sl-title-clean">'+escH(sl.title)+'</div>'
+        +(sl.sub?'<div class="sl-sub-clean">'+escH(sl.sub)+'</div>':'')
+        +'<div class="sl-num">'+n+'</div>'
+      +'</div>'
+      +'<div class="sl-body">'+body+'</div>'
+      +'</div>'
+    );
+    if(lay==='bold')return(
+      '<div class="slide">'
+      +'<div class="sl-hdr-bold">'
+        +'<div class="sl-num sl-num-bold">'+n+'</div>'
+        +'<div class="sl-title-bold">'+escH(sl.title)+'</div>'
+        +(sl.sub?'<div class="sl-sub-bold">'+escH(sl.sub)+'</div>':'')
+      +'</div>'
+      +'<div class="sl-body">'+body+'</div>'
+      +'</div>'
+    );
+    if(lay==='editorial')return(
+      '<div class="slide slide-ed">'
+      +'<div class="sl-sidebar">'
+        +'<div class="sl-num sl-num-ed">'+n+'</div>'
+        +'<div class="sl-title-ed">'+escH(sl.title)+'</div>'
+        +(sl.sub?'<div class="sl-sub-ed">'+escH(sl.sub)+'</div>':'')
+      +'</div>'
+      +'<div class="sl-body sl-body-ed">'+body+'</div>'
+      +'</div>'
+    );
+    if(lay==='minimal')return(
+      '<div class="slide slide-min">'
+      +'<div class="sl-top-stripe"></div>'
+      +'<div class="sl-inner-min">'
+        +'<div class="sl-num sl-num-min">'+n+'</div>'
+        +'<div class="sl-title-min">'+escH(sl.title)+'</div>'
+        +(sl.sub?'<div class="sl-sub-min">'+escH(sl.sub)+'</div>':'')
+        +'<div class="sl-body">'+body+'</div>'
+      +'</div>'
+      +'</div>'
+    );
+  }
+
+  const slidesHTML=slides.map((sl,i)=>makeSlide(sl,i+1)).join('\n');
+
+  // Layout-specific structural CSS — each layout has genuinely different
+  // header structure, background, and typography treatment.
+  const layCSS={
+    clean:
+      '.slide{background:'+sc.bg+';}'
+      +'.sl-hdr-clean{background:'+sc.accent+';color:#fff;padding:14pt 20pt 11pt;border-bottom:3pt solid '+sc.accentLight+';position:relative;}'
+      +'.sl-title-clean{font-family:'+fp.heading+';font-size:18pt;font-weight:700;line-height:1.15;}'
+      +'.sl-sub-clean{font-size:9pt;opacity:.82;font-style:italic;margin-top:3pt;}'
+      +'.sl-num{position:absolute;top:8pt;right:16pt;font-size:8pt;opacity:.5;}',
+
+    bold:
+      '.slide{background:'+sc.bg+';}'
+      +'.sl-hdr-bold{background:'+sc.accentDark+';color:#fff;padding:20pt 20pt 16pt;min-height:35%;display:flex;flex-direction:column;justify-content:flex-end;position:relative;}'
+      +'.sl-title-bold{font-family:'+fp.heading+';font-size:22pt;font-weight:700;color:#fff;line-height:1.1;}'
+      +'.sl-sub-bold{font-size:9pt;color:rgba(255,255,255,.72);margin-top:4pt;}'
+      +'.sl-num-bold{position:absolute;top:10pt;right:16pt;font-size:7pt;color:rgba(255,255,255,.4);}'
+      +'.sl-body{background:#fff!important;}',
+
+    editorial:
+      '.slide{background:'+sc.bg+';}'
+      +'.slide-ed{display:flex!important;flex-direction:row!important;}'
+      +'.sl-sidebar{width:28%;background:'+sc.accent+';color:#fff;padding:20pt 14pt;display:flex;flex-direction:column;justify-content:flex-end;flex-shrink:0;}'
+      +'.sl-title-ed{font-family:'+fp.heading+';font-size:14pt;font-weight:700;color:#fff;line-height:1.2;margin-top:auto;}'
+      +'.sl-sub-ed{font-size:8pt;color:rgba(255,255,255,.72);margin-top:4pt;}'
+      +'.sl-num-ed{font-size:7pt;color:rgba(255,255,255,.4);margin-bottom:auto;letter-spacing:.05em;}'
+      +'.sl-body-ed{background:'+sc.surface+';padding:16pt 18pt!important;}',
+
+    minimal:
+      '.slide{background:#fff;}'
+      +'.slide-min{background:#fff!important;}'
+      +'.sl-top-stripe{height:6pt;background:'+sc.accent+';width:100%;flex-shrink:0;}'
+      +'.sl-inner-min{padding:14pt 24pt;display:flex;flex-direction:column;gap:6pt;}'
+      +'.sl-title-min{font-family:'+fp.heading+';font-size:20pt;color:'+sc.accent+';font-weight:700;line-height:1.15;border-bottom:1.5pt solid '+sc.tag+';padding-bottom:5pt;}'
+      +'.sl-sub-min{font-size:9pt;color:'+sc.subtext+';}'
+      +'.sl-num-min{font-size:7pt;color:'+sc.accentLight+';letter-spacing:.1em;text-transform:uppercase;}'
+      +'.sl-body{padding:0!important;}',
+  };
+
+  // Common CSS shared by all layouts
+  const commonCSS=
+    '*{box-sizing:border-box;margin:0;padding:0;}'
+    +'@page{size:297mm 167mm;margin:0;}'
+    +'html,body{width:297mm;font-family:'+fp.body+';-webkit-print-color-adjust:exact;print-color-adjust:exact;color:'+sc.text+';}'
+    +'body{background:#555;}'
+    // CRITICAL: no overflow:hidden, no fixed height on .slide so text is never cut
+    +'.slide{width:297mm;min-height:167mm;page-break-after:always;break-after:page;display:flex;flex-direction:column;position:relative;}'
+    +'.sl-body{flex:1;padding:14pt 20pt;display:flex;flex-direction:column;gap:6pt;}'
+    // Cover
+    +'.slide-cover{background:'+sc.accent+'!important;min-height:167mm;align-items:center;justify-content:center;}'
+    +'.cover-inner{text-align:center;padding:36pt;}'
+    +'.cover-eyebrow{font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:'+sc.accentLight+';margin-bottom:10pt;font-family:monospace;}'
+    +'.cover-title{font-family:'+fp.heading+';font-size:28pt;font-weight:700;color:#fff;line-height:1.2;margin-bottom:10pt;}'
+    +'.cover-sub{font-size:11pt;color:rgba(255,255,255,.8);}'
+    +'.cover-rule{width:50pt;height:2pt;background:'+sc.accentLight+';margin:12pt auto;}'
+    +'.cover-group{font-size:8pt;letter-spacing:.15em;text-transform:uppercase;color:'+sc.tag+';font-family:monospace;}'
+    // Contributor bylines — two styles:
+    // .sl-by-owner = slide owner at top of body (italic, subtle)
+    // .sl-by       = inline author directly above their text (small badge)
+    +'.sl-by{display:inline-block;font-size:7.5pt;font-style:italic;color:'+sc.accentLight+';background:'+sc.tag+'33;border-left:2pt solid '+sc.accentLight+';padding:1pt 5pt;margin:4pt 0 2pt;}'
+    +'.sl-by-owner{display:block;font-size:7.5pt;font-style:italic;color:'+sc.accentLight+';margin-bottom:6pt;opacity:.8;}'
+    // Body elements — LARGER than before
+    +'.sl-para{font-size:10pt;line-height:1.65;color:'+sc.text+';margin-bottom:5pt;}'
+    +'.sl-bullets{padding-left:14pt;display:flex;flex-direction:column;gap:3pt;}'
+    +'.sl-bullets li{font-size:10pt;line-height:1.55;color:'+sc.text+';}'
+    +'.sl-kv{display:flex;gap:8pt;font-size:9.5pt;line-height:1.55;padding:3pt 0;border-bottom:1pt solid '+sc.tag+'66;}'
+    +'.sl-kv-label{font-size:8pt;letter-spacing:.05em;color:'+sc.accentLight+';white-space:nowrap;min-width:120pt;text-transform:uppercase;font-family:monospace;flex-shrink:0;}'
+    +'.sl-kv-val{color:'+sc.text+';flex:1;}'
+    +'.sl-section-tag{display:inline-block;font-size:7pt;letter-spacing:.1em;text-transform:uppercase;background:'+sc.tag+';color:'+sc.tagText+';border-radius:2pt;padding:1pt 5pt;margin-bottom:5pt;font-family:monospace;}'
+    +'.sl-muted{opacity:.45;}'
+    +'.sl-imgs{display:flex;gap:8pt;flex-wrap:wrap;margin-top:8pt;align-items:flex-start;}'
+    +'.sl-img-wrap{display:flex;flex-direction:column;gap:3pt;}'
+    +'.sl-img-cap{font-size:7pt;color:'+sc.subtext+';line-height:1.3;}'
+    +'@media print{body{background:none;}.slide{page-break-after:always;break-after:page;}}';
+
+  return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">'
+    +'<title>MODULE 05 Group '+currentGroup+' '+(presDay==='day1'?'Day 1':'Day 2')+'</title>'
+    +'<link rel="preconnect" href="https://fonts.googleapis.com">'
+    +'<link href="'+fp.import+'" rel="stylesheet">'
+    +'<style>'+commonCSS+(layCSS[lay]||layCSS.clean)+'</style>'
+    +'</head><body>'+slidesHTML+'</body></html>';
+}
+
+function previewPresentation(){
+  const slides=presDay==='day1'?buildDay1Slides():buildDay2Slides();
+  const html=buildFinalHTML([slides[0],slides.length>1?slides[1]:slides[0]]);
+  const win=window.open('','_blank','width=980,height=640');
+  if(!win){alert('Pop-up blocked \u2014 please allow pop-ups for this page.');return;}
+  win.document.write(html+'<p style="font-family:sans-serif;padding:12px;color:#666;font-size:12px;background:#eee;text-align:center;">Preview: first 2 slides. Close and click \u201cExport PDF Slides\u201d for the full deck.</p>');
+  win.document.close();
+}
+
+function buildAndPrintPresentation(){
+  const slides=presDay==='day1'?buildDay1Slides():buildDay2Slides();
+  const html=buildFinalHTML(slides);
+  const win=window.open('','_blank');
+  if(!win){alert('Pop-up blocked \u2014 please allow pop-ups for this page, then try again.');return;}
+  win.document.write(html);
+  win.document.close();
+  win.onload=()=>setTimeout(()=>{win.focus();win.print();},1500);
+  setTimeout(()=>{if(win&&!win.closed){win.focus();win.print();}},3500);
+  closePresentationModal();
+}
+
+
 </script>
 </body>
 </html>
