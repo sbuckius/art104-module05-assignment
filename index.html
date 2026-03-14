@@ -341,7 +341,7 @@ details[open] .ctx-box summary::before{content:'▾';}
       <option value="">— choose group —</option>
       <option value="1">Group 1</option><option value="2">Group 2</option><option value="3">Group 3</option>
       <option value="4">Group 4</option><option value="5">Group 5</option><option value="6">Group 6</option>
-      <option value="7">Group 7</option>
+      <option value="7">Group 7</option><option value="8">Group 8</option>
     </select>
   </div>
   <div>
@@ -1148,53 +1148,98 @@ details[open] .ctx-box summary::before{content:'▾';}
       <!-- Layout style -->
       <div style="margin-bottom:1.4rem;">
         <div style="font-family:'DM Mono',monospace;font-size:.63rem;letter-spacing:.12em;text-transform:uppercase;color:var(--fern);margin-bottom:.6rem;">Slide Layout Style</div>
-        <div style="display:flex;gap:.7rem;flex-wrap:wrap;">
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
+
+          <!-- CLEAN -->
           <div class="layout-opt selected" id="layout-clean" onclick="selectLayout('clean')">
             <div class="layout-preview" style="background:#f5f0e8;">
               <div style="background:#3d5a2e;height:22%;width:100%;"></div>
               <div style="padding:.2rem .3rem;">
-                <div style="background:#dde8d5;height:6px;width:70%;border-radius:2px;margin:.15rem 0;"></div>
-                <div style="background:#e8e4da;height:4px;width:90%;border-radius:2px;margin:.1rem 0;"></div>
-                <div style="background:#e8e4da;height:4px;width:80%;border-radius:2px;margin:.1rem 0;"></div>
+                <div style="background:#dde8d5;height:5px;width:65%;border-radius:2px;margin:.12rem 0;"></div>
+                <div style="background:#e8e4da;height:3px;width:90%;border-radius:1px;margin:.08rem 0;"></div>
+                <div style="background:#e8e4da;height:3px;width:80%;border-radius:1px;margin:.08rem 0;"></div>
               </div>
             </div>
             <div class="layout-label">Clean</div>
           </div>
+
+          <!-- BOLD -->
           <div class="layout-opt" id="layout-bold" onclick="selectLayout('bold')">
-            <div class="layout-preview" style="background:#3d5a2e;">
-              <div style="padding:.3rem;">
-                <div style="background:rgba(255,255,255,.9);height:8px;width:60%;border-radius:2px;margin-bottom:.2rem;"></div>
-                <div style="background:rgba(255,255,255,.4);height:4px;width:85%;border-radius:2px;"></div>
+            <div class="layout-preview" style="background:#2a3e1f;">
+              <div style="padding:.3rem .3rem .2rem;">
+                <div style="background:rgba(255,255,255,.9);height:8px;width:55%;border-radius:1px;margin-bottom:.15rem;"></div>
+                <div style="background:rgba(255,255,255,.4);height:3px;width:80%;border-radius:1px;"></div>
               </div>
-              <div style="background:#f5f0e8;margin:.2rem;border-radius:2px;padding:.2rem;flex:1;">
-                <div style="background:#ddd;height:4px;width:90%;border-radius:1px;margin:.1rem 0;"></div>
-                <div style="background:#ddd;height:4px;width:75%;border-radius:1px;margin:.1rem 0;"></div>
+              <div style="background:#f5f0e8;margin:.15rem .2rem .2rem;border-radius:2px;padding:.2rem;flex:1;">
+                <div style="background:#ccc;height:3px;width:90%;border-radius:1px;margin:.08rem 0;"></div>
+                <div style="background:#ccc;height:3px;width:72%;border-radius:1px;margin:.08rem 0;"></div>
               </div>
             </div>
             <div class="layout-label">Bold</div>
           </div>
+
+          <!-- EDITORIAL (left sidebar) -->
           <div class="layout-opt" id="layout-editorial" onclick="selectLayout('editorial')">
             <div class="layout-preview" style="background:#fafafa;display:flex;flex-direction:row;">
-              <div style="width:35%;background:#3d5a2e;"></div>
-              <div style="flex:1;padding:.25rem .3rem;">
-                <div style="background:#ddd;height:6px;width:80%;border-radius:2px;margin:.1rem 0;"></div>
-                <div style="background:#eee;height:3px;width:95%;border-radius:1px;margin:.08rem 0;"></div>
-                <div style="background:#eee;height:3px;width:85%;border-radius:1px;margin:.08rem 0;"></div>
+              <div style="width:30%;background:#3d5a2e;display:flex;flex-direction:column;justify-content:flex-end;padding:.2rem;">
+                <div style="background:rgba(255,255,255,.8);height:5px;width:85%;border-radius:1px;margin-bottom:.1rem;"></div>
+              </div>
+              <div style="flex:1;padding:.2rem .25rem;">
+                <div style="background:#ddd;height:4px;width:85%;border-radius:1px;margin:.08rem 0;"></div>
+                <div style="background:#eee;height:3px;width:95%;border-radius:1px;margin:.06rem 0;"></div>
+                <div style="background:#eee;height:3px;width:78%;border-radius:1px;margin:.06rem 0;"></div>
               </div>
             </div>
             <div class="layout-label">Editorial</div>
           </div>
+
+          <!-- MINIMAL -->
           <div class="layout-opt" id="layout-minimal" onclick="selectLayout('minimal')">
             <div class="layout-preview" style="background:#fff;border:1px solid #eee;">
-              <div style="height:3px;background:#3d5a2e;width:100%;"></div>
-              <div style="padding:.25rem .3rem;">
-                <div style="background:#333;height:7px;width:50%;border-radius:1px;margin:.15rem 0;"></div>
-                <div style="background:#ddd;height:3px;width:90%;border-radius:1px;margin:.08rem 0;"></div>
-                <div style="background:#ddd;height:3px;width:75%;border-radius:1px;margin:.08rem 0;"></div>
+              <div style="height:4px;background:#3d5a2e;width:100%;"></div>
+              <div style="padding:.2rem .3rem;">
+                <div style="background:#3d5a2e;height:6px;width:48%;border-radius:1px;margin:.1rem 0;"></div>
+                <div style="background:#ddd;height:3px;width:90%;border-radius:1px;margin:.07rem 0;"></div>
+                <div style="background:#ddd;height:3px;width:74%;border-radius:1px;margin:.07rem 0;"></div>
               </div>
             </div>
             <div class="layout-label">Minimal</div>
           </div>
+
+          <!-- IMG RIGHT — text left, image column right -->
+          <div class="layout-opt" id="layout-imgright" onclick="selectLayout('imgright')">
+            <div class="layout-preview" style="background:#f5f0e8;display:flex;flex-direction:column;">
+              <div style="background:#3d5a2e;height:22%;width:100%;"></div>
+              <div style="flex:1;display:flex;flex-direction:row;padding:.15rem .2rem;gap:.15rem;">
+                <div style="flex:1;display:flex;flex-direction:column;gap:.08rem;">
+                  <div style="background:#dde8d5;height:4px;width:90%;border-radius:1px;"></div>
+                  <div style="background:#e8e4da;height:3px;width:80%;border-radius:1px;"></div>
+                  <div style="background:#e8e4da;height:3px;width:85%;border-radius:1px;"></div>
+                  <div style="background:#e8e4da;height:3px;width:70%;border-radius:1px;"></div>
+                </div>
+                <div style="width:38%;background:#a8c896;border-radius:2px;"></div>
+              </div>
+            </div>
+            <div class="layout-label">Img Right</div>
+          </div>
+
+          <!-- IMG LEFT — image column left, text right -->
+          <div class="layout-opt" id="layout-imgleft" onclick="selectLayout('imgleft')">
+            <div class="layout-preview" style="background:#f5f0e8;display:flex;flex-direction:column;">
+              <div style="background:#3d5a2e;height:22%;width:100%;"></div>
+              <div style="flex:1;display:flex;flex-direction:row;padding:.15rem .2rem;gap:.15rem;">
+                <div style="width:38%;background:#a8c896;border-radius:2px;"></div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:.08rem;">
+                  <div style="background:#dde8d5;height:4px;width:90%;border-radius:1px;"></div>
+                  <div style="background:#e8e4da;height:3px;width:80%;border-radius:1px;"></div>
+                  <div style="background:#e8e4da;height:3px;width:85%;border-radius:1px;"></div>
+                  <div style="background:#e8e4da;height:3px;width:70%;border-radius:1px;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="layout-label">Img Left</div>
+          </div>
+
         </div>
       </div>
 
@@ -1945,15 +1990,252 @@ async function deleteSketch(idx) {
   renderSketchGrid();
 }
 
-// ── PLAIN PDF EXPORT (print page as-is) ──────────────
+// ── PLAIN PDF EXPORT — formatted document in new window ──────────────────────
 function exportPDF() {
-  document.querySelectorAll('.day-panel').forEach(p=>p.classList.add('active'));
-  window.print();
-  setTimeout(() => {
-    document.querySelectorAll('.day-panel').forEach(p=>p.classList.remove('active'));
-    document.getElementById('day1').classList.add('active');
-    document.querySelectorAll('.day-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
-  }, 1500);
+  if (!currentGroup) { alert('Load a group first.'); return; }
+  const win = window.open('', '_blank');
+  if (!win) { alert('Pop-up blocked — please allow pop-ups for this page.'); return; }
+  win.document.write(buildDocumentHTML());
+  win.document.close();
+  win.onload = () => setTimeout(() => { win.focus(); win.print(); }, 800);
+  setTimeout(() => { if (win && !win.closed) { win.focus(); win.print(); } }, 2500);
+}
+
+function buildDocumentHTML() {
+  // ── helpers (local copies so no dependency on pres builder) ──
+  function v(id) { const el=document.getElementById(id); return el?el.value.trim():''; }
+  function bv(cid) { return Array.from(document.querySelectorAll('#'+cid+' [data-field-id]')).map(e=>e.value.trim()).filter(Boolean); }
+  function e(s) { return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function imgs(fk) { return (imageRegistry[fk]||[]).filter(i=>i.url); }
+  function sk() { return sketchRegistry.filter(s=>s.url); }
+
+  function sec(title, pts, owner, items) {
+    if (!items.trim()) return '';
+    const ownerBadge = owner ? '<span class="doc-owner">&#9998; '+e(owner)+'</span>' : '';
+    return '<div class="doc-section">'
+      +'<div class="doc-sec-hdr"><span class="doc-sec-title">'+e(title)+'</span>'+(pts?'<span class="doc-pts">'+e(pts)+'</span>':'')+ownerBadge+'</div>'
+      +'<div class="doc-sec-body">'+items+'</div>'
+      +'</div>';
+  }
+
+  function authored(nameId, html) {
+    if (!html) return '';
+    const name = v(nameId);
+    const badge = name ? '<div class="doc-inline-author">&#9998;&nbsp;'+e(name)+'</div>' : '';
+    return badge + html;
+  }
+
+  function para(t, nameId) {
+    if (!t) return '';
+    const badge = nameId ? authored(nameId, '') : '';
+    return (nameId && v(nameId) ? '<div class="doc-inline-author">&#9998;&nbsp;'+e(v(nameId))+'</div>' : '')
+         + '<p class="doc-para">'+e(t)+'</p>';
+  }
+
+  function blist(arr, nameId) {
+    const f = arr.filter(Boolean);
+    if (!f.length) return '';
+    return (nameId && v(nameId) ? '<div class="doc-inline-author">&#9998;&nbsp;'+e(v(nameId))+'</div>' : '')
+         + '<ul class="doc-list">'+f.map(i=>'<li>'+e(i)+'</li>').join('')+'</ul>';
+  }
+
+  function kv(label, text, nameId) {
+    if (!text) return '';
+    return (nameId && v(nameId) ? '<div class="doc-inline-author">&#9998;&nbsp;'+e(v(nameId))+'</div>' : '')
+         + '<div class="doc-kv"><span class="doc-kv-l">'+e(label)+'</span><span class="doc-kv-v">'+e(text)+'</span></div>';
+  }
+
+  function imgGrid(fk, caption) {
+    const imgList = imgs(fk);
+    if (!imgList.length) return '';
+    return '<div class="doc-imgs">'
+      +(caption?'<div class="doc-imgs-label">'+e(caption)+'</div>':'')
+      + imgList.map(i=>'<div class="doc-img-wrap">'
+          +'<img src="'+i.url+'" alt="'+e(i.caption||i.name||'')+'">'
+          +(i.caption?'<div class="doc-img-cap">'+e(i.caption)+'</div>':'')
+        +'</div>').join('')
+      +'</div>';
+  }
+
+  function sketchGrid() {
+    const all = sk();
+    if (!all.length) return '';
+    return '<div class="doc-imgs doc-sketches">'
+      +'<div class="doc-imgs-label">Sketch Gallery ('+all.length+' sketches)</div>'
+      + all.map(s=>'<div class="doc-img-wrap">'
+          +'<img src="'+s.url+'" alt="'+e(s.title||s.name||'sketch')+'">'
+          +(s.author||s.title ? '<div class="doc-img-cap">'+(s.author?'&#9998; '+e(s.author):'')+(s.title&&s.author?' — ':'')+e(s.title||'')+'</div>' : '')
+        +'</div>').join('')
+      +'</div>';
+  }
+
+  // ── Timeline from cache ──
+  function tlSection() {
+    const rows = (timelineCache||[]).filter(r=>r.year||r.event);
+    if (!rows.length) return '';
+    return sec('Theme Timeline', '7 pts', v('s2-owner'),
+      '<table class="doc-tl">'
+      + rows.map(r=>'<tr><td class="doc-tl-yr">'+e(r.year||'')+'</td><td>'+e(r.event||'')+'</td></tr>').join('')
+      +'</table>'
+    );
+  }
+
+  const gn    = v('group-name-input');
+  const theme = v('technology');
+  const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+  // ── Build body ──
+  const day1Body =
+    // Part 1
+    '<div class="doc-part"><div class="doc-part-title">Part 1 · Theme Summary</div>'
+    + sec('Theme Overview', '15 pts', v('s1-owner'),
+        blist(bv('tech-bullets'))
+        + imgGrid('tech-overview'))
+    + tlSection()
+    +'</div>'
+
+    // Part 2
+    +'<div class="doc-part"><div class="doc-part-title">Part 2 · Article Discussion</div>'
+    + sec('Article 1 — Citation', '', '', '<p class="doc-para doc-cite">'+e(v('art1-cite'))+'</p>')
+    + sec('Article 1 — Key Themes & Ideas', '20 pts', v('art1-owners'),
+        authored('art1-themes-name', '<p class="doc-para">'+e(v('art1-themes'))+'</p>'+blist(bv('art1-theme-bullets')))
+        + imgGrid('art1','Supporting images'))
+    + sec('Article 1 — Personal Response', '20 pts', v('art1-owners'),
+        authored('art1-response-name', '<p class="doc-para">'+e(v('art1-response'))+'</p>'+blist(bv('art1-resp-bullets'))))
+    + sec('Article 1 — Interdisciplinary Issues', '2.5 pts', v('art1-owners'),
+        authored('art1-interdis-name', '<p class="doc-para">'+e(v('art1-interdis'))+'</p>'+blist(bv('art1-interdis-bullets'))))
+    + sec('Article 2 — Citation', '', '', '<p class="doc-para doc-cite">'+e(v('art2-cite'))+'</p>')
+    + sec('Article 2 — Key Themes & Ideas', '20 pts', v('art2-owners'),
+        authored('art2-themes-name', '<p class="doc-para">'+e(v('art2-themes'))+'</p>'+blist(bv('art2-theme-bullets')))
+        + imgGrid('art2','Supporting images'))
+    + sec('Article 2 — Personal Response', '20 pts', v('art2-owners'),
+        authored('art2-response-name', '<p class="doc-para">'+e(v('art2-response'))+'</p>'+blist(bv('art2-resp-bullets'))))
+    + sec('Article 2 — Interdisciplinary Issues', '2.5 pts', v('art2-owners'),
+        authored('art2-interdis-name', '<p class="doc-para">'+e(v('art2-interdis'))+'</p>'+blist(bv('art2-interdis-bullets'))))
+    +'</div>'
+
+    // Part 3
+    +'<div class="doc-part"><div class="doc-part-title">Part 3 · Artwork Discussion</div>'
+    + sec('Artist 1 — '+v('a1-name'), '5 pts', v('a1-owner'),
+        imgGrid('a1-art','Artwork image'))
+    + sec('Artist 1 — Digital Media Concepts', '5 pts', '',
+        kv('Concepts', v('a1-concepts'), 'a1-concepts-name')
+        + kv('DM Art History', v('a1-history'))
+        + kv('Nature/Ecology Concepts', v('a1-reality'), 'a1-reality-name')
+        + kv('Technology', v('a1-tech'), 'a1-tech-name'))
+    + sec('Artist 1 — Personal Response', '10 pts', '',
+        authored('a1-personal-name', '<p class="doc-para">'+e(v('a1-personal'))+'</p>'))
+    + sec('Artist 2 — '+v('a2-name'), '5 pts', v('a2-owner'),
+        imgGrid('a2-art','Artwork image'))
+    + sec('Artist 2 — Digital Media Concepts', '5 pts', '',
+        kv('Concepts', v('a2-concepts'), 'a2-concepts-name')
+        + kv('DM Art History', v('a2-history'))
+        + kv('Nature/Ecology Concepts', v('a2-reality'), 'a2-reality-name')
+        + kv('Technology', v('a2-tech'), 'a2-tech-name'))
+    + sec('Artist 2 — Personal Response', '20 pts', '',
+        authored('a2-personal-name', '<p class="doc-para">'+e(v('a2-personal'))+'</p>'))
+    +'</div>';
+
+  const day2Body =
+    '<div class="doc-part"><div class="doc-part-title">Part 4 · Speculative Artwork Idea</div>'
+    + sec('Slide 1 — Sketches & Idea Generation', '', v('sp-sketch-owners'),
+        authored('sp-sketch-desc-name', '<p class="doc-para">'+e(v('sp-sketch-desc'))+'</p>')
+        + sketchGrid())
+    + sec('Slide 2 — AI-Generated Brainstorming', '', v('sp-ai-owners'),
+        authored('sp-ai-desc-name', '<p class="doc-para">'+e(v('sp-ai-desc'))+'</p>')
+        + imgGrid('sp-ai','AI brainstorm images'))
+    + sec('Slide 3 — Final Idea Drawing/Rendering', '', v('sp-final-owners'),
+        authored('sp-final-desc-name', '<p class="doc-para">'+e(v('sp-final-desc'))+'</p>')
+        + imgGrid('sp-final','Final artwork'))
+    + sec('Slide 4 — Digital Media Concepts', '10 pts', v('sp-tech-owner'),
+        authored('sp-tech-tech-name',
+          kv('Technologies', v('sp-tech-tech'))
+          + kv('Key Themes', v('sp-tech-themes'))
+          + kv('Formal Elements', v('sp-tech-formal'))
+          + kv('DM Art History', v('sp-tech-history'))))
+    + sec('Slide 5 — Nature/Ecology/Environment/Biology Concepts', '15 pts', v('sp-reality-owner'),
+        authored('sp-reality-text-name', '<p class="doc-para">'+e(v('sp-reality-text'))+'</p>'+blist(bv('sp-reality-bullets')))
+        + imgGrid('sp-reality'))
+    + sec('Slide 6 — Artist Connections', '15 pts', v('sp-artists-owner'),
+        (v('sp-artist1-name') ? '<div class="doc-artist-hdr">'+e(v('sp-artist1-name'))+'</div>'
+          + authored('sp-artist1-conn-name', '<p class="doc-para">'+e(v('sp-artist1-connection'))+'</p>') : '')
+        + (v('sp-artist2-name') ? '<div class="doc-artist-hdr">'+e(v('sp-artist2-name'))+'</div>'
+          + authored('sp-artist2-conn-name', '<p class="doc-para">'+e(v('sp-artist2-connection'))+'</p>') : ''))
+    + sec('Slide 7 — Personal Response & Connections', '10 pts', v('sp-personal-owner'),
+        authored('sp-personal-text-name', '<p class="doc-para">'+e(v('sp-personal-text'))+'</p>'+blist(bv('sp-personal-bullets'))))
+    +'</div>';
+
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>MODULE 05 — Group ${currentGroup} — Document Export</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+@page{size:A4;margin:18mm 20mm 20mm;}
+body{font-family:'DM Sans',sans-serif;font-size:10pt;color:#222;line-height:1.6;background:white;}
+/* ── Document header ── */
+.doc-cover{text-align:center;padding:24pt 0 20pt;border-bottom:2pt solid #3d5a2e;margin-bottom:18pt;}
+.doc-cover-eyebrow{font-family:'DM Mono',monospace;font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#7a9e6a;margin-bottom:6pt;}
+.doc-cover-title{font-family:'Playfair Display',serif;font-size:22pt;color:#3d5a2e;line-height:1.2;margin-bottom:6pt;}
+.doc-cover-meta{font-size:9pt;color:#6b5544;}
+.doc-cover-theme{display:inline-block;margin-top:6pt;background:#dde8d5;color:#3d5a2e;border-radius:3pt;padding:2pt 8pt;font-size:8pt;font-family:'DM Mono',monospace;letter-spacing:.08em;}
+/* ── Team members ── */
+.doc-team{display:flex;gap:8pt;flex-wrap:wrap;margin:10pt 0 16pt;padding:8pt 12pt;background:#f5f0e8;border-radius:4pt;border-left:3pt solid #3d5a2e;}
+.doc-team-member{font-size:9pt;color:#4a3728;}
+.doc-team-member::before{content:'▸ ';color:#7a9e6a;}
+/* ── Part headings ── */
+.doc-part{margin-bottom:10pt;}
+.doc-part-title{font-family:'Playfair Display',serif;font-size:13pt;color:#3d5a2e;padding:6pt 0 4pt;border-bottom:1pt solid #a8c896;margin-bottom:8pt;page-break-before:auto;}
+/* ── Section ── */
+.doc-section{margin-bottom:8pt;page-break-inside:auto;}
+.doc-sec-hdr{display:flex;align-items:baseline;gap:6pt;margin-bottom:3pt;flex-wrap:wrap;}
+.doc-sec-title{font-size:9.5pt;font-weight:600;color:#2b2a25;}
+.doc-pts{font-family:'DM Mono',monospace;font-size:7pt;color:#c4956a;background:#fdf8f2;border:1pt solid #e8c898;border-radius:2pt;padding:0 4pt;}
+.doc-owner{font-size:7.5pt;font-style:italic;color:#7a9e6a;margin-left:auto;}
+.doc-sec-body{padding-left:8pt;border-left:2pt solid #dde8d5;}
+/* ── Inline author (above their specific text) ── */
+.doc-inline-author{font-size:7pt;font-style:italic;color:#7a9e6a;border-left:2pt solid #a8c896;padding-left:4pt;margin:4pt 0 1pt;display:block;}
+/* ── Body text ── */
+.doc-para{font-size:10pt;line-height:1.65;color:#2b2a25;margin-bottom:4pt;}
+.doc-cite{font-style:italic;color:#6b5544;font-size:9pt;}
+.doc-list{padding-left:14pt;margin-bottom:4pt;}
+.doc-list li{font-size:10pt;line-height:1.55;margin-bottom:2pt;}
+/* ── Key-value rows ── */
+.doc-kv{display:flex;gap:8pt;font-size:9.5pt;padding:3pt 0;border-bottom:1pt solid #dde8d5;line-height:1.55;}
+.doc-kv-l{font-family:'DM Mono',monospace;font-size:7.5pt;color:#7a9e6a;white-space:nowrap;min-width:110pt;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;padding-top:.5pt;}
+.doc-kv-v{color:#2b2a25;flex:1;}
+/* ── Timeline table ── */
+.doc-tl{width:100%;border-collapse:collapse;}
+.doc-tl tr{border-bottom:1pt solid #dde8d5;}
+.doc-tl-yr{font-family:'DM Mono',monospace;font-size:9pt;color:#3d5a2e;width:55pt;padding:3pt 6pt 3pt 0;font-weight:600;vertical-align:top;}
+.doc-tl td{font-size:9.5pt;padding:3pt 0;vertical-align:top;}
+/* ── Image grid ── */
+.doc-imgs{margin:6pt 0;display:flex;flex-wrap:wrap;gap:6pt;align-items:flex-start;}
+.doc-imgs-label{width:100%;font-family:'DM Mono',monospace;font-size:7pt;color:#7a9e6a;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3pt;}
+.doc-img-wrap{display:flex;flex-direction:column;gap:2pt;}
+.doc-img-wrap img{height:90pt;width:auto;max-width:150pt;object-fit:cover;border-radius:3pt;border:1pt solid #dde8d5;}
+.doc-img-cap{font-size:7pt;color:#6b5544;max-width:150pt;line-height:1.3;}
+.doc-sketches .doc-img-wrap img{height:70pt;}
+/* ── Artist sub-header ── */
+.doc-artist-hdr{font-size:9pt;font-weight:600;color:#3d5a2e;margin:4pt 0 2pt;border-top:1pt dashed #dde8d5;padding-top:4pt;}
+@media print{
+  body{font-size:10pt;}
+  .doc-part-title{page-break-before:auto;page-break-after:avoid;}
+  .doc-section{page-break-inside:auto;}
+  .doc-imgs{page-break-inside:avoid;}
+}
+</style></head><body>
+<div class="doc-cover">
+  <div class="doc-cover-eyebrow">Art 104 · Module 05</div>
+  <div class="doc-cover-title">Nature/Ecology/Environment/Biology</div>
+  <div class="doc-cover-meta">Group ${currentGroup}${gn?' — '+e(gn):''} &nbsp;·&nbsp; ${e(today)}</div>
+  ${theme?'<div class="doc-cover-theme">Theme: '+e(theme)+'</div>':''}
+</div>
+${[v('member1'),v('member2'),v('member3'),v('member4')].filter(Boolean).length
+  ? '<div class="doc-team">'+[v('member1'),v('member2'),v('member3'),v('member4')].filter(Boolean).map(m=>'<span class="doc-team-member">'+e(m)+'</span>').join('')+'</div>' : ''}
+${day1Body}
+<div style="page-break-before:always;"></div>
+${day2Body}
+</body></html>`;
 }
 
 function switchDay(day,btn) {
@@ -1986,7 +2268,7 @@ function openPresentationModal(){if(!currentGroup){alert('Load a group first.');
 function closePresentationModal(){document.getElementById('pres-modal').style.display='none';}
 function selectPresDay(d){presDay=d;document.getElementById('pres-day1-btn').className='pres-day-btn'+(d==='day1'?' pres-day-selected':'');document.getElementById('pres-day2-btn').className='pres-day-btn'+(d==='day2'?' pres-day-selected':'');}
 function selectScheme(s){presScheme=s;document.querySelectorAll('.scheme-swatch').forEach(el=>el.classList.toggle('selected',el.dataset.scheme===s));}
-function selectLayout(l){presLayout=l;['clean','bold','editorial','minimal'].forEach(o=>document.getElementById('layout-'+o).classList.toggle('selected',o===l));}
+function selectLayout(l){presLayout=l;['clean','bold','editorial','minimal','imgright','imgleft'].forEach(o=>document.getElementById('layout-'+o).classList.toggle('selected',o===l));}
 function selectFont(f){presFont=f;['playfair','slab','modern','humanist'].forEach(o=>document.getElementById('font-'+o).classList.toggle('selected',o===f));}
 
 // ── Data helpers ──────────────────────────────────────
@@ -2302,6 +2584,46 @@ function buildFinalHTML(slides){
       +'</div>'
       +'</div>'
     );
+
+    // IMG RIGHT — header bar top, then two columns: text left | images right
+    if(lay==='imgright') {
+      const imgs=sl.imgs&&sl.imgs.length?sl.imgs:[];
+      const textBody=(sl.by||'')+sl.body;
+      const imgCol=imgs.length?'<div class="sl-img-col">'+imgs.slice(0,4).map(i=>'<div class="sl-img-col-item"><img src="'+i.url+'" alt="'+escH(i.caption||i.name||'')+'">'+(i.caption?'<div class="sl-img-cap">'+escH(i.caption)+'</div>':'')+'</div>').join('')+'</div>':'';
+      return(
+        '<div class="slide">'
+        +'<div class="sl-hdr-clean">'
+          +'<div class="sl-title-clean">'+escH(sl.title)+'</div>'
+          +(sl.sub?'<div class="sl-sub-clean">'+escH(sl.sub)+'</div>':'')
+          +'<div class="sl-num">'+n+'</div>'
+        +'</div>'
+        +'<div class="sl-split">'
+          +'<div class="sl-split-text">'+textBody+'</div>'
+          +(imgCol||'<div class="sl-split-imgs-empty"></div>')
+        +'</div>'
+        +'</div>'
+      );
+    }
+
+    // IMG LEFT — header bar top, then two columns: images left | text right
+    if(lay==='imgleft') {
+      const imgs=sl.imgs&&sl.imgs.length?sl.imgs:[];
+      const textBody=(sl.by||'')+sl.body;
+      const imgCol=imgs.length?'<div class="sl-img-col">'+imgs.slice(0,4).map(i=>'<div class="sl-img-col-item"><img src="'+i.url+'" alt="'+escH(i.caption||i.name||'')+'">'+(i.caption?'<div class="sl-img-cap">'+escH(i.caption)+'</div>':'')+'</div>').join('')+'</div>':'';
+      return(
+        '<div class="slide">'
+        +'<div class="sl-hdr-clean">'
+          +'<div class="sl-title-clean">'+escH(sl.title)+'</div>'
+          +(sl.sub?'<div class="sl-sub-clean">'+escH(sl.sub)+'</div>':'')
+          +'<div class="sl-num">'+n+'</div>'
+        +'</div>'
+        +'<div class="sl-split">'
+          +(imgCol||'<div class="sl-split-imgs-empty"></div>')
+          +'<div class="sl-split-text">'+textBody+'</div>'
+        +'</div>'
+        +'</div>'
+      );
+    }
   }
 
   const slidesHTML=slides.map((sl,i)=>makeSlide(sl,i+1)).join('\n');
@@ -2342,6 +2664,34 @@ function buildFinalHTML(slides){
       +'.sl-sub-min{font-size:9pt;color:'+sc.subtext+';}'
       +'.sl-num-min{font-size:7pt;color:'+sc.accentLight+';letter-spacing:.1em;text-transform:uppercase;}'
       +'.sl-body{padding:0!important;}',
+
+    imgright:
+      '.slide{background:'+sc.bg+';}'
+      +'.sl-hdr-clean{background:'+sc.accent+';color:#fff;padding:14pt 20pt 11pt;border-bottom:3pt solid '+sc.accentLight+';position:relative;}'
+      +'.sl-title-clean{font-family:'+fp.heading+';font-size:17pt;font-weight:700;line-height:1.15;}'
+      +'.sl-sub-clean{font-size:9pt;opacity:.82;font-style:italic;margin-top:3pt;}'
+      +'.sl-num{position:absolute;top:8pt;right:16pt;font-size:8pt;opacity:.5;}'
+      +'.sl-split{flex:1;display:flex;flex-direction:row;overflow:hidden;}'
+      +'.sl-split-text{flex:1;padding:12pt 14pt;display:flex;flex-direction:column;gap:5pt;color:'+sc.text+';}'
+      +'.sl-img-col{width:40%;background:'+sc.accentDark+';display:flex;flex-direction:column;}'
+      +'.sl-img-col-item{flex:1;overflow:hidden;min-height:0;}'
+      +'.sl-img-col-item img{width:100%;height:100%;object-fit:cover;display:block;}'
+      +'.sl-img-cap{font-size:6.5pt;color:rgba(255,255,255,.75);padding:2pt 6pt;background:rgba(0,0,0,.4);}'
+      +'.sl-split-imgs-empty{width:40%;background:'+sc.tag+'55;}',
+
+    imgleft:
+      '.slide{background:'+sc.bg+';}'
+      +'.sl-hdr-clean{background:'+sc.accent+';color:#fff;padding:14pt 20pt 11pt;border-bottom:3pt solid '+sc.accentLight+';position:relative;}'
+      +'.sl-title-clean{font-family:'+fp.heading+';font-size:17pt;font-weight:700;line-height:1.15;}'
+      +'.sl-sub-clean{font-size:9pt;opacity:.82;font-style:italic;margin-top:3pt;}'
+      +'.sl-num{position:absolute;top:8pt;right:16pt;font-size:8pt;opacity:.5;}'
+      +'.sl-split{flex:1;display:flex;flex-direction:row;overflow:hidden;}'
+      +'.sl-split-text{flex:1;padding:12pt 14pt;display:flex;flex-direction:column;gap:5pt;color:'+sc.text+';}'
+      +'.sl-img-col{width:40%;background:'+sc.accentDark+';display:flex;flex-direction:column;}'
+      +'.sl-img-col-item{flex:1;overflow:hidden;min-height:0;}'
+      +'.sl-img-col-item img{width:100%;height:100%;object-fit:cover;display:block;}'
+      +'.sl-img-cap{font-size:6.5pt;color:rgba(255,255,255,.75);padding:2pt 6pt;background:rgba(0,0,0,.4);}'
+      +'.sl-split-imgs-empty{width:40%;background:'+sc.tag+'55;}',
   };
 
   // Common CSS shared by all layouts
