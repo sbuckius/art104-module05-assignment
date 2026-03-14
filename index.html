@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MODULE 05 — Nature/Ecology/Environment/Biology</title>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey:            "AIzaSyCAZzq6EuUiDAYcjkX0GcVHxOGyPdDhOP8",
+    authDomain:        "art104-module05-p1-p2.firebaseapp.com",
+    projectId:         "art104-module05-p1-p2",
+    storageBucket:     "art104-module05-p1-p2.firebasestorage.app",
+    messagingSenderId: "28080752760",
+    appId:             "1:28080752760:web:679459f972adc7d29b458d",
+    measurementId:     "G-89SGWTR711"
+  };
+
+  const app       = initializeApp(firebaseConfig);
+  const db        = getFirestore(app);
+  const storage   = getStorage(app);
+
+  window._fb = { db, storage, doc, setDoc, getDoc, onSnapshot, ref, uploadBytes, getDownloadURL, deleteObject };
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+:root {
+  --moss:   #3d5a2e;
+  --sage:   #7a9e6a;
+  --fern:   #5c7a45;
+  --cream:  #f5f0e8;
+  --bark:   #4a3728;
+  --clay:   #c4956a;
+  --peat:   #2b2a25;
+  --mist:   #dde8d5;
+  --leaf:   #a8c896;
+  --soil:   #6b5544;
+  --white:  #ffffff;
+  --shadow: rgba(61,90,46,0.15);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--cream);
+  color:var(--peat);
+  min-height:100vh;
+}
+
+/* ── HEADER ─────────────────────────────────── */
+.site-header{
+  background:var(--moss);
+  color:var(--cream);
+  padding:2rem 3rem 1.8rem;
+  position:relative;
+  overflow:hidden;
+}
+.site-header::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 8 C28 20,12 26,6 40 C12 54,28 60,40 72 C52 60,68 54,74 40 C68 26,52 20,40 8Z' fill='none' stroke='%237a9e6a' stroke-width='0.6' opacity='0.25'/%3E%3C/svg%3E") repeat;
+}
+.site-header .inner{position:relative;z-index:1;}
+.module-tag{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--leaf);margin-bottom:.4rem;}
+.site-header h1{font-family:'Playfair Display',serif;font-size:2.1rem;font-weight:700;line-height:1.1;}
+.site-header p{font-size:.82rem;color:var(--mist);margin-top:.45rem;font-style:italic;}
+.firebase-badge{
+  position:absolute;top:1.2rem;right:2rem;z-index:2;
+  font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+  border-radius:20px;padding:.25rem .75rem;color:var(--leaf);
+}
+.firebase-badge.connected{background:rgba(168,200,150,.25);color:#c8f0b0;}
+
+/* ── SETUP PANEL ─────────────────────────────── */
+.setup-panel{
+  background:var(--mist);border-bottom:2px solid var(--sage);
+  padding:1.4rem 3rem;display:flex;gap:1.5rem;align-items:flex-end;flex-wrap:wrap;
+}
+.setup-panel label{
+  display:block;font-family:'DM Mono',monospace;font-size:.62rem;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--fern);margin-bottom:.35rem;
+}
+.setup-panel select,.setup-panel input[type="text"]{
+  font-family:'DM Sans',sans-serif;font-size:.88rem;
+  padding:.48rem .75rem;border:1.5px solid var(--sage);border-radius:5px;
+  background:white;color:var(--peat);min-width:175px;outline:none;transition:border-color .2s;
+}
+.setup-panel select:focus,.setup-panel input:focus{border-color:var(--moss);}
+
+.btn{
+  font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.52rem 1.1rem;border:none;border-radius:5px;cursor:pointer;transition:all .18s;
+  display:inline-flex;align-items:center;gap:.4rem;
+}
+.btn-primary{background:var(--moss);color:var(--cream);}
+.btn-primary:hover{background:var(--fern);}
+.btn-export{background:var(--clay);color:white;}
+.btn-export:hover{background:var(--soil);}
+.btn-danger{background:#b83232;color:white;font-size:.62rem;padding:.38rem .75rem;}
+.btn-danger:hover{background:#922828;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+
+/* ── STATUS BAR ──────────────────────────────── */
+.status-bar{
+  background:white;border-bottom:1px solid var(--mist);
+  padding:.55rem 3rem;display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;font-size:.78rem;
+}
+.status-chip{
+  background:var(--mist);border:1px solid var(--leaf);border-radius:20px;
+  padding:.2rem .8rem;font-family:'DM Mono',monospace;font-size:.67rem;color:var(--moss);
+}
+.status-chip.active{background:var(--moss);color:var(--cream);border-color:var(--moss);}
+.sync-dot{
+  width:8px;height:8px;border-radius:50%;background:#aaa;display:inline-block;margin-right:.3rem;
+  transition:background .3s;
+}
+.sync-dot.saving{background:#f0a000;animation:pulse .8s infinite alternate;}
+.sync-dot.saved{background:#5a9e40;}
+.sync-dot.error{background:#c03030;}
+@keyframes pulse{to{opacity:.4;}}
+
+/* ── MAIN ────────────────────────────────────── */
+.main-content{max-width:1020px;margin:0 auto;padding:2rem 2.5rem 5rem;}
+
+/* ── DAY TABS ────────────────────────────────── */
+.day-tabs{display:flex;gap:2px;border-bottom:2px solid var(--sage);margin-bottom:2rem;}
+.day-tab{
+  font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.65rem 1.4rem;border:1px solid var(--leaf);border-bottom:none;
+  background:var(--mist);color:var(--fern);cursor:pointer;border-radius:6px 6px 0 0;
+  transition:all .18s;
+}
+.day-tab.active{background:var(--moss);color:var(--cream);}
+.day-tab:hover:not(.active){background:var(--leaf);}
+.day-panel{display:none;}
+.day-panel.active{display:block;}
+
+/* ── SECTIONS ────────────────────────────────── */
+.section{
+  margin-bottom:2rem;border:1.5px solid var(--leaf);border-radius:9px;
+  overflow:hidden;background:white;box-shadow:0 2px 12px var(--shadow);
+}
+.section-header{
+  background:var(--moss);color:var(--cream);padding:.9rem 1.4rem;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.section-header h2{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;}
+.section-header .pts{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--leaf);letter-spacing:.1em;}
+.section-subheader{
+  background:var(--mist);padding:.5rem 1.4rem;
+  font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--fern);border-bottom:1px solid var(--leaf);
+}
+.section-body{padding:1.4rem;}
+
+/* ── TEAM PANEL ──────────────────────────────── */
+.team-panel{
+  background:white;border:1.5px solid var(--leaf);border-radius:9px;
+  padding:1.4rem;margin-bottom:1.8rem;box-shadow:0 2px 12px var(--shadow);
+}
+.team-panel h3{font-family:'Playfair Display',serif;font-size:1rem;margin-bottom:1rem;color:var(--moss);}
+.team-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+.team-member-row{display:flex;flex-direction:column;gap:.3rem;}
+.team-member-row label{
+  font-family:'DM Mono',monospace;font-size:.6rem;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--fern);
+}
+
+/* ── FIELDS ──────────────────────────────────── */
+.field-group{margin-bottom:1.4rem;}
+.field-group:last-child{margin-bottom:0;}
+.field-label{
+  font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--fern);margin-bottom:.3rem;display:flex;gap:.5rem;align-items:center;
+}
+.pts-tag{color:var(--clay);font-size:.62rem;}
+.field-desc{font-size:.76rem;color:var(--soil);margin-bottom:.45rem;font-style:italic;line-height:1.5;}
+.field-owner{display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem;}
+.field-owner>label{
+  font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--clay);white-space:nowrap;
+}
+.owner-input{
+  font-family:'DM Sans',sans-serif;font-size:.8rem;padding:.28rem .55rem;
+  border:1px dashed var(--clay);border-radius:3px;background:#fdf8f2;color:var(--peat);
+  width:200px;outline:none;transition:all .2s;
+}
+.owner-input:focus{border-color:var(--moss);border-style:solid;background:white;}
+
+textarea{
+  width:100%;font-family:'DM Sans',sans-serif;font-size:.86rem;line-height:1.65;
+  padding:.65rem .85rem;border:1.5px solid var(--mist);border-radius:5px;
+  background:#fafaf8;color:var(--peat);resize:vertical;min-height:80px;
+  outline:none;transition:border-color .2s;
+}
+textarea:focus{border-color:var(--sage);background:white;}
+input.short-text{
+  font-family:'DM Sans',sans-serif;font-size:.86rem;padding:.48rem .75rem;
+  border:1.5px solid var(--mist);border-radius:5px;background:#fafaf8;
+  color:var(--peat);width:100%;outline:none;transition:border-color .2s;
+}
+input.short-text:focus{border-color:var(--sage);background:white;}
+
+.bullet-group{display:flex;flex-direction:column;gap:.45rem;margin-top:.4rem;}
+.bullet-row{display:flex;gap:.5rem;align-items:flex-start;}
+.bullet-icon{margin-top:.6rem;width:6px;height:6px;border-radius:50%;background:var(--sage);flex-shrink:0;}
+.bullet-row textarea{min-height:50px;}
+
+/* ── TIMELINE ────────────────────────────────── */
+.timeline-entry{display:flex;gap:.7rem;margin-bottom:.45rem;align-items:flex-start;}
+.tl-year-wrap input{
+  font-family:'DM Mono',monospace;font-size:.78rem;padding:.42rem .45rem;
+  border:1.5px solid var(--mist);border-radius:4px;background:#fafaf8;width:78px;
+  outline:none;text-align:center;color:var(--moss);
+}
+.tl-year-wrap input:focus{border-color:var(--sage);}
+.add-row-btn{
+  font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.32rem .75rem;border:1px dashed var(--sage);border-radius:4px;
+  background:transparent;color:var(--fern);cursor:pointer;margin-top:.4rem;transition:all .18s;
+}
+.add-row-btn:hover{background:var(--mist);}
+.remove-row-btn{
+  font-size:.68rem;padding:.28rem .45rem;background:transparent;
+  border:1px solid #ddd;border-radius:3px;cursor:pointer;color:#aaa;margin-top:.42rem;flex-shrink:0;
+}
+.remove-row-btn:hover{background:#fee;color:#c00;border-color:#fcc;}
+
+/* ── NOTICE ──────────────────────────────────── */
+.notice{
+  background:#fdf8f2;border-left:3px solid var(--clay);padding:.65rem .9rem;
+  font-size:.77rem;color:var(--soil);border-radius:0 4px 4px 0;margin-bottom:1rem;font-style:italic;
+}
+
+/* ── IMAGE UPLOAD COMPONENT ──────────────────── */
+.img-upload-section{
+  margin-top:.75rem;
+  border:1.5px dashed var(--leaf);border-radius:7px;
+  padding:1rem;background:#f8fdf6;
+}
+.img-upload-section .img-label{
+  font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--sage);margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem;
+}
+.img-upload-section .img-label span{
+  background:var(--mist);border-radius:3px;padding:.1rem .4rem;font-size:.58rem;
+}
+.img-upload-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:.6rem;
+  margin-bottom:.6rem;
+}
+.img-thumb{
+  position:relative;aspect-ratio:1;border-radius:5px;overflow:hidden;
+  border:1.5px solid var(--leaf);background:var(--mist);
+  display:flex;align-items:center;justify-content:center;
+}
+.img-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.img-thumb .img-del{
+  position:absolute;top:3px;right:3px;background:rgba(0,0,0,.55);
+  border:none;border-radius:3px;color:white;font-size:.65rem;padding:.15rem .35rem;
+  cursor:pointer;opacity:0;transition:opacity .18s;
+}
+.img-thumb:hover .img-del{opacity:1;}
+.img-thumb .img-uploading{
+  position:absolute;inset:0;background:rgba(255,255,255,.75);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:.55rem;color:var(--moss);
+}
+.img-add-btn{
+  aspect-ratio:1;border-radius:5px;border:2px dashed var(--leaf);background:white;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:.3rem;color:var(--sage);font-size:1.3rem;font-family:'DM Mono',monospace;
+  font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;transition:all .18s;
+}
+.img-add-btn:hover{background:var(--mist);border-color:var(--fern);color:var(--fern);}
+.img-add-btn .plus{font-size:1.5rem;line-height:1;}
+.img-file-input{display:none;}
+.img-caption-row{display:flex;gap:.5rem;margin-top:.3rem;font-size:.72rem;}
+.img-caption-row input{
+  font-family:'DM Sans',sans-serif;font-size:.72rem;padding:.25rem .5rem;
+  border:1px solid var(--mist);border-radius:3px;background:white;width:100%;
+  outline:none;color:var(--peat);
+}
+.img-caption-row input:focus{border-color:var(--sage);}
+.img-count-bar{
+  font-family:'DM Mono',monospace;font-size:.58rem;color:var(--soil);
+  letter-spacing:.08em;text-align:right;margin-top:.3rem;
+}
+
+/* ── SKETCH GALLERY ──────────────────────────── */
+.sketch-gallery{
+  border:2px solid var(--leaf);border-radius:9px;padding:1.2rem;
+  background:#f8fdf6;margin-top:.5rem;
+}
+.sketch-gallery-title{
+  font-family:'Playfair Display',serif;font-size:.95rem;color:var(--moss);margin-bottom:.4rem;
+}
+.sketch-gallery-desc{font-size:.75rem;color:var(--soil);font-style:italic;margin-bottom:.9rem;}
+.sketch-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.8rem;
+  margin-bottom:.8rem;
+}
+.sketch-card{
+  border-radius:7px;overflow:hidden;border:1.5px solid var(--leaf);
+  background:white;display:flex;flex-direction:column;
+}
+.sketch-card .sketch-img-wrap{
+  aspect-ratio:4/3;background:var(--mist);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.sketch-card .sketch-img-wrap img{width:100%;height:100%;object-fit:cover;}
+.sketch-card .sketch-meta{padding:.45rem .5rem;display:flex;flex-direction:column;gap:.25rem;}
+.sketch-card .sketch-meta input{
+  font-family:'DM Sans',sans-serif;font-size:.7rem;padding:.2rem .4rem;
+  border:1px solid var(--mist);border-radius:3px;background:#fafaf8;color:var(--peat);outline:none;
+}
+.sketch-card .sketch-meta input:focus{border-color:var(--sage);}
+.sketch-card .sketch-del{
+  font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;
+  background:#fee;color:#c00;border:none;padding:.2rem;cursor:pointer;border-top:1px solid #fdd;
+  transition:background .15s;
+}
+.sketch-card .sketch-del:hover{background:#fcc;}
+.sketch-uploading-card{
+  border-radius:7px;border:1.5px dashed var(--leaf);background:var(--mist);
+  aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:.6rem;color:var(--fern);letter-spacing:.08em;
+  animation:pulse .8s infinite alternate;
+}
+
+/* ── EXPORT BAR ──────────────────────────────── */
+.export-bar{
+  position:sticky;bottom:0;background:var(--bark);padding:.75rem 3rem;
+  display:flex;gap:1rem;align-items:center;justify-content:flex-end;
+  border-top:2px solid var(--clay);z-index:100;
+}
+.export-bar>span{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--leaf);letter-spacing:.1em;flex:1;}
+
+/* ── NO GROUP ────────────────────────────────── */
+#no-group-msg{text-align:center;padding:4rem 2rem;color:var(--soil);}
+#no-group-msg h2{font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:.5rem;color:var(--moss);}
+
+/* ── CONFIG OVERLAY ──────────────────────────── */
+.config-overlay{
+  position:fixed;inset:0;background:rgba(43,42,37,.85);z-index:200;
+  display:flex;align-items:center;justify-content:center;padding:1rem;
+}
+.config-box{
+  background:white;border-radius:10px;padding:2rem;max-width:520px;width:100%;
+  box-shadow:0 8px 40px rgba(0,0,0,.35);
+}
+.config-box h2{font-family:'Playfair Display',serif;color:var(--moss);margin-bottom:.5rem;}
+.config-box p{font-size:.82rem;color:var(--soil);margin-bottom:1.2rem;line-height:1.6;}
+.config-field{margin-bottom:.9rem;}
+.config-field label{
+  display:block;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--fern);margin-bottom:.3rem;
+}
+.config-field input{
+  font-family:'DM Mono',monospace;font-size:.8rem;padding:.5rem .75rem;
+  border:1.5px solid var(--sage);border-radius:5px;background:#fafaf8;color:var(--peat);
+  width:100%;outline:none;
+}
+.config-field input:focus{border-color:var(--moss);}
+.config-note{font-size:.72rem;color:#888;font-style:italic;margin-top:.3rem;}
+
+/* ── PRINT ───────────────────────────────────── */
+@media print{
+  body{background:white;font-size:9.5pt;}
+  .site-header{background:#3d5a2e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:1rem;}
+  .setup-panel,.status-bar,.day-tabs,.export-bar,
+  .add-row-btn,.remove-row-btn,.img-del,.sketch-del,
+  .img-add-btn,.btn,.config-overlay{display:none!important;}
+  .day-panel{display:block!important;}
+  .main-content{padding:.5rem;max-width:100%;}
+  .section{break-inside:avoid;border:1px solid #aaa;margin-bottom:1rem;box-shadow:none;}
+  .section-header{background:#3d5a2e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .img-upload-section,.sketch-gallery{border:1px solid #ccc;background:white;}
+  .img-upload-grid,.sketch-grid{grid-template-columns:repeat(4,1fr);}
+  textarea,input.short-text,.tl-year-wrap input,.owner-input{border:1px solid #ddd!important;background:white!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- CONFIG OVERLAY (shown when Firebase not configured) -->
+<div class="config-overlay" id="config-overlay">
+  <div class="config-box">
+    <h2>Firebase Configuration</h2>
+    <p>Enter your Firebase project credentials to connect. These are stored only in your browser. Get them from your <strong>Firebase Console → Project Settings → Your Apps</strong>.</p>
+    <div class="config-field">
+      <label>API Key</label>
+      <input type="text" id="cfg-apiKey" placeholder="AIzaSy...">
+    </div>
+    <div class="config-field">
+      <label>Auth Domain</label>
+      <input type="text" id="cfg-authDomain" placeholder="your-project.firebaseapp.com">
+    </div>
+    <div class="config-field">
+      <label>Project ID</label>
+      <input type="text" id="cfg-projectId" placeholder="your-project-id">
+    </div>
+    <div class="config-field">
+      <label>Storage Bucket</label>
+      <input type="text" id="cfg-storageBucket" placeholder="your-project.appspot.com">
+    </div>
+    <div class="config-field">
+      <label>Messaging Sender ID</label>
+      <input type="text" id="cfg-messagingSenderId" placeholder="123456789">
+    </div>
+    <div class="config-field">
+      <label>App ID</label>
+      <input type="text" id="cfg-appId" placeholder="1:123456789:web:abc123">
+    </div>
+    <p class="config-note">💡 Or, embed your config directly in the &lt;script&gt; block at the top of this file and reload.</p>
+    <button class="btn btn-primary" onclick="applyConfig()" style="margin-top:.5rem;">Connect to Firebase</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="site-header">
+  <div class="inner">
+    <div class="module-tag">Art 104 · Module 05</div>
+    <h1>Nature/Ecology/<br>Environment/Biology</h1>
+    <p>Group Assignment Tool — select your group, add your name to tasks, fill in sections, upload images, and export anytime.</p>
+  </div>
+  <div class="firebase-badge" id="firebase-badge">⬤ Connecting…</div>
+</div>
+
+<!-- SETUP PANEL -->
+<div class="setup-panel">
+  <div>
+    <label for="group-select">Select Your Group</label>
+    <select id="group-select">
+      <option value="">— choose group —</option>
+      <option value="1">Group 1</option>
+      <option value="2">Group 2</option>
+      <option value="3">Group 3</option>
+      <option value="4">Group 4</option>
+      <option value="5">Group 5</option>
+      <option value="6">Group 6</option>
+      <option value="7">Group 7</option>
+    </select>
+  </div>
+  <div>
+    <label for="group-name-input">Group Name (optional)</label>
+    <input type="text" id="group-name-input" placeholder="e.g. Forest Collective" maxlength="60">
+  </div>
+  <button class="btn btn-primary" id="load-btn" onclick="loadGroup()">Load Group</button>
+  <button class="btn btn-danger" onclick="confirmClear()">Clear Group Data</button>
+  <button class="btn" style="background:#555;color:#fff;font-size:.6rem;" onclick="document.getElementById('config-overlay').style.display='flex'">⚙ Config</button>
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar" id="status-bar" style="display:none;">
+  <span id="status-group-name" class="status-chip active"></span>
+  <span><span class="sync-dot" id="sync-dot"></span><span id="sync-status">—</span></span>
+  <span style="color:#bbb;font-size:.72rem;margin-left:auto;">Synced with Firestore · Images in Firebase Storage</span>
+</div>
+
+<!-- MAIN -->
+<div class="main-content" id="main-content">
+  <div id="no-group-msg">
+    <h2>Select a Group to Begin</h2>
+    <p>Choose your group number above and click "Load Group" to start filling in your assignment. All changes sync live to Firebase.</p>
+  </div>
+
+  <div id="assignment-form" style="display:none;">
+
+    <!-- DAY TABS -->
+    <div class="day-tabs">
+      <button class="day-tab active" onclick="switchDay('day1',this)">Day 1 · Tech + Articles + Artists</button>
+      <button class="day-tab" onclick="switchDay('day2',this)">Day 2 · Speculative Artwork</button>
+    </div>
+
+    <!-- ══════════════════ DAY 1 ══════════════════ -->
+    <div class="day-panel active" id="day1">
+
+      <!-- TEAM INFO -->
+      <div class="team-panel">
+        <h3>Team Information</h3>
+        <div class="team-grid">
+          <div class="team-member-row">
+            <label>Team Member 1</label>
+            <input type="text" class="short-text" id="member1" placeholder="Name + contact" oninput="queueSave()">
+          </div>
+          <div class="team-member-row">
+            <label>Team Member 2</label>
+            <input type="text" class="short-text" id="member2" placeholder="Name + contact" oninput="queueSave()">
+          </div>
+          <div class="team-member-row">
+            <label>Team Member 3</label>
+            <input type="text" class="short-text" id="member3" placeholder="Name + contact" oninput="queueSave()">
+          </div>
+          <div class="team-member-row">
+            <label>Team Member 4</label>
+            <input type="text" class="short-text" id="member4" placeholder="Name + contact" oninput="queueSave()">
+          </div>
+        </div>
+        <div style="margin-top:.9rem;">
+          <label style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fern);display:block;margin-bottom:.3rem;">Google Drive Folder Link</label>
+          <input type="text" class="short-text" id="drive-link" placeholder="Paste shared Google Drive link" oninput="queueSave()">
+        </div>
+        <div style="margin-top:.9rem;">
+          <label style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fern);display:block;margin-bottom:.3rem;">Our Technology Is</label>
+          <input type="text" class="short-text" id="technology" placeholder="e.g. Augmented Reality, Deepfakes…" oninput="queueSave()">
+        </div>
+        <div style="margin-top:.9rem;">
+          <label style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fern);display:block;margin-bottom:.3rem;">Our Subtheme Is</label>
+          <input type="text" class="short-text" id="subtheme" placeholder="Your group's chosen subtheme" oninput="queueSave()">
+        </div>
+      </div>
+
+      <!-- PART 1 -->
+      <div class="section">
+        <div class="section-header">
+          <h2>Part 1 · Technology Summary</h2>
+          <span class="pts">15 pts · Group</span>
+        </div>
+        <div class="section-subheader">Slide 1: Overview &nbsp;|&nbsp; Slide 2: Timeline</div>
+        <div class="section-body">
+
+          <div class="field-group">
+            <div class="field-owner"><label>Slide 1 owner:</label><input type="text" class="owner-input" id="s1-owner" placeholder="Team member name" oninput="queueSave()"></div>
+            <div class="field-label">Technology Overview — 5 Key Ideas <span class="pts-tag">1 pt each</span></div>
+            <div class="field-desc">Summarize interesting ideas related to this technology you might want to consider, investigate, critique, or grapple with.</div>
+            <div class="bullet-group" id="tech-bullets"></div>
+            <!-- image upload -->
+            <div class="img-upload-section" id="imgs-tech-overview">
+              <div class="img-label">📎 Supporting Images <span>optional</span></div>
+              <div class="img-upload-grid" id="grid-tech-overview"></div>
+              <input type="file" class="img-file-input" id="file-tech-overview" accept="image/*" multiple onchange="handleImageUpload('tech-overview',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-tech-overview').click()">+ Add Images</button>
+              <div class="img-count-bar" id="count-tech-overview"></div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-owner"><label>Slide 2 owner:</label><input type="text" class="owner-input" id="s2-owner" placeholder="Team member name" oninput="queueSave()"></div>
+            <div class="field-label">Technology Timeline <span class="pts-tag">7 pts</span></div>
+            <div class="field-desc">Important milestones — add rows as needed.</div>
+            <div id="timeline-rows"></div>
+            <button class="add-row-btn" onclick="addTimelineRow()">+ Add Milestone</button>
+            <!-- image upload -->
+            <div class="img-upload-section" style="margin-top:.8rem;" id="imgs-tech-timeline">
+              <div class="img-label">📎 Timeline Images <span>optional</span></div>
+              <div class="img-upload-grid" id="grid-tech-timeline"></div>
+              <input type="file" class="img-file-input" id="file-tech-timeline" accept="image/*" multiple onchange="handleImageUpload('tech-timeline',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-tech-timeline').click()">+ Add Images</button>
+              <div class="img-count-bar" id="count-tech-timeline"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PART 2 -->
+      <div class="section">
+        <div class="section-header">
+          <h2>Part 2 · Article Discussion</h2>
+          <span class="pts">85 pts · Group</span>
+        </div>
+        <div class="section-subheader">Slides 3 & 4</div>
+        <div class="section-body">
+          <div class="notice">Find 2 articles related to Nature/Ecology/Environment/Biology & your technology. One must be peer-reviewed.</div>
+
+          <!-- ARTICLE 1 -->
+          <div class="field-group">
+            <div class="field-label" style="font-size:.8rem;color:var(--bark);">▸ Article 1</div>
+            <div class="field-owner"><label>Slide 3 owner(s):</label><input type="text" class="owner-input" id="art1-owners" placeholder="Team member name(s)" oninput="queueSave()"></div>
+            <div class="field-label">Citation / Title / Link</div>
+            <input type="text" class="short-text" id="art1-cite" placeholder="Title, author, source, URL" oninput="queueSave()" style="margin-bottom:.8rem;">
+
+            <div class="field-label">Key Themes & Ideas <span class="pts-tag">20 pts</span></div>
+            <div class="field-desc">2-3 sentences + 3 bullet points. What themes related to Nature/Ecology/Environment/Biology interest your group?</div>
+            <textarea id="art1-themes" rows="4" placeholder="Write 2-3 sentences…" oninput="queueSave()"></textarea>
+            <div class="bullet-group" id="art1-theme-bullets"></div>
+
+            <div class="field-label" style="margin-top:.9rem;">Personal Response <span class="pts-tag">20 pts</span></div>
+            <div class="field-desc">1 paragraph + 3 bullet points. Questions raised, opinions, ethical/cultural concerns, why useful for your project.</div>
+            <textarea id="art1-response" rows="5" placeholder="Your group's reaction/response…" oninput="queueSave()"></textarea>
+            <div class="bullet-group" id="art1-resp-bullets"></div>
+
+            <div class="field-label" style="margin-top:.9rem;">Interdisciplinary Issues <span class="pts-tag">2.5 pts</span></div>
+            <div class="field-desc">2 sentences + 2 bullet points. How does an issue in the article connect different academic disciplines?</div>
+            <textarea id="art1-interdis" rows="3" placeholder="Describe the interdisciplinary connection…" oninput="queueSave()"></textarea>
+            <div class="bullet-group" id="art1-interdis-bullets"></div>
+
+            <div class="img-upload-section" style="margin-top:.8rem;">
+              <div class="img-label">📎 Article 1 Images <span>optional — diagrams, screenshots, figures</span></div>
+              <div class="img-upload-grid" id="grid-art1"></div>
+              <input type="file" class="img-file-input" id="file-art1" accept="image/*" multiple onchange="handleImageUpload('art1',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-art1').click()">+ Add Images</button>
+              <div class="img-count-bar" id="count-art1"></div>
+            </div>
+          </div>
+
+          <hr style="border:none;border-top:1.5px dashed var(--leaf);margin:1.4rem 0;">
+
+          <!-- ARTICLE 2 -->
+          <div class="field-group">
+            <div class="field-label" style="font-size:.8rem;color:var(--bark);">▸ Article 2</div>
+            <div class="field-owner"><label>Slide 4 owner(s):</label><input type="text" class="owner-input" id="art2-owners" placeholder="Team member name(s)" oninput="queueSave()"></div>
+            <div class="field-label">Citation / Title / Link</div>
+            <input type="text" class="short-text" id="art2-cite" placeholder="Title, author, source, URL" oninput="queueSave()" style="margin-bottom:.8rem;">
+
+            <div class="field-label">Key Themes & Ideas <span class="pts-tag">20 pts</span></div>
+            <div class="field-desc">2-3 sentences + 3 bullet points.</div>
+            <textarea id="art2-themes" rows="4" placeholder="Write 2-3 sentences…" oninput="queueSave()"></textarea>
+            <div class="bullet-group" id="art2-theme-bullets"></div>
+
+            <div class="field-label" style="margin-top:.9rem;">Personal Response <span class="pts-tag">20 pts</span></div>
+            <textarea id="art2-response" rows="5" placeholder="Your group's reaction/response…" oninput="queueSave()"></textarea>
+            <div class="bullet-group" id="art2-resp-bullets"></div>
+
+            <div class="field-label" style="margin-top:.9rem;">Interdisciplinary Issues <span class="pts-tag">2.5 pts</span></div>
+            <textarea id="art2-interdis" rows="3" placeholder="Describe the interdisciplinary connection…" oninput="queueSave()"></textarea>
+            <div class="bullet-group" id="art2-interdis-bullets"></div>
+
+            <div class="img-upload-section" style="margin-top:.8rem;">
+              <div class="img-label">📎 Article 2 Images <span>optional</span></div>
+              <div class="img-upload-grid" id="grid-art2"></div>
+              <input type="file" class="img-file-input" id="file-art2" accept="image/*" multiple onchange="handleImageUpload('art2',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-art2').click()">+ Add Images</button>
+              <div class="img-count-bar" id="count-art2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PART 3 -->
+      <div class="section">
+        <div class="section-header">
+          <h2>Part 3 · Artwork Discussion</h2>
+          <span class="pts">60 pts · Group</span>
+        </div>
+        <div class="section-subheader">Slides 5 & 6 — Artworks do NOT need to relate to your theme</div>
+        <div class="section-body">
+          <div class="notice">Select artists/artworks from the spreadsheet. They do not need to connect to your technology or theme.</div>
+
+          <!-- ARTIST 1 -->
+          <div class="field-group">
+            <div class="field-label" style="font-size:.8rem;color:var(--bark);">▸ Artist 1</div>
+            <div class="field-owner"><label>Slide 5 owner:</label><input type="text" class="owner-input" id="a1-owner" placeholder="Team member name" oninput="queueSave()"></div>
+            <div class="field-label">Artist & Artwork Title <span class="pts-tag">5 pts</span></div>
+            <input type="text" class="short-text" id="a1-name" placeholder="Artist name, artwork title, year" oninput="queueSave()" style="margin-bottom:.7rem;">
+
+            <div class="img-upload-section" style="margin-bottom:.8rem;">
+              <div class="img-label">🖼 Artwork Image(s)</div>
+              <div class="img-upload-grid" id="grid-a1-art"></div>
+              <input type="file" class="img-file-input" id="file-a1-art" accept="image/*" multiple onchange="handleImageUpload('a1-art',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-a1-art').click()">+ Add Artwork Image</button>
+              <div class="img-count-bar" id="count-a1-art"></div>
+            </div>
+
+            <div class="field-label">Digital Media Concepts — Key Themes <span class="pts-tag">5 pts</span></div>
+            <textarea id="a1-concepts" rows="3" placeholder="Concept/content as it relates to digital media art…" oninput="queueSave()"></textarea>
+            <div class="field-label" style="margin-top:.7rem;">Importance in Digital Media Art History</div>
+            <textarea id="a1-history" rows="2" placeholder="Why is this piece historically important?" oninput="queueSave()"></textarea>
+            <div class="field-label" style="margin-top:.7rem;">Nature/Ecology/Environment/Biology Concepts <span class="pts-tag">5 pts</span></div>
+            <textarea id="a1-reality" rows="3" placeholder="How does this reflect ideas important to Nature/Ecology/Environment/Biology?" oninput="queueSave()"></textarea>
+            <div class="field-label" style="margin-top:.7rem;">Digital Media Art Technology <span class="pts-tag">5 pts</span></div>
+            <textarea id="a1-tech" rows="2" placeholder="Key technologies used or highlighted…" oninput="queueSave()"></textarea>
+            <div class="field-label" style="margin-top:.7rem;">Personal Response <span class="pts-tag">10 pts</span></div>
+            <div class="field-desc">Interesting/inspirational aspects? Questions raised? Likes/dislikes? Lived experience? Connection to digital media/computer tech?</div>
+            <textarea id="a1-personal" rows="5" placeholder="Your personal response…" oninput="queueSave()"></textarea>
+          </div>
+
+          <hr style="border:none;border-top:1.5px dashed var(--leaf);margin:1.4rem 0;">
+
+          <!-- ARTIST 2 -->
+          <div class="field-group">
+            <div class="field-label" style="font-size:.8rem;color:var(--bark);">▸ Artist 2</div>
+            <div class="field-owner"><label>Slide 6 owner:</label><input type="text" class="owner-input" id="a2-owner" placeholder="Team member name" oninput="queueSave()"></div>
+            <div class="field-label">Artist & Artwork Title <span class="pts-tag">5 pts</span></div>
+            <input type="text" class="short-text" id="a2-name" placeholder="Artist name, artwork title, year" oninput="queueSave()" style="margin-bottom:.7rem;">
+
+            <div class="img-upload-section" style="margin-bottom:.8rem;">
+              <div class="img-label">🖼 Artwork Image(s)</div>
+              <div class="img-upload-grid" id="grid-a2-art"></div>
+              <input type="file" class="img-file-input" id="file-a2-art" accept="image/*" multiple onchange="handleImageUpload('a2-art',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-a2-art').click()">+ Add Artwork Image</button>
+              <div class="img-count-bar" id="count-a2-art"></div>
+            </div>
+
+            <div class="field-label">Digital Media Concepts — Key Themes <span class="pts-tag">5 pts</span></div>
+            <textarea id="a2-concepts" rows="3" placeholder="Concept/content as it relates to digital media art…" oninput="queueSave()"></textarea>
+            <div class="field-label" style="margin-top:.7rem;">Importance in Digital Media Art History</div>
+            <textarea id="a2-history" rows="2" placeholder="Why is this piece historically important?" oninput="queueSave()"></textarea>
+            <div class="field-label" style="margin-top:.7rem;">Nature/Ecology/Environment/Biology Concepts <span class="pts-tag">5 pts</span></div>
+            <textarea id="a2-reality" rows="3" placeholder="How does this reflect ideas important to Nature/Ecology/Environment/Biology?" oninput="queueSave()"></textarea>
+            <div class="field-label" style="margin-top:.7rem;">Digital Media Art Technology <span class="pts-tag">5 pts</span></div>
+            <textarea id="a2-tech" rows="2" placeholder="Key technologies used or highlighted…" oninput="queueSave()"></textarea>
+            <div class="field-label" style="margin-top:.7rem;">Personal Response <span class="pts-tag">20 pts</span></div>
+            <div class="field-desc">Interesting/inspirational aspects? Questions raised? Likes/dislikes? Lived experience? Connection to digital media/computer tech?</div>
+            <textarea id="a2-personal" rows="5" placeholder="Your personal response…" oninput="queueSave()"></textarea>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /day1 -->
+
+    <!-- ══════════════════ DAY 2 ══════════════════ -->
+    <div class="day-panel" id="day2">
+
+      <div class="section">
+        <div class="section-header">
+          <h2>Part 4 · Speculative Artwork Idea</h2>
+          <span class="pts">100 pts · Group</span>
+        </div>
+        <div class="section-subheader">Due March 26, 2026 @ 11 am</div>
+        <div class="section-body">
+          <div class="notice">Create a speculative artwork idea related to Nature/Ecology/Environment/Biology + your technology. Final image MUST be created by you, NOT AI.</div>
+
+          <!-- SLIDE 1: Sketches by you -->
+          <div class="field-group">
+            <div class="field-label" style="font-size:.8rem;color:var(--bark);">▸ Slide 1 — Sketches & Idea Generation (by you)</div>
+            <div class="field-owner"><label>Owner(s):</label><input type="text" class="owner-input" id="sp-sketch-owners" placeholder="Team member name(s)" oninput="queueSave()"></div>
+            <div class="field-desc">Describe your sketching process and how you arrived at your idea. Label each sketch with your name on the drawing itself.</div>
+            <textarea id="sp-sketch-desc" rows="4" placeholder="Describe your sketching process and early ideas…" oninput="queueSave()"></textarea>
+
+            <!-- SKETCH GALLERY (10-15 images) -->
+            <div class="sketch-gallery" style="margin-top:1rem;">
+              <div class="sketch-gallery-title">Sketch Gallery</div>
+              <div class="sketch-gallery-desc">Upload 10–15 hand-made sketches and idea drawings. Each can have a title and your name. These must be your own work.</div>
+              <div class="sketch-grid" id="sketch-grid"></div>
+              <input type="file" class="img-file-input" id="file-sketches" accept="image/*" multiple onchange="handleSketchUpload(this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-sketches').click()">+ Add Sketches (select multiple)</button>
+              <div class="img-count-bar" id="sketch-count">0 / 15 sketches uploaded</div>
+            </div>
+          </div>
+
+          <!-- SLIDE 2: AI Brainstorming -->
+          <div class="field-group">
+            <div class="field-label" style="font-size:.8rem;color:var(--bark);">▸ Slide 2 — AI-Generated Brainstorming (inspiration only)</div>
+            <div class="field-owner"><label>Owner(s):</label><input type="text" class="owner-input" id="sp-ai-owners" placeholder="Team member name(s)" oninput="queueSave()"></div>
+            <div class="field-desc">Notes on AI images/prompts used for brainstorming only. These are NOT the final work.</div>
+            <textarea id="sp-ai-desc" rows="3" placeholder="Describe AI prompts or ideas explored for brainstorming…" oninput="queueSave()"></textarea>
+            <div class="img-upload-section" style="margin-top:.7rem;">
+              <div class="img-label">🤖 AI Brainstorm Images <span>for reference only</span></div>
+              <div class="img-upload-grid" id="grid-sp-ai"></div>
+              <input type="file" class="img-file-input" id="file-sp-ai" accept="image/*" multiple onchange="handleImageUpload('sp-ai',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-sp-ai').click()">+ Add AI Brainstorm Images</button>
+              <div class="img-count-bar" id="count-sp-ai"></div>
+            </div>
+          </div>
+
+          <!-- SLIDE 3: Final Rendering -->
+          <div class="field-group">
+            <div class="field-label" style="font-size:.8rem;color:var(--bark);">▸ Slide 3 — Final Idea Drawing/Rendering <span style="color:#b83232;font-size:.72rem;">(MUST be by you, NOT AI)</span></div>
+            <div class="field-owner"><label>Owner(s):</label><input type="text" class="owner-input" id="sp-final-owners" placeholder="Team member name(s)" oninput="queueSave()"></div>
+            <textarea id="sp-final-desc" rows="3" placeholder="Describe your final artwork/rendering…" oninput="queueSave()"></textarea>
+            <div class="img-upload-section" style="margin-top:.7rem;">
+              <div class="img-label">🎨 Final Artwork Image(s)</div>
+              <div class="img-upload-grid" id="grid-sp-final"></div>
+              <input type="file" class="img-file-input" id="file-sp-final" accept="image/*" multiple onchange="handleImageUpload('sp-final',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-sp-final').click()">+ Upload Final Artwork</button>
+              <div class="img-count-bar" id="count-sp-final"></div>
+            </div>
+          </div>
+
+          <hr style="border:none;border-top:1.5px dashed var(--leaf);margin:1.4rem 0;">
+
+          <!-- SLIDE 4: Digital Media Concepts -->
+          <div class="field-group">
+            <div class="field-owner"><label>Slide 4 owner:</label><input type="text" class="owner-input" id="sp-tech-owner" placeholder="Team member name" oninput="queueSave()"></div>
+            <div class="field-label">Digital Media Concepts <span class="pts-tag">10 pts</span></div>
+            <div class="field-label" style="margin-top:.6rem;">Key technologies used/highlighted</div>
+            <textarea id="sp-tech-tech" rows="2" placeholder="Technologies used or highlighted…" oninput="queueSave()"></textarea>
+            <div class="field-label" style="margin-top:.6rem;">Key themes</div>
+            <textarea id="sp-tech-themes" rows="2" placeholder="Key themes evident in the work…" oninput="queueSave()"></textarea>
+            <div class="field-label" style="margin-top:.6rem;">Key formal elements (color, aesthetics, shapes, lines, glitches…)</div>
+            <textarea id="sp-tech-formal" rows="2" placeholder="Formal elements…" oninput="queueSave()"></textarea>
+            <div class="field-label" style="margin-top:.6rem;">Importance in digital media art history</div>
+            <textarea id="sp-tech-history" rows="2" placeholder="Importance in digital media art history…" oninput="queueSave()"></textarea>
+          </div>
+
+          <!-- SLIDE 5: Nature/Ecology concepts -->
+          <div class="field-group">
+            <div class="field-owner"><label>Slide 5 owner:</label><input type="text" class="owner-input" id="sp-reality-owner" placeholder="Team member name" oninput="queueSave()"></div>
+            <div class="field-label">Nature/Ecology/Environment/Biology Concepts <span class="pts-tag">15 pts</span></div>
+            <div class="field-desc">How does this work reflect ideas important to Nature/Ecology/Environment/Biology? Tie in articles and research.</div>
+            <textarea id="sp-reality-text" rows="5" placeholder="Your discussion here…" oninput="queueSave()"></textarea>
+            <div class="bullet-group" id="sp-reality-bullets"></div>
+            <div class="img-upload-section" style="margin-top:.7rem;">
+              <div class="img-label">📎 Supporting Images <span>optional</span></div>
+              <div class="img-upload-grid" id="grid-sp-reality"></div>
+              <input type="file" class="img-file-input" id="file-sp-reality" accept="image/*" multiple onchange="handleImageUpload('sp-reality',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-sp-reality').click()">+ Add Images</button>
+              <div class="img-count-bar" id="count-sp-reality"></div>
+            </div>
+          </div>
+
+          <!-- SLIDE 6: Artist Connections -->
+          <div class="field-group">
+            <div class="field-owner"><label>Slide 6 owner:</label><input type="text" class="owner-input" id="sp-artists-owner" placeholder="Team member name" oninput="queueSave()"></div>
+            <div class="field-label">Artist Connections <span class="pts-tag">15 pts</span></div>
+            <div class="field-desc">How does your work connect to 2 artists (conceptually, technically, or formally)?</div>
+            <div class="field-label" style="margin-top:.6rem;">Artist Connection 1</div>
+            <input type="text" class="short-text" id="sp-artist1-name" placeholder="Artist name / artwork" oninput="queueSave()" style="margin-bottom:.4rem;">
+            <textarea id="sp-artist1-connection" rows="3" placeholder="How does your work connect to this artist?" oninput="queueSave()"></textarea>
+            <div class="field-label" style="margin-top:.8rem;">Artist Connection 2</div>
+            <input type="text" class="short-text" id="sp-artist2-name" placeholder="Artist name / artwork" oninput="queueSave()" style="margin-bottom:.4rem;">
+            <textarea id="sp-artist2-connection" rows="3" placeholder="How does your work connect to this artist?" oninput="queueSave()"></textarea>
+          </div>
+
+          <!-- SLIDE 7: Personal Response -->
+          <div class="field-group">
+            <div class="field-owner"><label>Slide 7 owner:</label><input type="text" class="owner-input" id="sp-personal-owner" placeholder="Team member name" oninput="queueSave()"></div>
+            <div class="field-label">Personal Response & Connections <span class="pts-tag">10 pts</span></div>
+            <div class="field-desc">How does your work relate to your lived experience, feelings, ideas, politics, life? Are you critiquing or proposing alternatives to this technology? Why did you make this piece?</div>
+            <textarea id="sp-personal-text" rows="5" placeholder="Your personal response…" oninput="queueSave()"></textarea>
+            <div class="bullet-group" id="sp-personal-bullets"></div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /day2 -->
+
+  </div><!-- /assignment-form -->
+</div><!-- /main-content -->
+
+<!-- EXPORT BAR -->
+<div class="export-bar" id="export-bar" style="display:none;">
+  <span id="export-label">Select a group to begin exporting.</span>
+  <button class="btn btn-export" onclick="exportPDF()">⬇ Export as PDF</button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════ -->
+<script>
+// ─── STATE ──────────────────────────────────────────
+let currentGroup  = null;
+let unsubscribe   = null;
+let saveTimer     = null;
+let fbReady       = false;
+let imageRegistry = {};   // { fieldKey: [{url, path, caption}] }
+let sketchRegistry = [];  // [{url, path, title, author}]
+
+// ─── BULLET FIELD CONFIG ────────────────────────────
+const BULLET_FIELDS = {
+  'tech-bullets':3,
+  'art1-theme-bullets':3,'art1-resp-bullets':3,'art1-interdis-bullets':2,
+  'art2-theme-bullets':3,'art2-resp-bullets':3,'art2-interdis-bullets':2,
+  'sp-reality-bullets':3,'sp-personal-bullets':3,
+};
+
+// ─── SIMPLE FIELD IDS ───────────────────────────────
+const SIMPLE_IDS = [
+  'group-name-input','member1','member2','member3','member4','drive-link','technology','subtheme',
+  's1-owner','s2-owner',
+  'art1-owners','art1-cite','art1-themes','art1-response','art1-interdis',
+  'art2-owners','art2-cite','art2-themes','art2-response','art2-interdis',
+  'a1-owner','a1-name','a1-concepts','a1-history','a1-reality','a1-tech','a1-personal',
+  'a2-owner','a2-name','a2-concepts','a2-history','a2-reality','a2-tech','a2-personal',
+  'sp-sketch-owners','sp-sketch-desc','sp-ai-owners','sp-ai-desc',
+  'sp-final-owners','sp-final-desc','sp-tech-owner','sp-tech-tech','sp-tech-themes',
+  'sp-tech-formal','sp-tech-history','sp-reality-owner','sp-reality-text',
+  'sp-artists-owner','sp-artist1-name','sp-artist1-connection','sp-artist2-name','sp-artist2-connection',
+  'sp-personal-owner','sp-personal-text',
+];
+
+// ─── FIREBASE INIT ──────────────────────────────────
+window.addEventListener('firebase-ready', () => { fbReady = true; checkConfig(); });
+
+function checkConfig() {
+  document.getElementById('config-overlay').style.display = 'none';
+  document.getElementById('firebase-badge').textContent = '⬤ Firebase Connected';
+  document.getElementById('firebase-badge').classList.add('connected');
+}
+
+function applyConfig() {
+  const cfg = {
+    apiKey:            document.getElementById('cfg-apiKey').value.trim(),
+    authDomain:        document.getElementById('cfg-authDomain').value.trim(),
+    projectId:         document.getElementById('cfg-projectId').value.trim(),
+    storageBucket:     document.getElementById('cfg-storageBucket').value.trim(),
+    messagingSenderId: document.getElementById('cfg-messagingSenderId').value.trim(),
+    appId:             document.getElementById('cfg-appId').value.trim(),
+  };
+  if (!cfg.projectId) { alert('Project ID is required.'); return; }
+  // Store and reload (simplest approach for dynamic config)
+  localStorage.setItem('art104-firebase-config', JSON.stringify(cfg));
+  alert('Config saved! The page will reload and connect to your Firebase project.');
+  location.reload();
+}
+
+// On load: check for saved config and inject it
+(function injectSavedConfig() {
+  const saved = localStorage.getItem('art104-firebase-config');
+  if (saved) {
+    try {
+      const c = JSON.parse(saved);
+      // We inject it into the existing script's firebaseConfig via a note in the overlay
+      // (Full dynamic re-init requires separate script module — we note this to user)
+      // Pre-fill overlay fields
+      window.addEventListener('DOMContentLoaded', () => {
+        Object.keys(c).forEach(k => {
+          const el = document.getElementById('cfg-'+k);
+          if (el) el.value = c[k];
+        });
+      });
+    } catch(e) {}
+  }
+})();
+
+// ─── INIT ────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  buildAllBullets();
+  buildTimelineRows([{year:'',event:''}]);
+});
+
+function buildAllBullets() {
+  Object.entries(BULLET_FIELDS).forEach(([id, count]) => buildBullets(id, count));
+}
+
+function buildBullets(containerId, count) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  c.innerHTML = '';
+  for (let i = 0; i < count; i++) {
+    const row = document.createElement('div');
+    row.className = 'bullet-row';
+    row.innerHTML = `<div class="bullet-icon"></div>
+      <textarea data-bullet="${containerId}-${i}" rows="2"
+        placeholder="Bullet point ${i+1}…" oninput="queueSave()"></textarea>`;
+    c.appendChild(row);
+  }
+}
+
+// ─── TIMELINE ───────────────────────────────────────
+function buildTimelineRows(rows) {
+  const c = document.getElementById('timeline-rows');
+  c.innerHTML = '';
+  rows.forEach((r,i) => addTimelineRow(r.year, r.event, i));
+}
+
+function addTimelineRow(year='', event='', index=null) {
+  const c = document.getElementById('timeline-rows');
+  const idx = index !== null ? index : c.children.length;
+  const div = document.createElement('div');
+  div.className = 'timeline-entry';
+  div.innerHTML = `
+    <div class="tl-year-wrap"><input type="text" data-tl-year="${idx}" placeholder="Year"
+      value="${esc(year)}" oninput="queueSave()"></div>
+    <textarea data-tl-event="${idx}" rows="2" style="flex:1"
+      placeholder="Milestone / event description…" oninput="queueSave()">${esc(event)}</textarea>
+    <button class="remove-row-btn" onclick="removeTimelineRow(this)">✕</button>`;
+  c.appendChild(div);
+}
+
+function removeTimelineRow(btn) {
+  btn.closest('.timeline-entry').remove();
+  reindexTimeline();
+  queueSave();
+}
+
+function reindexTimeline() {
+  document.querySelectorAll('[data-tl-year]').forEach((el,i) => el.dataset.tlYear = i);
+  document.querySelectorAll('[data-tl-event]').forEach((el,i) => el.dataset.tlEvent = i);
+}
+
+function esc(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+// ─── GROUP MANAGEMENT ───────────────────────────────
+function loadGroup() {
+  const sel = document.getElementById('group-select').value;
+  if (!sel) { alert('Please select a group first.'); return; }
+  if (!fbReady) { alert('Firebase not ready yet. Please wait a moment.'); return; }
+
+  if (unsubscribe) unsubscribe();
+  currentGroup = sel;
+
+  const { db, doc, onSnapshot } = window._fb;
+  const docRef = doc(db, 'art104-mod05', `group${sel}`);
+
+  setSyncStatus('saving', 'Loading…');
+
+  unsubscribe = onSnapshot(docRef, snap => {
+    if (snap.exists()) {
+      const data = snap.data();
+      populateForm(data);
+    }
+    showUI();
+    setSyncStatus('saved', 'Synced');
+  }, err => {
+    console.error(err);
+    setSyncStatus('error', 'Error: ' + err.message);
+  });
+}
+
+function confirmClear() {
+  const sel = document.getElementById('group-select').value;
+  if (!sel) { alert('Select a group first.'); return; }
+  if (!confirm(`⚠️ This will permanently delete ALL text data for Group ${sel} from Firestore.\n\nImages in Storage will NOT be deleted (delete them manually from Firebase Console).\n\nContinue?`)) return;
+  const { db, doc, setDoc } = window._fb;
+  setDoc(doc(db, 'art104-mod05', `group${sel}`), { _cleared: Date.now() })
+    .then(() => { populateForm({}); setSyncStatus('saved','Cleared'); })
+    .catch(e => setSyncStatus('error', e.message));
+}
+
+function showUI() {
+  document.getElementById('no-group-msg').style.display = 'none';
+  document.getElementById('assignment-form').style.display = 'block';
+  document.getElementById('status-bar').style.display = 'flex';
+  document.getElementById('export-bar').style.display = 'flex';
+  const gName = document.getElementById('group-name-input').value;
+  const label = gName ? `Group ${currentGroup}: ${gName}` : `Group ${currentGroup}`;
+  document.getElementById('status-group-name').textContent = label;
+  document.getElementById('export-label').textContent = `Group ${currentGroup} — click to export PDF`;
+}
+
+// ─── SYNC STATUS ────────────────────────────────────
+function setSyncStatus(state, msg) {
+  const dot  = document.getElementById('sync-dot');
+  const span = document.getElementById('sync-status');
+  dot.className = 'sync-dot ' + state;
+  span.textContent = msg;
+}
+
+// ─── SAVE ────────────────────────────────────────────
+function queueSave() {
+  setSyncStatus('saving','Saving…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveToFirestore, 800);
+}
+
+async function saveToFirestore() {
+  if (!currentGroup || !fbReady) return;
+  const data = collectForm();
+  const { db, doc, setDoc } = window._fb;
+  try {
+    await setDoc(doc(db, 'art104-mod05', `group${currentGroup}`), data, { merge: true });
+    setSyncStatus('saved','Saved ✓ ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'}));
+    const gName = document.getElementById('group-name-input').value;
+    const label = gName ? `Group ${currentGroup}: ${gName}` : `Group ${currentGroup}`;
+    document.getElementById('status-group-name').textContent = label;
+  } catch(e) {
+    setSyncStatus('error','Save failed: ' + e.message);
+    console.error(e);
+  }
+}
+
+// ─── COLLECT FORM DATA ──────────────────────────────
+function collectForm() {
+  const data = {};
+  SIMPLE_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) data[id] = el.value;
+  });
+  document.querySelectorAll('[data-bullet]').forEach(el => {
+    data[el.dataset.bullet] = el.value;
+  });
+  const tl = [];
+  document.querySelectorAll('.timeline-entry').forEach(row => {
+    const y = row.querySelector('[data-tl-year]');
+    const e = row.querySelector('[data-tl-event]');
+    tl.push({ year: y ? y.value : '', event: e ? e.value : '' });
+  });
+  data['__timeline'] = tl;
+  data['__images']   = imageRegistry;
+  data['__sketches'] = sketchRegistry;
+  return data;
+}
+
+// ─── POPULATE FORM ──────────────────────────────────
+function populateForm(data) {
+  SIMPLE_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && data[id] !== undefined) el.value = data[id];
+  });
+  document.querySelectorAll('[data-bullet]').forEach(el => {
+    const k = el.dataset.bullet;
+    if (data[k] !== undefined) el.value = data[k];
+  });
+  if (data['__timeline'] && data['__timeline'].length > 0) {
+    buildTimelineRows(data['__timeline']);
+  }
+  if (data['__images']) {
+    imageRegistry = data['__images'];
+    Object.entries(imageRegistry).forEach(([key, imgs]) => renderImageGrid(key, imgs));
+  }
+  if (data['__sketches']) {
+    sketchRegistry = data['__sketches'];
+    renderSketchGrid();
+  }
+}
+
+// ─── IMAGE UPLOAD ────────────────────────────────────
+async function handleImageUpload(fieldKey, input) {
+  if (!input.files.length) return;
+  if (!currentGroup) { alert('Load a group first.'); return; }
+  if (!imageRegistry[fieldKey]) imageRegistry[fieldKey] = [];
+
+  const { storage, ref, uploadBytes, getDownloadURL } = window._fb;
+  const files = Array.from(input.files);
+
+  // show uploading placeholders
+  const grid = document.getElementById('grid-'+fieldKey);
+  files.forEach(() => {
+    const ph = document.createElement('div');
+    ph.className = 'img-thumb';
+    ph.innerHTML = '<div class="img-uploading">Uploading…</div>';
+    grid.appendChild(ph);
+  });
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const path = `art104-mod05/group${currentGroup}/${fieldKey}/${Date.now()}_${file.name}`;
+    try {
+      const storageRef = ref(storage, path);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      imageRegistry[fieldKey].push({ url, path, caption: '' });
+      // remove placeholder
+      const placeholders = grid.querySelectorAll('.img-uploading');
+      if (placeholders.length) placeholders[0].closest('.img-thumb').remove();
+    } catch(e) {
+      console.error(e);
+      setSyncStatus('error','Upload failed: '+e.message);
+    }
+  }
+  renderImageGrid(fieldKey, imageRegistry[fieldKey]);
+  updateImageCount(fieldKey);
+  queueSave();
+  input.value = '';
+}
+
+function renderImageGrid(fieldKey, imgs) {
+  const grid = document.getElementById('grid-'+fieldKey);
+  if (!grid) return;
+  grid.innerHTML = '';
+  imgs.forEach((img, i) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'img-thumb';
+    thumb.style = 'flex-direction:column;height:auto;aspect-ratio:unset;';
+    thumb.innerHTML = `
+      <div style="position:relative;width:100%;aspect-ratio:1;overflow:hidden;border-radius:4px 4px 0 0;">
+        <img src="${img.url}" alt="uploaded image" style="width:100%;height:100%;object-fit:cover;">
+        <button class="img-del" onclick="deleteImage('${fieldKey}',${i})">✕ remove</button>
+      </div>
+      <div class="img-caption-row">
+        <input type="text" placeholder="Add caption…" value="${esc(img.caption||'')}"
+          oninput="updateCaption('${fieldKey}',${i},this.value)">
+      </div>`;
+    grid.appendChild(thumb);
+  });
+  updateImageCount(fieldKey);
+}
+
+function updateCaption(fieldKey, idx, val) {
+  if (imageRegistry[fieldKey] && imageRegistry[fieldKey][idx]) {
+    imageRegistry[fieldKey][idx].caption = val;
+    queueSave();
+  }
+}
+
+async function deleteImage(fieldKey, idx) {
+  if (!confirm('Remove this image?')) return;
+  const img = imageRegistry[fieldKey][idx];
+  if (img && img.path) {
+    const { storage, ref, deleteObject } = window._fb;
+    try { await deleteObject(ref(storage, img.path)); } catch(e) { console.warn(e); }
+  }
+  imageRegistry[fieldKey].splice(idx, 1);
+  renderImageGrid(fieldKey, imageRegistry[fieldKey]);
+  queueSave();
+}
+
+function updateImageCount(fieldKey) {
+  const el = document.getElementById('count-'+fieldKey);
+  if (el && imageRegistry[fieldKey]) el.textContent = imageRegistry[fieldKey].length + ' image(s) uploaded';
+}
+
+// ─── SKETCH UPLOAD ───────────────────────────────────
+async function handleSketchUpload(input) {
+  if (!input.files.length) return;
+  if (!currentGroup) { alert('Load a group first.'); return; }
+  const MAX_SKETCHES = 15;
+  const remaining = MAX_SKETCHES - sketchRegistry.length;
+  if (remaining <= 0) { alert(`You've reached the maximum of ${MAX_SKETCHES} sketches.`); return; }
+
+  const { storage, ref, uploadBytes, getDownloadURL } = window._fb;
+  const files = Array.from(input.files).slice(0, remaining);
+  const grid  = document.getElementById('sketch-grid');
+
+  // uploading placeholders
+  files.forEach(() => {
+    const ph = document.createElement('div');
+    ph.className = 'sketch-uploading-card';
+    ph.textContent = 'Uploading…';
+    grid.appendChild(ph);
+  });
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const path = `art104-mod05/group${currentGroup}/sketches/${Date.now()}_${file.name}`;
+    try {
+      const storageRef = ref(storage, path);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      sketchRegistry.push({ url, path, title:'', author:'' });
+      const placeholders = grid.querySelectorAll('.sketch-uploading-card');
+      if (placeholders.length) placeholders[0].remove();
+    } catch(e) {
+      console.error(e);
+      setSyncStatus('error','Sketch upload failed: '+e.message);
+    }
+  }
+  renderSketchGrid();
+  queueSave();
+  input.value = '';
+}
+
+function renderSketchGrid() {
+  const grid = document.getElementById('sketch-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  sketchRegistry.forEach((sk, i) => {
+    const card = document.createElement('div');
+    card.className = 'sketch-card';
+    card.innerHTML = `
+      <div class="sketch-img-wrap"><img src="${sk.url}" alt="sketch ${i+1}"></div>
+      <div class="sketch-meta">
+        <input type="text" placeholder="Title / description…" value="${esc(sk.title||'')}"
+          oninput="updateSketch(${i},'title',this.value)">
+        <input type="text" placeholder="Your name" value="${esc(sk.author||'')}"
+          oninput="updateSketch(${i},'author',this.value)">
+      </div>
+      <button class="sketch-del" onclick="deleteSketch(${i})">✕ remove</button>`;
+    grid.appendChild(card);
+  });
+  const cnt = document.getElementById('sketch-count');
+  if (cnt) cnt.textContent = `${sketchRegistry.length} / 15 sketches uploaded`;
+}
+
+function updateSketch(idx, field, val) {
+  if (sketchRegistry[idx]) { sketchRegistry[idx][field] = val; queueSave(); }
+}
+
+async function deleteSketch(idx) {
+  if (!confirm('Remove this sketch?')) return;
+  const sk = sketchRegistry[idx];
+  if (sk && sk.path) {
+    const { storage, ref, deleteObject } = window._fb;
+    try { await deleteObject(ref(storage, sk.path)); } catch(e) { console.warn(e); }
+  }
+  sketchRegistry.splice(idx, 1);
+  renderSketchGrid();
+  queueSave();
+}
+
+// ─── TAB SWITCHING ───────────────────────────────────
+function switchDay(day, btn) {
+  document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.day-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(day).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ─── PDF EXPORT ──────────────────────────────────────
+function exportPDF() {
+  document.querySelectorAll('.day-panel').forEach(p => p.classList.add('active'));
+  window.print();
+  setTimeout(() => {
+    document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('day1').classList.add('active');
+    document.querySelectorAll('.day-tab').forEach((t,i) => { if(i===0) t.classList.add('active'); else t.classList.remove('active'); });
+  }, 1500);
+}
+</script>
+</body>
+</html>
