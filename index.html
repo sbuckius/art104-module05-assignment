@@ -43,6 +43,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--peat);
 .firebase-badge{position:absolute;top:1.2rem;right:2rem;z-index:2;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:.25rem .75rem;color:var(--leaf);}
 .firebase-badge.connected{background:rgba(168,200,150,.25);color:#c8f0b0;}
 
+/* UPLOAD BANNER */
+.upload-banner{background:#f0f4ff;border-bottom:1.5px solid #b8c8f0;padding:.7rem 3rem;}
+.upload-banner-inner{display:flex;gap:.8rem;align-items:flex-start;max-width:1020px;margin:0 auto;font-size:.77rem;color:#334;line-height:1.55;}
+.upload-banner strong{color:#2244aa;}
+
 /* COLLAB BANNER */
 .collab-banner{background:#eef6e8;border-bottom:2px solid var(--leaf);padding:.8rem 3rem;}
 .collab-banner-inner{display:flex;gap:.9rem;align-items:flex-start;max-width:1020px;margin:0 auto;font-size:.8rem;color:var(--peat);line-height:1.55;}
@@ -227,7 +232,7 @@ details[open] .ctx-box summary::before{content:'▾';}
   body{background:white;font-size:9.5pt;}
   .site-header{background:#3d5a2e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:1rem;}
   /* hide ALL UI chrome AND context boxes */
-  .setup-panel,.status-bar,.day-tabs,.export-bar,.collab-banner,
+  .setup-panel,.status-bar,.day-tabs,.export-bar,.collab-banner,.upload-banner,
   .add-row-btn,.remove-row-btn,.img-del,.sketch-del,
   .btn,.config-overlay,.ctx-box,details{display:none!important;}
   .day-panel{display:block!important;}
@@ -280,6 +285,20 @@ details[open] .ctx-box summary::before{content:'▾';}
     <div>
       <strong>Multiple people can work at the same time</strong> — each field saves independently, so teammates typing in <em>different</em> fields will never overwrite each other.
       <span class="collab-rule">⚠ One rule: only one person should type in the <em>same</em> field at a time. Last to stop typing wins.</span>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD INFO BANNER -->
+<div class="upload-banner">
+  <div class="upload-banner-inner">
+    <span style="font-size:1.2rem;flex-shrink:0;">📎</span>
+    <div>
+      <strong>File uploads:</strong> All upload buttons accept <strong>any file type</strong> — images (JPG, PNG, GIF, WebP, SVG), PDFs, Word docs, PowerPoints, videos, and more.
+      &nbsp;|&nbsp; <strong>Max size: 25 MB per file.</strong> &nbsp;|&nbsp;
+      Files are stored in Firebase Storage and shared with your whole group in real time.
+      Image files will show a preview thumbnail; other file types will show a file icon with a link to open them.
+      &nbsp;|&nbsp; <strong>Make sure you are logged into Firebase and your Storage rules allow writes</strong> — if uploads fail, check the browser console for the error.
     </div>
   </div>
 </div>
@@ -378,26 +397,29 @@ details[open] .ctx-box summary::before{content:'▾';}
 
             <details>
               <div class="ctx-box">
-                <summary><span class="ctx-label">Instructions</span> Theme Overview — click to expand</summary>
-                <p>Select a theme for the focus of your project from the list above. Summarize 5 interesting ideas related to this theme that you might want to consider, investigate, critique, or grapple with in your project.</p>
-                <p style="margin-top:.4rem;"><strong>Resources:</strong></p>
+                <summary><span class="ctx-label">Instructions &amp; Resources</span> Theme Overview (Slide 1) — click to expand</summary>
+                <p><strong>Select a theme</strong> for the focus of your project from the list. If you have an idea for another theme that fits under the larger theme of Nature/Ecology/Environment/Biology, run it by the instructor.</p>
+                <p style="margin-top:.5rem;"><strong>Resources &amp; Lists:</strong></p>
                 <ul>
-                  <li><a href="https://sbuckius.github.io/art104-reality-module04-links-3/" target="_blank">Module 04 Links Page</a></li>
-                  <li><a href="https://docs.google.com/spreadsheets/d/16bw23P12hHslymqK8FpnLhSoGs2hGlLq9NJ9MNY3f-4/edit?gid=1512360011#gid=1512360011" target="_blank">Resource Spreadsheet</a></li>
-                  <li><a href="https://sbuckius.github.io/art104-group-matcher-module04/" target="_blank">Group Matcher Tool</a></li>
+                  <li><a href="https://sbuckius.github.io/art104-module05-links-nature/" target="_blank">MODULE 05 Links Page</a></li>
+                  <li><a href="https://docs.google.com/spreadsheets/d/1mypGCudHXmgEPuRrKEhf7PfQv0Paz9K78H4PXE5SyKA/edit?gid=0#gid=0" target="_blank">MODULE 05 Link Spreadsheet</a></li>
+                  <li><a href="https://sbuckius.github.io/art104-module05-team-matcher/" target="_blank">MODULE 05 Team Matcher</a></li>
+                  <li><a href="https://docs.google.com/presentation/d/15p7EIQtbQmz3FdFJ_lt05YcyISlNIk3shLk7enhZmo4/edit?usp=drive_link" target="_blank">Presentation Template (Day 1)</a></li>
                 </ul>
-                <p style="margin-top:.4rem;"><strong>Possible Themes:</strong> Activist, Critical &amp; Dialogic Practices · Artificial Life · Biotech &amp; Genetics · Telepresence &amp; Remote Ecologies · Hidden Ecology of the Internet · Virtual Nature &amp; Immersive Space · Interspecies &amp; Post-human · Ecocriticism &amp; Climate Media</p>
+                <p style="margin-top:.5rem;"><strong>What to do:</strong> Summarize interesting ideas related to this theme that you might want to consider, investigate, critique, or grapple with in your project. Give at least 5 bullet points (1 point each).</p>
+                <p style="margin-top:.5rem;"><strong>Possible Themes:</strong> Activist, Critical &amp; Dialogic Practices · Artificial Life · Biotech &amp; Genetics · Telepresence &amp; Remote Ecologies · Hidden Ecology of the Internet · Virtual Nature &amp; Immersive Space · Interspecies &amp; Post-human · Ecocriticism &amp; Climate Media</p>
+                <p style="margin-top:.5rem;"><em>Note: Subthemes are up to you. Look at the articles after deciding on a theme to help narrow your subtheme.</em></p>
               </div>
             </details>
 
             <div class="field-label">Theme Overview — 5 Key Ideas <span class="pts-tag">1 pt each</span></div>
-            <div class="field-desc">Summarize interesting ideas related to your theme that you might want to consider, investigate, critique, or grapple with.</div>
+            <div class="field-desc">Summarize interesting ideas related to your theme that you might want to consider, investigate, critique, or grapple with in your project.</div>
             <div class="bullet-group" id="tech-bullets"></div>
             <div class="img-upload-section">
               <div class="img-label">📎 Supporting Images <span>optional</span></div>
               <div class="img-upload-grid" id="grid-tech-overview"></div>
-              <input type="file" class="img-file-input" id="file-tech-overview" accept="image/*" multiple onchange="handleImageUpload('tech-overview',this)">
-              <button class="add-row-btn" onclick="document.getElementById('file-tech-overview').click()">+ Add Images</button>
+              <input type="file" class="img-file-input" id="file-tech-overview" accept="*/*" multiple onchange="handleImageUpload('tech-overview',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-tech-overview').click()">+ Add Files</button>
               <div class="img-count-bar" id="count-tech-overview"></div>
             </div>
           </div>
@@ -408,12 +430,13 @@ details[open] .ctx-box summary::before{content:'▾';}
 
             <details>
               <div class="ctx-box">
-                <summary><span class="ctx-label">Instructions</span> Theme Timeline — click to expand</summary>
-                <p>Create a timeline that includes important milestones in the history related to your theme — digital technology, computer technology, or other relevant events showing progress in this area. Add images to timeline rows for a visual timeline display.</p>
-                <p style="margin-top:.4rem;"><strong>Resources:</strong></p>
+                <summary><span class="ctx-label">Instructions &amp; Resources</span> Theme Timeline (Slide 2) — click to expand</summary>
+                <p>Create a timeline for your theme that includes important milestones in the history of digital technology, computer technology, or other relevant technologies or things that show technological/cultural progress in this area. <strong>7 points.</strong></p>
+                <p style="margin-top:.5rem;">Add an image to each row — they will appear in the visual timeline preview below.</p>
+                <p style="margin-top:.5rem;"><strong>Resources:</strong></p>
                 <ul>
-                  <li><a href="https://sbuckius.github.io/art104-reality-module04-links-3/" target="_blank">Module 04 Links Page</a></li>
-                  <li><a href="https://docs.google.com/spreadsheets/d/16bw23P12hHslymqK8FpnLhSoGs2hGlLq9NJ9MNY3f-4/edit?gid=1512360011#gid=1512360011" target="_blank">Resource Spreadsheet</a></li>
+                  <li><a href="https://sbuckius.github.io/art104-module05-links-nature/" target="_blank">MODULE 05 Links Page</a></li>
+                  <li><a href="https://docs.google.com/spreadsheets/d/1mypGCudHXmgEPuRrKEhf7PfQv0Paz9K78H4PXE5SyKA/edit?gid=0#gid=0" target="_blank">MODULE 05 Link Spreadsheet</a></li>
                 </ul>
               </div>
             </details>
@@ -443,21 +466,32 @@ details[open] .ctx-box summary::before{content:'▾';}
 
           <details>
             <div class="ctx-box">
-              <summary><span class="ctx-label">Instructions</span> How to find articles — click to expand</summary>
-              <p>Find 2 articles related to an interest your group has at the intersection of <strong>Nature/Ecology/Environment/Biology</strong> and your chosen theme. <strong>One article must be peer-reviewed.</strong></p>
-              <p style="margin-top:.4rem;"><strong>Peer-reviewed sources:</strong></p>
+              <summary><span class="ctx-label">Instructions &amp; Resources</span> Article Discussion Overview (Slides 3 &amp; 4) — click to expand</summary>
+              <p>Find <strong>2 interdisciplinary articles</strong> that relate to an interest your group has when it comes to Nature/Ecology/Environment/Biology &amp; your theme.</p>
+              <ul style="margin-top:.4rem;">
+                <li><strong>One article must be peer-reviewed.</strong></li>
+                <li>One article can be any other type of article.</li>
+              </ul>
+              <p style="margin-top:.5rem;"><strong>Peer-reviewed article ideas:</strong></p>
               <ul>
-                <li><a href="https://library.sjsu.edu/" target="_blank">SJSU Library</a></li>
                 <li><a href="https://drive.google.com/drive/folders/1mNJmZ5Xl1MWTTmLNPhoY-y0EIkSFeOrR?usp=drive_link" target="_blank">Provided Article Folder (Google Drive)</a></li>
+                <li><a href="https://sbuckius.github.io/art104-module05-links-nature/" target="_blank">MODULE 05 Links Page</a></li>
+                <li><a href="https://docs.google.com/spreadsheets/d/1mypGCudHXmgEPuRrKEhf7PfQv0Paz9K78H4PXE5SyKA/edit?gid=0#gid=0" target="_blank">MODULE 05 Link Spreadsheet</a></li>
+                <li><a href="https://library.sjsu.edu/" target="_blank">SJSU Library</a></li>
               </ul>
-              <p style="margin-top:.4rem;"><strong>Other article sources:</strong></p>
+              <p style="margin-top:.5rem;"><strong>Other article sources:</strong></p>
               <ul>
-                <li><a href="https://www.wired.com/" target="_blank">Wired</a> · <a href="https://arstechnica.com/" target="_blank">Ars Technica</a> · <a href="https://futurism.com/" target="_blank">Futurism</a></li>
-                <li><a href="https://www.forbes.com/" target="_blank">Forbes</a> · <a href="https://www.popularmechanics.com/" target="_blank">Popular Mechanics</a></li>
-                <li><a href="https://interestingengineering.com/" target="_blank">Interesting Engineering</a> · <a href="https://www.nytimes.com/" target="_blank">New York Times</a></li>
-                <li><a href="https://docs.google.com/spreadsheets/d/16bw23P12hHslymqK8FpnLhSoGs2hGlLq9NJ9MNY3f-4/edit?usp=drive_link" target="_blank">Resource Spreadsheet</a></li>
-                <li><a href="https://sbuckius.github.io/art104-reality-module04-links-3/" target="_blank">Module 04 Links Page</a></li>
+                <li><a href="https://www.wired.com/" target="_blank">Wired</a> — <a href="https://www.allsides.com/news-source/wired-media-bias" target="_blank">media bias info</a></li>
+                <li><a href="https://arstechnica.com/" target="_blank">Ars Technica</a> — <a href="https://www.allsides.com/news-source/ars-technica-media-bias" target="_blank">media bias info</a></li>
+                <li><a href="https://futurism.com/" target="_blank">Futurism</a> — <a href="https://mediabiasfactcheck.com/futurism/" target="_blank">media bias info</a></li>
+                <li><a href="https://www.forbes.com/" target="_blank">Forbes</a> — <a href="https://www.allsides.com/news-source/forbes-media-bias" target="_blank">media bias info</a></li>
+                <li><a href="https://www.popularmechanics.com/" target="_blank">Popular Mechanics</a> — <a href="https://mediabiasfactcheck.com/popular-mechanics/" target="_blank">media bias info</a></li>
+                <li><a href="https://interestingengineering.com/" target="_blank">Interesting Engineering</a> — <a href="https://mediabiasfactcheck.com/interesting-engineering-bias-and-credibility/" target="_blank">media bias info</a></li>
+                <li><a href="https://www.nytimes.com/" target="_blank">New York Times</a> — <a href="https://www.allsides.com/news-source/new-york-times-opinion-media-bias" target="_blank">media bias info</a></li>
+                <li><a href="https://docs.google.com/spreadsheets/d/1mypGCudHXmgEPuRrKEhf7PfQv0Paz9K78H4PXE5SyKA/edit?gid=0#gid=0" target="_blank">MODULE 05 Link Spreadsheet</a></li>
+                <li><a href="https://sbuckius.github.io/art104-module05-links-nature/" target="_blank">MODULE 05 Links Page</a></li>
               </ul>
+              <p style="margin-top:.5rem;"><strong>Presentation Template (Day 1):</strong> <a href="https://docs.google.com/presentation/d/15p7EIQtbQmz3FdFJ_lt05YcyISlNIk3shLk7enhZmo4/edit?usp=drive_link" target="_blank">Open Template</a></p>
             </div>
           </details>
 
@@ -472,8 +506,9 @@ details[open] .ctx-box summary::before{content:'▾';}
 
             <details>
               <div class="ctx-box">
-                <summary><span class="ctx-label">Instructions</span> Key Themes &amp; Ideas — click to expand</summary>
-                <p>Write 2-3 sentences + 3 bullet points. What themes are raised by the article related to Nature/Ecology/Environment/Biology that interest your group for your project?</p>
+                <summary><span class="ctx-label">Instructions</span> Article 1: Key Themes &amp; Ideas — click to expand</summary>
+                <p><strong>What themes are raised by the article related to Nature/Ecology/Environment/Biology that interest your group for your project?</strong></p>
+                <p style="margin-top:.4rem;">Write 2-3 sentences + 3 bullet points. <em>20 points.</em></p>
               </div>
             </details>
             <div class="field-label">Key Themes &amp; Ideas <span class="pts-tag">20 pts</span></div>
@@ -483,8 +518,18 @@ details[open] .ctx-box summary::before{content:'▾';}
 
             <details style="margin-top:.9rem;">
               <div class="ctx-box">
-                <summary><span class="ctx-label">Instructions</span> Personal Response — click to expand</summary>
-                <p>Write 1 paragraph + 3 bullet points. Describe your reaction/response. Include questions it raises, opinions, connections to other ideas, future research ideas, ethical or cultural concerns. What makes this article interesting and useful for your project? You can include multiple group members' responses or select one lead.</p>
+                <summary><span class="ctx-label">Instructions</span> Article 1: Personal Response — click to expand</summary>
+                <p>Write 1 paragraph + 3 bullet points. <strong>Describe your reaction/response.</strong> This can include:</p>
+                <ul style="margin-top:.3rem;">
+                  <li>Questions that the article raises for you</li>
+                  <li>Opinions you have</li>
+                  <li>Thoughts about how it connects to other ideas</li>
+                  <li>Ideas about future areas of research</li>
+                  <li>Other personal reflections on its importance</li>
+                  <li>Ethical concerns or cultural concerns</li>
+                </ul>
+                <p style="margin-top:.4rem;"><strong>What makes this article interesting to you and useful as you work on your project?</strong></p>
+                <p style="margin-top:.3rem;"><em>You can include multiple group members' responses or select one to be the lead. 20 points.</em></p>
               </div>
             </details>
             <div class="field-label" style="margin-top:.9rem;">Personal Response <span class="pts-tag">20 pts</span></div>
@@ -494,11 +539,16 @@ details[open] .ctx-box summary::before{content:'▾';}
 
             <details style="margin-top:.9rem;">
               <div class="ctx-box">
-                <summary><span class="ctx-label">Instructions</span> Interdisciplinary Issues — click to expand</summary>
-                <p>Write 2 sentences + 2 bullet points. Describe how one issue raised by the article is interdisciplinary in nature. How does it connect different ideas between academic disciplines?</p>
+                <summary><span class="ctx-label">Instructions</span> Article 1: Contextual/Interdisciplinary Issues — click to expand</summary>
+                <p>Write 2 sentences + 2 bullet points.</p>
+                <ul style="margin-top:.3rem;">
+                  <li>Describe how <strong>one issue that is raised by the article is interdisciplinary in nature.</strong></li>
+                  <li>How does it connect different ideas between academic disciplines?</li>
+                </ul>
+                <p style="margin-top:.3rem;"><em>2.5 points.</em></p>
               </div>
             </details>
-            <div class="field-label" style="margin-top:.9rem;">Interdisciplinary Issues <span class="pts-tag">2.5 pts</span></div>
+            <div class="field-label" style="margin-top:.9rem;">Contextual/Interdisciplinary Issues <span class="pts-tag">2.5 pts</span></div>
             <div class="respondent-row"><label>Your name:</label><input type="text" class="respondent-input" id="art1-interdis-name" data-field-id="art1-interdis-name" placeholder="Who is writing this?" oninput="saveField('art1-interdis-name',this.value)"></div>
             <textarea id="art1-interdis" data-field-id="art1-interdis" rows="3" placeholder="Describe the interdisciplinary connection…" oninput="saveField('art1-interdis',this.value)"></textarea>
             <div class="bullet-group" id="art1-interdis-bullets"></div>
@@ -506,8 +556,8 @@ details[open] .ctx-box summary::before{content:'▾';}
             <div class="img-upload-section" style="margin-top:.8rem;">
               <div class="img-label">📎 Article 1 Images <span>optional — diagrams, screenshots, figures</span></div>
               <div class="img-upload-grid" id="grid-art1"></div>
-              <input type="file" class="img-file-input" id="file-art1" accept="image/*" multiple onchange="handleImageUpload('art1',this)">
-              <button class="add-row-btn" onclick="document.getElementById('file-art1').click()">+ Add Images</button>
+              <input type="file" class="img-file-input" id="file-art1" accept="*/*" multiple onchange="handleImageUpload('art1',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-art1').click()">+ Add Files</button>
               <div class="img-count-bar" id="count-art1"></div>
             </div>
           </div>
@@ -521,17 +571,51 @@ details[open] .ctx-box summary::before{content:'▾';}
             <div class="field-label">Citation / Title / Link</div>
             <input type="text" class="short-text" id="art2-cite" data-field-id="art2-cite" placeholder="Title, author, source, URL" oninput="saveField('art2-cite',this.value)" style="margin-bottom:.8rem;">
 
+            <details>
+              <div class="ctx-box">
+                <summary><span class="ctx-label">Instructions</span> Article 2: Key Themes &amp; Ideas — click to expand</summary>
+                <p><strong>What themes are raised by the article related to Nature/Ecology/Environment/Biology that interest your group for your project?</strong></p>
+                <p style="margin-top:.4rem;">Write 2-3 sentences + 3 bullet points. <em>20 points.</em></p>
+              </div>
+            </details>
             <div class="field-label">Key Themes &amp; Ideas <span class="pts-tag">20 pts</span></div>
             <div class="respondent-row"><label>Your name:</label><input type="text" class="respondent-input" id="art2-themes-name" data-field-id="art2-themes-name" placeholder="Who is writing this?" oninput="saveField('art2-themes-name',this.value)"></div>
             <textarea id="art2-themes" data-field-id="art2-themes" rows="4" placeholder="Write 2-3 sentences…" oninput="saveField('art2-themes',this.value)"></textarea>
             <div class="bullet-group" id="art2-theme-bullets"></div>
 
+            <details style="margin-top:.9rem;">
+              <div class="ctx-box">
+                <summary><span class="ctx-label">Instructions</span> Article 2: Personal Response — click to expand</summary>
+                <p>Write 1 paragraph + 3 bullet points. <strong>Describe your reaction/response.</strong> This can include:</p>
+                <ul style="margin-top:.3rem;">
+                  <li>Questions that the article raises for you</li>
+                  <li>Opinions you have</li>
+                  <li>Thoughts about how it connects to other ideas</li>
+                  <li>Ideas about future areas of research</li>
+                  <li>Other personal reflections on its importance</li>
+                  <li>Ethical concerns or cultural concerns</li>
+                </ul>
+                <p style="margin-top:.4rem;"><strong>What makes this article interesting to you and useful as you work on your project?</strong></p>
+                <p style="margin-top:.3rem;"><em>You can include multiple group members' responses or select one to be the lead. 20 points.</em></p>
+              </div>
+            </details>
             <div class="field-label" style="margin-top:.9rem;">Personal Response <span class="pts-tag">20 pts</span></div>
             <div class="respondent-row"><label>Your name:</label><input type="text" class="respondent-input" id="art2-response-name" data-field-id="art2-response-name" placeholder="Who is writing this?" oninput="saveField('art2-response-name',this.value)"></div>
             <textarea id="art2-response" data-field-id="art2-response" rows="5" placeholder="Your group's reaction/response…" oninput="saveField('art2-response',this.value)"></textarea>
             <div class="bullet-group" id="art2-resp-bullets"></div>
 
-            <div class="field-label" style="margin-top:.9rem;">Interdisciplinary Issues <span class="pts-tag">2.5 pts</span></div>
+            <details style="margin-top:.9rem;">
+              <div class="ctx-box">
+                <summary><span class="ctx-label">Instructions</span> Article 2: Contextual/Interdisciplinary Issues — click to expand</summary>
+                <p>Write 2 sentences + 2 bullet points.</p>
+                <ul style="margin-top:.3rem;">
+                  <li>Describe how <strong>one issue that is raised by the article is interdisciplinary in nature.</strong></li>
+                  <li>How does it connect different ideas between academic disciplines?</li>
+                </ul>
+                <p style="margin-top:.3rem;"><em>2.5 points.</em></p>
+              </div>
+            </details>
+            <div class="field-label" style="margin-top:.9rem;">Contextual/Interdisciplinary Issues <span class="pts-tag">2.5 pts</span></div>
             <div class="respondent-row"><label>Your name:</label><input type="text" class="respondent-input" id="art2-interdis-name" data-field-id="art2-interdis-name" placeholder="Who is writing this?" oninput="saveField('art2-interdis-name',this.value)"></div>
             <textarea id="art2-interdis" data-field-id="art2-interdis" rows="3" placeholder="Describe the interdisciplinary connection…" oninput="saveField('art2-interdis',this.value)"></textarea>
             <div class="bullet-group" id="art2-interdis-bullets"></div>
@@ -539,8 +623,8 @@ details[open] .ctx-box summary::before{content:'▾';}
             <div class="img-upload-section" style="margin-top:.8rem;">
               <div class="img-label">📎 Article 2 Images <span>optional</span></div>
               <div class="img-upload-grid" id="grid-art2"></div>
-              <input type="file" class="img-file-input" id="file-art2" accept="image/*" multiple onchange="handleImageUpload('art2',this)">
-              <button class="add-row-btn" onclick="document.getElementById('file-art2').click()">+ Add Images</button>
+              <input type="file" class="img-file-input" id="file-art2" accept="*/*" multiple onchange="handleImageUpload('art2',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-art2').click()">+ Add Files</button>
               <div class="img-count-bar" id="count-art2"></div>
             </div>
           </div>
@@ -555,11 +639,21 @@ details[open] .ctx-box summary::before{content:'▾';}
 
           <details>
             <div class="ctx-box">
-              <summary><span class="ctx-label">Instructions</span> How to choose artworks — click to expand</summary>
-              <p>Select an Artist/Artwork from the list in the spreadsheet. Artworks <strong>do not need to relate</strong> to your theme or technology.</p>
+              <summary><span class="ctx-label">Instructions &amp; Resources</span> Artwork Discussion Overview (Slides 5 &amp; 6) — click to expand</summary>
+              <p>Select an Artist/Artwork from the list in the spreadsheet for each slide. <strong>Artworks do NOT need to relate to your theme.</strong></p>
+              <p style="margin-top:.5rem;"><strong>Artist Resources:</strong></p>
               <ul>
-                <li><a href="https://docs.google.com/spreadsheets/d/16bw23P12hHslymqK8FpnLhSoGs2hGlLq9NJ9MNY3f-4/edit?gid=644703742#gid=644703742" target="_blank">Artist Spreadsheet (tab: Artists)</a></li>
-                <li><a href="https://sbuckius.github.io/art104-reality-module04-links-3/" target="_blank">Module 04 Links Page</a></li>
+                <li><a href="https://docs.google.com/spreadsheets/d/1mypGCudHXmgEPuRrKEhf7PfQv0Paz9K78H4PXE5SyKA/edit?gid=0#gid=0" target="_blank">Artist Spreadsheet (Artists tab)</a></li>
+                <li><a href="https://sbuckius.github.io/art104-module05-links-nature/" target="_blank">MODULE 05 Links Page</a></li>
+              </ul>
+              <p style="margin-top:.5rem;"><strong>For each artist, discuss:</strong></p>
+              <ul>
+                <li>The artwork &amp; artist's concept/content as it relates to digital media art</li>
+                <li>Key themes evident in the work</li>
+                <li>How this piece is important in digital media art history</li>
+                <li>How this work reflects ideas important to the theme of Nature/Ecology/Environment/Biology</li>
+                <li>Key technologies used or highlighted in the work</li>
+                <li>A personal response</li>
               </ul>
             </div>
           </details>
@@ -575,15 +669,20 @@ details[open] .ctx-box summary::before{content:'▾';}
             <div class="img-upload-section" style="margin-bottom:.8rem;">
               <div class="img-label">🖼 Artwork Image(s)</div>
               <div class="img-upload-grid" id="grid-a1-art"></div>
-              <input type="file" class="img-file-input" id="file-a1-art" accept="image/*" multiple onchange="handleImageUpload('a1-art',this)">
-              <button class="add-row-btn" onclick="document.getElementById('file-a1-art').click()">+ Add Artwork Image</button>
+              <input type="file" class="img-file-input" id="file-a1-art" accept="*/*" multiple onchange="handleImageUpload('a1-art',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-a1-art').click()">+ Add Artwork File</button>
               <div class="img-count-bar" id="count-a1-art"></div>
             </div>
 
             <details>
               <div class="ctx-box">
-                <summary><span class="ctx-label">Instructions</span> Digital Media Concepts — click to expand</summary>
-                <p>Discuss the artwork &amp; artist's concept/content as it relates to digital media art. What are the key themes evident in the work? How is this piece important in digital media art history?</p>
+                <summary><span class="ctx-label">Instructions</span> Artist 1: Digital Media Concepts — click to expand</summary>
+                <p><strong>Discuss the artwork &amp; artist's concept/content as it relates to digital media art.</strong></p>
+                <ul style="margin-top:.3rem;">
+                  <li>What are the key themes evident in the work?</li>
+                  <li>How is this piece important in digital media art history?</li>
+                </ul>
+                <p style="margin-top:.3rem;"><em>5 points.</em></p>
               </div>
             </details>
             <div class="field-label">Digital Media Concepts — Key Themes <span class="pts-tag">5 pts</span></div>
@@ -594,22 +693,39 @@ details[open] .ctx-box summary::before{content:'▾';}
 
             <details style="margin-top:.7rem;">
               <div class="ctx-box">
-                <summary><span class="ctx-label">Instructions</span> Nature/Ecology Concepts — click to expand</summary>
-                <p>Discuss how this work reflects ideas important to the theme of Nature/Ecology/Environment/Biology.</p>
+                <summary><span class="ctx-label">Instructions</span> Artist 1: Nature/Ecology/Environment/Biology Concepts — click to expand</summary>
+                <p><strong>Discuss how this work reflects ideas important to the theme of Nature/Ecology/Environment/Biology.</strong></p>
+                <p style="margin-top:.3rem;"><em>5 points.</em></p>
               </div>
             </details>
             <div class="field-label" style="margin-top:.7rem;">Nature/Ecology/Environment/Biology Concepts <span class="pts-tag">5 pts</span></div>
             <div class="respondent-row"><label>Your name:</label><input type="text" class="respondent-input" id="a1-reality-name" data-field-id="a1-reality-name" placeholder="Who is writing this?" oninput="saveField('a1-reality-name',this.value)"></div>
             <textarea id="a1-reality" data-field-id="a1-reality" rows="3" placeholder="How does this reflect ideas important to Nature/Ecology/Environment/Biology?" oninput="saveField('a1-reality',this.value)"></textarea>
 
+            <details style="margin-top:.7rem;">
+              <div class="ctx-box">
+                <summary><span class="ctx-label">Instructions</span> Artist 1: Digital Media Art Technology — click to expand</summary>
+                <p><strong>What are the key technologies used or highlighted in the work?</strong></p>
+                <p style="margin-top:.3rem;"><em>5 points.</em></p>
+              </div>
+            </details>
             <div class="field-label" style="margin-top:.7rem;">Digital Media Art Technology <span class="pts-tag">5 pts</span></div>
             <div class="respondent-row"><label>Your name:</label><input type="text" class="respondent-input" id="a1-tech-name" data-field-id="a1-tech-name" placeholder="Who is writing this?" oninput="saveField('a1-tech-name',this.value)"></div>
             <textarea id="a1-tech" data-field-id="a1-tech" rows="2" placeholder="Key technologies used or highlighted…" oninput="saveField('a1-tech',this.value)"></textarea>
 
             <details style="margin-top:.7rem;">
               <div class="ctx-box">
-                <summary><span class="ctx-label">Instructions</span> Personal Response — click to expand</summary>
-                <p>What is interesting or inspirational about this work to you? What questions does it raise? What do you like or dislike about it? How does it relate to your lived experience? How does it connect to your interest in digital media art and computer technology?</p>
+                <summary><span class="ctx-label">Instructions</span> Artist 1: Personal Response — click to expand</summary>
+                <p>Respond personally to this artwork. Consider any of the following:</p>
+                <ul style="margin-top:.3rem;">
+                  <li>What is interesting or inspirational about this work to you?</li>
+                  <li>What questions does it raise for you?</li>
+                  <li>What do you like or dislike about it?</li>
+                  <li>How does it relate to your lived experience?</li>
+                  <li>How does it connect to your interest in digital media art?</li>
+                  <li>How does it connect to your interest in computer technology?</li>
+                </ul>
+                <p style="margin-top:.3rem;"><em>10 points.</em></p>
               </div>
             </details>
             <div class="field-label" style="margin-top:.7rem;">Personal Response <span class="pts-tag">10 pts</span></div>
@@ -628,22 +744,62 @@ details[open] .ctx-box summary::before{content:'▾';}
             <div class="img-upload-section" style="margin-bottom:.8rem;">
               <div class="img-label">🖼 Artwork Image(s)</div>
               <div class="img-upload-grid" id="grid-a2-art"></div>
-              <input type="file" class="img-file-input" id="file-a2-art" accept="image/*" multiple onchange="handleImageUpload('a2-art',this)">
-              <button class="add-row-btn" onclick="document.getElementById('file-a2-art').click()">+ Add Artwork Image</button>
+              <input type="file" class="img-file-input" id="file-a2-art" accept="*/*" multiple onchange="handleImageUpload('a2-art',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-a2-art').click()">+ Add Artwork File</button>
               <div class="img-count-bar" id="count-a2-art"></div>
             </div>
 
+            <details>
+              <div class="ctx-box">
+                <summary><span class="ctx-label">Instructions</span> Artist 2: Digital Media Concepts — click to expand</summary>
+                <p><strong>Discuss the artwork &amp; artist's concept/content as it relates to digital media art.</strong></p>
+                <ul style="margin-top:.3rem;">
+                  <li>What are the key themes evident in the work?</li>
+                  <li>How is this piece important in digital media art history?</li>
+                </ul>
+                <p style="margin-top:.3rem;"><em>5 points.</em></p>
+              </div>
+            </details>
             <div class="field-label">Digital Media Concepts — Key Themes <span class="pts-tag">5 pts</span></div>
             <div class="respondent-row"><label>Your name:</label><input type="text" class="respondent-input" id="a2-concepts-name" data-field-id="a2-concepts-name" placeholder="Who is writing this?" oninput="saveField('a2-concepts-name',this.value)"></div>
             <textarea id="a2-concepts" data-field-id="a2-concepts" rows="3" placeholder="Concept/content as it relates to digital media art…" oninput="saveField('a2-concepts',this.value)"></textarea>
             <div class="field-label" style="margin-top:.7rem;">Importance in Digital Media Art History</div>
             <textarea id="a2-history" data-field-id="a2-history" rows="2" placeholder="Why is this piece historically important?" oninput="saveField('a2-history',this.value)"></textarea>
+            <details style="margin-top:.7rem;">
+              <div class="ctx-box">
+                <summary><span class="ctx-label">Instructions</span> Artist 2: Nature/Ecology/Environment/Biology Concepts — click to expand</summary>
+                <p><strong>Discuss how this work reflects ideas important to the theme of Nature/Ecology/Environment/Biology.</strong></p>
+                <p style="margin-top:.3rem;"><em>5 points.</em></p>
+              </div>
+            </details>
             <div class="field-label" style="margin-top:.7rem;">Nature/Ecology/Environment/Biology Concepts <span class="pts-tag">5 pts</span></div>
             <div class="respondent-row"><label>Your name:</label><input type="text" class="respondent-input" id="a2-reality-name" data-field-id="a2-reality-name" placeholder="Who is writing this?" oninput="saveField('a2-reality-name',this.value)"></div>
             <textarea id="a2-reality" data-field-id="a2-reality" rows="3" placeholder="How does this reflect ideas important to Nature/Ecology/Environment/Biology?" oninput="saveField('a2-reality',this.value)"></textarea>
+            <details style="margin-top:.7rem;">
+              <div class="ctx-box">
+                <summary><span class="ctx-label">Instructions</span> Artist 2: Digital Media Art Technology — click to expand</summary>
+                <p><strong>What are the key technologies used or highlighted in the work?</strong></p>
+                <p style="margin-top:.3rem;"><em>5 points.</em></p>
+              </div>
+            </details>
             <div class="field-label" style="margin-top:.7rem;">Digital Media Art Technology <span class="pts-tag">5 pts</span></div>
             <div class="respondent-row"><label>Your name:</label><input type="text" class="respondent-input" id="a2-tech-name" data-field-id="a2-tech-name" placeholder="Who is writing this?" oninput="saveField('a2-tech-name',this.value)"></div>
             <textarea id="a2-tech" data-field-id="a2-tech" rows="2" placeholder="Key technologies used or highlighted…" oninput="saveField('a2-tech',this.value)"></textarea>
+            <details style="margin-top:.7rem;">
+              <div class="ctx-box">
+                <summary><span class="ctx-label">Instructions</span> Artist 2: Personal Response — click to expand</summary>
+                <p>Respond personally to this artwork. Consider any of the following:</p>
+                <ul style="margin-top:.3rem;">
+                  <li>What is interesting or inspirational about this work to you?</li>
+                  <li>What questions does it raise for you?</li>
+                  <li>What do you like or dislike about it?</li>
+                  <li>How does it relate to your lived experience?</li>
+                  <li>How does it connect to your interest in digital media art?</li>
+                  <li>How does it connect to your interest in computer technology?</li>
+                </ul>
+                <p style="margin-top:.3rem;"><em>20 points.</em></p>
+              </div>
+            </details>
             <div class="field-label" style="margin-top:.7rem;">Personal Response <span class="pts-tag">20 pts</span></div>
             <div class="respondent-row"><label>Your name:</label><input type="text" class="respondent-input" id="a2-personal-name" data-field-id="a2-personal-name" placeholder="Who is writing this?" oninput="saveField('a2-personal-name',this.value)"></div>
             <textarea id="a2-personal" data-field-id="a2-personal" rows="5" placeholder="Your personal response…" oninput="saveField('a2-personal',this.value)"></textarea>
@@ -662,18 +818,42 @@ details[open] .ctx-box summary::before{content:'▾';}
 
           <details>
             <div class="ctx-box">
-              <summary><span class="ctx-label">Instructions</span> Speculative Artwork Overview — click to expand</summary>
-              <p>Create a speculative artwork idea related to Nature/Ecology/Environment/Biology + your theme. See <a href="https://readings.design/PDF/speculative-everything.pdf" target="_blank">Speculative Everything (PDF)</a> for conceptual approaches. Ideas for inspiration: <a href="https://www.acuteart.com/discover" target="_blank">Acute Art</a>.</p>
-              <p style="margin-top:.4rem;"><strong>Possible conceptual approaches:</strong> Design a machine/device · Fictional world · Utopia/Dystopia · Idea as Story · What if? · Video Game Design · Thought Experiments · Reductio Ad Absurdum · Counterfactual · Tweaking the Everyday · Constructed Realities · Imaginary Institution · Chain Reactions</p>
-              <p style="margin-top:.4rem;"><strong>Possible depiction mediums:</strong> Hand sketches · Digital drawings · Illustrator 3D sketches · Blender render · Digital photography · p5.js code · Digital diagram. <strong>NOT permitted for final image:</strong> AI-generated images from Midjourney, Adobe Firefly, etc. (translate AI images into your own drawing if used for reference).</p>
-              <p style="margin-top:.4rem;"><strong>Inspiration links:</strong></p>
+              <summary><span class="ctx-label">Instructions &amp; Resources</span> Speculative Artwork Overview (Part 4) — click to expand</summary>
+              <p>Create a speculative artwork idea that is related to Nature/Ecology/Environment/Biology + your theme. See <a href="https://readings.design/PDF/speculative-everything.pdf" target="_blank">Speculative Everything (PDF)</a> for conceptual approaches. Ideas for inspiration: <a href="https://www.acuteart.com/discover" target="_blank">Acute Art — Discover</a>.</p>
+              <p style="margin-top:.5rem;"><strong>Possible Conceptual Approaches:</strong></p>
               <ul>
-                <li><a href="https://dunneandraby.co.uk/content/projects" target="_blank">Dunne &amp; Raby Projects</a></li>
-                <li><a href="https://www.lawrencelek.com/works" target="_blank">Lawrence Lek Works</a></li>
-                <li><a href="https://www.daisyginsberg.com/work/growth-assembly" target="_blank">Daisy Ginsberg — Growth Assembly</a></li>
-                <li><a href="https://anatomyof.ai/" target="_blank">Anatomy of AI</a></li>
-                <li><a href="https://openprocessing.org/sketch/2536968" target="_blank">OpenProcessing Example</a></li>
+                <li><strong>Nature/Ecology + Your Theme Design:</strong> Design your own Nature/Ecology + Your Theme machine/device/artwork that reflects concepts, inspirations, critiques of ideas at the intersection between your theme and Nature/Ecology. What would it look like? Utopian or dystopian slant?</li>
+                <li><strong>Fictional Worlds:</strong> Imagine a world that includes a device/technology of your creation. What is this world like? What does your device do? How does it work? What code would it need? Can you create an image, video game scene, or net art piece for this fictional world?</li>
+                <li><strong>Utopia/Dystopia:</strong> Present a utopian or dystopian view. Create an image for a scene from a video game or a net-art piece as the portal to this world.</li>
+                <li><strong>Idea As Story:</strong> Create a speculative artwork about a device/technology that exists in a story. What if it's set 50 million years in the future?</li>
+                <li><strong>What if?:</strong> What if your device/technology went rogue? Became your best friend? Could draw? What does it look like? How does it work?</li>
+                <li><strong>Video Game Design:</strong> Make a video game that involves imagined devices/technologies from your theme. What would they do, look like, how would they work? What would the setting be?</li>
+                <li><strong>Thought Experiments:</strong> What if your theme's technology were invented 1000 years ago? What if it made your work slower? What if it were implanted in your brain? What if it were designed only for a certain type of person?</li>
+                <li><strong>Reductio Ad Absurdum:</strong> Think of a claim about a technology/concept in your theme. Take it to the extreme — the result would be absurd, proving the original claim incorrect. How could you show this in an image, drawing, code, or video game?</li>
+                <li><strong>CounterFactual:</strong> Change a historical fact related to your theme to see what would happen if… What would the outcome be? <a href="https://en.wikipedia.org/wiki/Counterfactual_thinking" target="_blank">More on counterfactual thinking</a>.</li>
+                <li><strong>Tweaking the Everyday:</strong> Make a slight change to a technology of today to address a concern, idea, or experience you have with it.</li>
+                <li><strong>Constructed Realities &amp; Unrealities:</strong> Construct a new reality for your theme — possible or impossible.</li>
+                <li><strong>Imaginary Institution:</strong> Design a new company, organization, or institution related to your theme. What code would they employ? A website, video game, drawing, or video?</li>
+                <li><strong>Chain Reactions:</strong> Start with one idea. What is the chain reaction for the future if things evolve from this design?</li>
               </ul>
+              <p style="margin-top:.5rem;"><strong>Possible Depiction Mediums (a sketch is completely fine!):</strong></p>
+              <ul>
+                <li>Hand sketches on paper — <a href="https://spectrum.ieee.org/this-is-a-robotic-armpit" target="_blank">example 1</a>, <a href="https://www.artsy.net/artist/abu-bakarr-mansaray" target="_blank">Abu Bakarr Mansaray</a>, <a href="https://www.amycutler.com/drawings" target="_blank">Amy Cutler</a></li>
+                <li>Drawings/sketches in any digital program</li>
+                <li>Illustrator 3D sketches or Blender Render — <a href="https://dunneandraby.co.uk/content/projects/744/0" target="_blank">Dunne &amp; Raby example</a>, <a href="https://www.lawrencelek.com/works" target="_blank">Lawrence Lek</a></li>
+                <li>Digital Photography + Blender Render — <a href="https://dunneandraby.co.uk/content/projects/772/0" target="_blank">example</a></li>
+                <li>Drawing with p5.js or other code — <a href="https://showcase.p5js.org/#/2022-All/portrait-of-an-organic-machine/" target="_blank">p5.js example</a>, <a href="https://openprocessing.org/sketch/2536968" target="_blank">OpenProcessing example</a></li>
+                <li>Digital diagram — <a href="https://anatomyof.ai/" target="_blank">Anatomy of AI</a></li>
+                <li><a href="https://dunneandraby.co.uk/content/projects/773/0" target="_blank">Dunne &amp; Raby — Designs for an Overpopulated Planet</a></li>
+                <li><a href="https://www.daisyginsberg.com/work/growth-assembly" target="_blank">Daisy Ginsberg — Growth Assembly</a></li>
+                <li><a href="https://art-vista.com/paul-noble-a-cartography-of-the-self/" target="_blank">Paul Noble — A Cartography of the Self</a></li>
+                <li><a href="https://whitney.org/collection/works/13875" target="_blank">Whitney Museum — Example work</a></li>
+                <li><a href="https://archive.org/details/Luigi.Serafini..Codex.Seraphinianus_201608/page/n369/mode/2up" target="_blank">Codex Seraphinianus (Luigi Serafini)</a></li>
+                <li><a href="https://societeberlin.com/artists/petra-cortright/" target="_blank">Petra Cortright</a>, <a href="https://www.danzigergallery.com/artists/petra-cortright?view=slider#5" target="_blank">Danziger Gallery</a></li>
+                <li><a href="https://www.sfartscommission.org/content/art-proposals-new-southeast-community-center-plaza-sculpture-public-art-project#proposal" target="_blank">SF Arts Commission — Public Art Proposals</a></li>
+              </ul>
+              <p style="margin-top:.5rem;"><strong>⚠ NOT PERMITTED for the final image:</strong> AI-generated images directly from Midjourney, Adobe Firefly, or other AI programs. If you want to use AI for brainstorming, translate the image into a drawing or depiction of your own creation.</p>
+              <p style="margin-top:.5rem;"><strong>Presentation Template (Day 2):</strong> <a href="https://docs.google.com/presentation/d/1yKIMjn242OtrYyg_-vLrs87f_IYNGoLucjXlt2ZA97I/edit?usp=drive_link" target="_blank">Open Template</a></p>
             </div>
           </details>
 
@@ -691,8 +871,8 @@ details[open] .ctx-box summary::before{content:'▾';}
               <div class="sketch-gallery-title">Sketch Gallery</div>
               <div class="sketch-gallery-desc">Upload 10–15 hand-made sketches and idea drawings. Each card has a title and your name field. These must be your own work.</div>
               <div class="sketch-grid" id="sketch-grid"></div>
-              <input type="file" class="img-file-input" id="file-sketches" accept="image/*" multiple onchange="handleSketchUpload(this)">
-              <button class="add-row-btn" onclick="document.getElementById('file-sketches').click()">+ Add Sketches (select multiple)</button>
+              <input type="file" class="img-file-input" id="file-sketches" accept="*/*" multiple onchange="handleSketchUpload(this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-sketches').click()">+ Add Sketches / Files (select multiple)</button>
               <div class="img-count-bar" id="sketch-count">0 / 15 sketches uploaded</div>
             </div>
           </div>
@@ -707,8 +887,8 @@ details[open] .ctx-box summary::before{content:'▾';}
             <div class="img-upload-section" style="margin-top:.7rem;">
               <div class="img-label">🤖 AI Brainstorm Images <span>for reference only</span></div>
               <div class="img-upload-grid" id="grid-sp-ai"></div>
-              <input type="file" class="img-file-input" id="file-sp-ai" accept="image/*" multiple onchange="handleImageUpload('sp-ai',this)">
-              <button class="add-row-btn" onclick="document.getElementById('file-sp-ai').click()">+ Add AI Brainstorm Images</button>
+              <input type="file" class="img-file-input" id="file-sp-ai" accept="*/*" multiple onchange="handleImageUpload('sp-ai',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-sp-ai').click()">+ Add AI Brainstorm Files</button>
               <div class="img-count-bar" id="count-sp-ai"></div>
             </div>
           </div>
@@ -722,8 +902,8 @@ details[open] .ctx-box summary::before{content:'▾';}
             <div class="img-upload-section" style="margin-top:.7rem;">
               <div class="img-label">🎨 Final Artwork Image(s)</div>
               <div class="img-upload-grid" id="grid-sp-final"></div>
-              <input type="file" class="img-file-input" id="file-sp-final" accept="image/*" multiple onchange="handleImageUpload('sp-final',this)">
-              <button class="add-row-btn" onclick="document.getElementById('file-sp-final').click()">+ Upload Final Artwork</button>
+              <input type="file" class="img-file-input" id="file-sp-final" accept="*/*" multiple onchange="handleImageUpload('sp-final',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-sp-final').click()">+ Upload Final Artwork / File</button>
               <div class="img-count-bar" id="count-sp-final"></div>
             </div>
           </div>
@@ -735,8 +915,14 @@ details[open] .ctx-box summary::before{content:'▾';}
             <div class="field-owner"><label>Slide 4 owner:</label><input type="text" class="owner-input" id="sp-tech-owner" data-field-id="sp-tech-owner" placeholder="Team member name" oninput="saveField('sp-tech-owner',this.value)"></div>
             <details>
               <div class="ctx-box">
-                <summary><span class="ctx-label">Instructions</span> Digital Media Concepts — click to expand</summary>
-                <p>Discuss the concept/content as it relates to digital media art. Answers can be in outline form. Cover: key technologies used or highlighted; key themes; key formal elements (color, aesthetics, shapes, lines, glitches); importance in digital media art history.</p>
+                <summary><span class="ctx-label">Instructions</span> Slide 4: Digital Media Concepts — click to expand</summary>
+                <p>Discuss the concept/content as it relates to digital media art. <em>Answers here can be in outline form. 10 points.</em></p>
+                <ul style="margin-top:.4rem;">
+                  <li><strong>What are the key technologies used or highlighted in the work?</strong></li>
+                  <li><strong>What are the key themes evident in the work?</strong></li>
+                  <li><strong>What are the key formal elements</strong> (color, aesthetics, shapes, lines, glitches, etc.) in the work?</li>
+                  <li><strong>How is this piece important in digital media art history?</strong></li>
+                </ul>
               </div>
             </details>
             <div class="field-label">Digital Media Concepts <span class="pts-tag">10 pts</span></div>
@@ -756,8 +942,9 @@ details[open] .ctx-box summary::before{content:'▾';}
             <div class="field-owner"><label>Slide 5 owner:</label><input type="text" class="owner-input" id="sp-reality-owner" data-field-id="sp-reality-owner" placeholder="Team member name" oninput="saveField('sp-reality-owner',this.value)"></div>
             <details>
               <div class="ctx-box">
-                <summary><span class="ctx-label">Instructions</span> Nature/Ecology Concepts — click to expand</summary>
-                <p>Discuss how this work reflects ideas important to the theme of Nature/Ecology/Environment/Biology. Tie in articles and research. Answers can be in outline form.</p>
+                <summary><span class="ctx-label">Instructions</span> Slide 5: Nature/Ecology/Environment/Biology Concepts — click to expand</summary>
+                <p><strong>Discuss how this work reflects ideas important to the theme of Nature/Ecology/Environment/Biology.</strong> Tie in your articles and research where relevant.</p>
+                <p style="margin-top:.4rem;"><em>Answers can be in outline form. 15 points.</em></p>
               </div>
             </details>
             <div class="field-label">Nature/Ecology/Environment/Biology Concepts <span class="pts-tag">15 pts</span></div>
@@ -767,8 +954,8 @@ details[open] .ctx-box summary::before{content:'▾';}
             <div class="img-upload-section" style="margin-top:.7rem;">
               <div class="img-label">📎 Supporting Images <span>optional</span></div>
               <div class="img-upload-grid" id="grid-sp-reality"></div>
-              <input type="file" class="img-file-input" id="file-sp-reality" accept="image/*" multiple onchange="handleImageUpload('sp-reality',this)">
-              <button class="add-row-btn" onclick="document.getElementById('file-sp-reality').click()">+ Add Images</button>
+              <input type="file" class="img-file-input" id="file-sp-reality" accept="*/*" multiple onchange="handleImageUpload('sp-reality',this)">
+              <button class="add-row-btn" onclick="document.getElementById('file-sp-reality').click()">+ Add Files</button>
               <div class="img-count-bar" id="count-sp-reality"></div>
             </div>
           </div>
@@ -778,11 +965,13 @@ details[open] .ctx-box summary::before{content:'▾';}
             <div class="field-owner"><label>Slide 6 owner:</label><input type="text" class="owner-input" id="sp-artists-owner" data-field-id="sp-artists-owner" placeholder="Team member name" oninput="saveField('sp-artists-owner',this.value)"></div>
             <details>
               <div class="ctx-box">
-                <summary><span class="ctx-label">Instructions</span> Artist Connections — click to expand</summary>
-                <p>Discuss how this work connects to the work of 2 artists, either conceptually, technically, or formally. The artists you reference here <strong>do not need to be the ones you presented</strong> in Part 3. You can find other artists online or use ones your classmates presented. The key is to make connections — even sketchy ones — to your project.</p>
+                <summary><span class="ctx-label">Instructions</span> Slide 6: Artist Connections — click to expand</summary>
+                <p>Discuss how this work connects to the work of <strong>2 artists</strong>, either conceptually, technically, or formally.</p>
+                <p style="margin-top:.4rem;">The artists you reference here <strong>do not need to be the ones you presented</strong> in Part 3. You can find other artists online or use ones your classmates presented. The key is to practice creating linkages — even if they are sketchy or thin — to your project. <em>15 points.</em></p>
+                <p style="margin-top:.4rem;"><strong>Resources:</strong></p>
                 <ul>
-                  <li><a href="https://docs.google.com/spreadsheets/d/16bw23P12hHslymqK8FpnLhSoGs2hGlLq9NJ9MNY3f-4/edit?gid=644703742#gid=644703742" target="_blank">Artist Spreadsheet</a></li>
-                  <li><a href="https://sbuckius.github.io/art104-reality-module04-links-3/" target="_blank">Module 04 Links Page</a></li>
+                  <li><a href="https://docs.google.com/spreadsheets/d/1mypGCudHXmgEPuRrKEhf7PfQv0Paz9K78H4PXE5SyKA/edit?gid=0#gid=0" target="_blank">Artist Spreadsheet (Artists tab)</a></li>
+                  <li><a href="https://sbuckius.github.io/art104-module05-links-nature/" target="_blank">MODULE 05 Links Page</a></li>
                 </ul>
               </div>
             </details>
@@ -802,8 +991,14 @@ details[open] .ctx-box summary::before{content:'▾';}
             <div class="field-owner"><label>Slide 7 owner:</label><input type="text" class="owner-input" id="sp-personal-owner" data-field-id="sp-personal-owner" placeholder="Team member name" oninput="saveField('sp-personal-owner',this.value)"></div>
             <details>
               <div class="ctx-box">
-                <summary><span class="ctx-label">Instructions</span> Personal Response — click to expand</summary>
-                <p>How does your work relate to your lived experience, your feelings, your ideas, your politics, your life? Are you critiquing aspects of this theme? Are you proposing alternatives? Why did you make this piece? Answers can be in outline form.</p>
+                <summary><span class="ctx-label">Instructions</span> Slide 7: Personal Response &amp; Connections — click to expand</summary>
+                <p>How does your work relate to your lived experience, your feelings, your ideas, your politics, your life?</p>
+                <ul style="margin-top:.4rem;">
+                  <li>Are you critiquing aspects of this theme or technology?</li>
+                  <li>Are you proposing alternatives?</li>
+                  <li>Why did you make this piece?</li>
+                </ul>
+                <p style="margin-top:.4rem;"><em>Answers can be in outline form. 10 points.</em></p>
               </div>
             </details>
             <div class="field-label">Personal Response &amp; Connections <span class="pts-tag">10 pts</span></div>
@@ -921,9 +1116,9 @@ function addTimelineRow(year='', event='', index=null) {
         placeholder="Milestone / event description…"
         oninput="saveField('${eId}',this.value);rebuildVisTimeline()">${esc(event)}</textarea>
       <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
-        <input type="file" class="img-file-input" id="file-${imgKey}" accept="image/*" multiple
+        <input type="file" class="img-file-input" id="file-${imgKey}" accept="*/*" multiple
           onchange="handleTlImageUpload('${imgKey}',this)">
-        <button class="add-row-btn" style="margin-top:0;" onclick="document.getElementById('file-${imgKey}').click()">📷 Add image</button>
+        <button class="add-row-btn" style="margin-top:0;" onclick="document.getElementById('file-${imgKey}').click()">📎 Add file</button>
         <div id="tl-img-preview-${idx}" style="display:flex;gap:.3rem;flex-wrap:wrap;"></div>
       </div>
     </div>
@@ -955,13 +1150,20 @@ async function handleTlImageUpload(imgKey, input) {
   if (!tlImageRegistry[imgKey]) tlImageRegistry[imgKey] = [];
   const { storage, ref, uploadBytes, getDownloadURL } = window._fb;
   const idx = parseInt(imgKey.replace('tl-img-',''));
-  for (const file of Array.from(input.files)) {
+  const validTlFiles = Array.from(input.files).filter(f => {
+    if (f.size > MAX_FILE_BYTES) {
+      alert(`"${f.name}" is ${(f.size/1024/1024).toFixed(1)} MB — exceeds the ${MAX_FILE_MB}MB limit.`);
+      return false;
+    }
+    return true;
+  });
+  for (const file of validTlFiles) {
     const path = `art104-mod05/group${currentGroup}/timeline/${Date.now()}_${file.name}`;
     try {
       const r = ref(storage, path);
       await uploadBytes(r, file);
       const url = await getDownloadURL(r);
-      tlImageRegistry[imgKey].push({ url, path });
+      tlImageRegistry[imgKey].push({ url, path, name:file.name, type:file.type, isImage:isImageType(file) });
       renderTlImgPreview(idx, imgKey);
       rebuildVisTimeline();
       saveField('__tlImages', tlImageRegistry);
@@ -1204,27 +1406,64 @@ function submitClear() {
 }
 
 // ── IMAGE UPLOAD ──────────────────────────────────────
+const MAX_FILE_MB = 25;
+const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
+
+function isImageType(file) {
+  return file.type.startsWith('image/');
+}
+
+function fileIcon(file) {
+  const t = file.type || '';
+  if (t.startsWith('image/'))     return '🖼';
+  if (t === 'application/pdf')    return '📄';
+  if (t.includes('word') || file.name.endsWith('.doc') || file.name.endsWith('.docx')) return '📝';
+  if (t.includes('presentation') || file.name.endsWith('.pptx')) return '📊';
+  if (t.includes('spreadsheet') || file.name.endsWith('.xlsx')) return '📋';
+  if (t.includes('zip') || t.includes('compressed')) return '🗜';
+  if (t.startsWith('video/'))     return '🎬';
+  if (t.startsWith('audio/'))     return '🎵';
+  return '📎';
+}
+
 async function handleImageUpload(fieldKey, input) {
   if (!input.files.length || !currentGroup) { if(!currentGroup) alert('Load a group first.'); return; }
   if (!imageRegistry[fieldKey]) imageRegistry[fieldKey] = [];
   const { storage, ref, uploadBytes, getDownloadURL } = window._fb;
   const grid = document.getElementById('grid-'+fieldKey);
-  Array.from(input.files).forEach(() => {
+
+  const files = Array.from(input.files);
+  // Check file sizes before uploading
+  const oversized = files.filter(f => f.size > MAX_FILE_BYTES);
+  if (oversized.length) {
+    alert(`The following file(s) exceed the ${MAX_FILE_MB}MB limit and will be skipped:\n` +
+      oversized.map(f => `• ${f.name} (${(f.size/1024/1024).toFixed(1)} MB)`).join('\n'));
+  }
+  const validFiles = files.filter(f => f.size <= MAX_FILE_BYTES);
+  if (!validFiles.length) { input.value=''; return; }
+
+  validFiles.forEach(() => {
     const ph = document.createElement('div');
     ph.className='img-thumb';
     ph.innerHTML='<div class="img-uploading">Uploading…</div>';
     grid.appendChild(ph);
   });
-  for (const file of Array.from(input.files)) {
+
+  for (const file of validFiles) {
     const path = `art104-mod05/group${currentGroup}/${fieldKey}/${Date.now()}_${file.name}`;
     try {
       const r = ref(storage, path);
       await uploadBytes(r, file);
       const url = await getDownloadURL(r);
-      imageRegistry[fieldKey].push({url, path, caption:''});
+      imageRegistry[fieldKey].push({url, path, caption:'', name:file.name, type:file.type, isImage:isImageType(file)});
       const phs = grid.querySelectorAll('.img-uploading');
       if (phs.length) phs[0].closest('.img-thumb').remove();
-    } catch(e) { setSyncStatus('error','Upload failed: '+e.message); }
+    } catch(e) {
+      const phs = grid.querySelectorAll('.img-uploading');
+      if (phs.length) phs[0].closest('.img-thumb').remove();
+      setSyncStatus('error','Upload failed: '+e.message);
+      console.error(e);
+    }
   }
   renderImageGrid(fieldKey, imageRegistry[fieldKey]);
   saveField('__images', imageRegistry);
@@ -1239,9 +1478,17 @@ function renderImageGrid(fieldKey, imgs) {
     const t = document.createElement('div');
     t.className='img-thumb';
     t.style='flex-direction:column;height:auto;aspect-ratio:unset;';
+    const isImg = img.isImage !== false && (img.type||'').startsWith('image/') || (!img.type && img.url && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(img.url));
+    const previewHtml = isImg
+      ? `<img src="${img.url}" alt="" style="width:100%;height:100%;object-fit:cover;">`
+      : `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:.3rem;padding:.5rem;">
+           <span style="font-size:2rem;">${fileIcon({type:img.type||'',name:img.name||''})}</span>
+           <span style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--soil);text-align:center;word-break:break-all;max-width:90px;">${esc(img.name||'file')}</span>
+           <a href="${img.url}" target="_blank" style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--fern);text-decoration:underline;">open ↗</a>
+         </div>`;
     t.innerHTML=`
-      <div style="position:relative;width:100%;aspect-ratio:1;overflow:hidden;border-radius:4px 4px 0 0;">
-        <img src="${img.url}" alt="" style="width:100%;height:100%;object-fit:cover;">
+      <div style="position:relative;width:100%;aspect-ratio:1;overflow:hidden;border-radius:4px 4px 0 0;background:var(--mist);">
+        ${previewHtml}
         <button class="img-del" onclick="deleteImage('${fieldKey}',${i})">✕ remove</button>
       </div>
       <div class="img-caption-row">
@@ -1252,7 +1499,7 @@ function renderImageGrid(fieldKey, imgs) {
     grid.appendChild(t);
   });
   const cnt = document.getElementById('count-'+fieldKey);
-  if (cnt) cnt.textContent = imgs.length+' image(s) uploaded';
+  if (cnt) cnt.textContent = imgs.length+' file(s) uploaded';
 }
 
 function updateCaption(fieldKey,idx,val) {
@@ -1279,9 +1526,18 @@ async function handleSketchUpload(input) {
   if (!input.files.length || !currentGroup) return;
   const MAX=15, remaining=MAX-sketchRegistry.length;
   if (remaining<=0) { alert('Maximum of 15 sketches reached.'); return; }
+
+  const allFiles = Array.from(input.files);
+  const oversized = allFiles.filter(f => f.size > MAX_FILE_BYTES);
+  if (oversized.length) {
+    alert(`The following file(s) exceed the ${MAX_FILE_MB}MB limit and will be skipped:\n` +
+      oversized.map(f => `• ${f.name} (${(f.size/1024/1024).toFixed(1)} MB)`).join('\n'));
+  }
+  const files = allFiles.filter(f => f.size <= MAX_FILE_BYTES).slice(0,remaining);
+  if (!files.length) { input.value=''; return; }
+
   const { storage, ref, uploadBytes, getDownloadURL } = window._fb;
-  const files = Array.from(input.files).slice(0,remaining);
-  const grid  = document.getElementById('sketch-grid');
+  const grid = document.getElementById('sketch-grid');
   files.forEach(() => {
     const ph=document.createElement('div');ph.className='sketch-uploading-card';ph.textContent='Uploading…';
     grid.appendChild(ph);
@@ -1292,10 +1548,14 @@ async function handleSketchUpload(input) {
       const r=ref(storage,path);
       await uploadBytes(r,file);
       const url=await getDownloadURL(r);
-      sketchRegistry.push({url,path,title:'',author:''});
+      sketchRegistry.push({url,path,title:'',author:'',type:file.type,name:file.name,isImage:isImageType(file)});
       const phs=grid.querySelectorAll('.sketch-uploading-card');
       if (phs.length) phs[0].remove();
-    } catch(e) { setSyncStatus('error','Sketch upload failed: '+e.message); }
+    } catch(e) {
+      const phs=grid.querySelectorAll('.sketch-uploading-card');
+      if (phs.length) phs[0].remove();
+      setSyncStatus('error','Sketch upload failed: '+e.message);
+    }
   }
   renderSketchGrid();
   saveField('__sketches',sketchRegistry);
@@ -1309,8 +1569,16 @@ function renderSketchGrid() {
   sketchRegistry.forEach((sk,i) => {
     const card=document.createElement('div');
     card.className='sketch-card';
+    const isImg = sk.isImage !== false && (sk.type||'').startsWith('image/') || (!sk.type && sk.url && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(sk.url));
+    const preview = isImg
+      ? `<img src="${sk.url}" alt="sketch ${i+1}">`
+      : `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:.4rem;padding:.5rem;background:var(--mist);">
+           <span style="font-size:2.2rem;">${fileIcon({type:sk.type||'',name:sk.name||''})}</span>
+           <span style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--soil);text-align:center;word-break:break-all;">${esc(sk.name||'file')}</span>
+           <a href="${sk.url}" target="_blank" style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--fern);">open ↗</a>
+         </div>`;
     card.innerHTML=`
-      <div class="sketch-img-wrap"><img src="${sk.url}" alt="sketch ${i+1}"></div>
+      <div class="sketch-img-wrap">${preview}</div>
       <div class="sketch-meta">
         <input type="text" placeholder="Title / description…" value="${esc(sk.title||'')}"
           data-field-id="sketch-title-${i}" oninput="updateSketch(${i},'title',this.value)">
@@ -1321,7 +1589,7 @@ function renderSketchGrid() {
     grid.appendChild(card);
   });
   const cnt=document.getElementById('sketch-count');
-  if (cnt) cnt.textContent=`${sketchRegistry.length} / 15 sketches uploaded`;
+  if (cnt) cnt.textContent=`${sketchRegistry.length} / 15 files uploaded`;
 }
 
 function updateSketch(idx,field,val) {
