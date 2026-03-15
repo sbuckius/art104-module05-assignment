@@ -153,16 +153,25 @@ details[open] .ctx-box summary::before{content:'▾';}
 .remove-row-btn{font-size:.68rem;padding:.28rem .45rem;background:transparent;border:1px solid #ddd;border-radius:3px;cursor:pointer;color:#aaa;margin-top:.42rem;flex-shrink:0;}
 .remove-row-btn:hover{background:#fee;color:#c00;border-color:#fcc;}
 
-/* VISUAL TIMELINE */
-.vis-timeline{margin:1.5rem 0;position:relative;padding-left:2.5rem;}
-.vis-timeline::before{content:'';position:absolute;left:1rem;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--leaf),var(--moss));}
-.vt-item{position:relative;margin-bottom:1.4rem;display:flex;gap:1rem;align-items:flex-start;}
-.vt-dot{position:absolute;left:-1.55rem;top:.35rem;width:12px;height:12px;border-radius:50%;background:var(--moss);border:2px solid white;box-shadow:0 0 0 2px var(--sage);flex-shrink:0;}
-.vt-year{font-family:'DM Mono',monospace;font-size:.72rem;font-weight:500;color:var(--moss);min-width:50px;padding-top:.25rem;}
-.vt-card{background:white;border:1px solid var(--leaf);border-radius:6px;padding:.55rem .8rem;flex:1;box-shadow:0 1px 4px var(--shadow);}
-.vt-card .vt-event{font-size:.83rem;color:var(--peat);line-height:1.5;}
-.vt-card .vt-imgs{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.5rem;}
-.vt-card .vt-imgs img{height:60px;width:60px;object-fit:cover;border-radius:4px;border:1px solid var(--leaf);}
+/* HORIZONTAL VISUAL TIMELINE */
+.vis-timeline{margin:1.2rem 0;width:100%;}
+.vt-track{display:flex;align-items:stretch;width:100%;}
+/* each node shares available width equally */
+.vt-node{display:flex;flex-direction:column;align-items:center;flex:1;min-width:0;position:relative;}
+/* image at top */
+.vt-img-wrap{width:100%;height:80px;border-radius:6px 6px 0 0;overflow:hidden;border:1.5px solid var(--leaf);border-bottom:none;background:var(--mist);flex-shrink:0;position:relative;}
+.vt-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+.vt-img-placeholder{width:100%;height:80px;background:var(--mist);border-radius:6px 6px 0 0;border:1.5px solid var(--leaf);border-bottom:none;flex-shrink:0;}
+/* connector line row */
+.vt-line-row{display:flex;align-items:center;width:100%;height:22px;flex-shrink:0;}
+.vt-line-seg{flex:1;height:2px;background:linear-gradient(to right,var(--leaf),var(--moss));min-width:0;}
+.vt-line-seg.first{background:transparent;}
+.vt-line-seg.last{background:transparent;}
+.vt-dot{width:13px;height:13px;border-radius:50%;background:var(--moss);border:2.5px solid white;box-shadow:0 0 0 2px var(--sage);flex-shrink:0;z-index:1;}
+/* year badge */
+.vt-year{font-family:'DM Mono',monospace;font-size:.65rem;font-weight:600;color:var(--moss);margin-top:.2rem;text-align:center;padding:0 2px;word-break:break-word;}
+/* event text */
+.vt-event{font-size:.7rem;color:var(--peat);line-height:1.4;text-align:center;padding:.25rem .3rem;word-break:break-word;}
 .vt-empty{font-family:'DM Mono',monospace;font-size:.65rem;color:#bbb;font-style:italic;padding:.5rem 0;}
 
 /* NOTICE */
@@ -1405,7 +1414,7 @@ function saveTimelineField() {
 
 // Upload image for a specific timeline row — handled by new Firestore-based function below
 
-// Build the visual timeline from current row data
+// Build the HORIZONTAL visual timeline from current row data
 function rebuildVisTimeline() {
   const container = document.getElementById('vis-timeline');
   if (!container) return;
@@ -1414,10 +1423,9 @@ function rebuildVisTimeline() {
     const y = row.querySelector('[data-field-id^="tl-year"]');
     const e = row.querySelector('[data-field-id^="tl-event"]');
     const idx = row.dataset.tlIndex;
-    const imgKey = `tl-img-${idx}`;
     const yr  = y ? y.value.trim() : '';
     const evt = e ? e.value.trim() : '';
-    if (yr || evt) rows.push({ yr, evt, imgKey });
+    if (yr || evt) rows.push({ yr, evt, imgKey: `tl-img-${idx}` });
   });
 
   if (!rows.length) {
@@ -1425,23 +1433,41 @@ function rebuildVisTimeline() {
     return;
   }
 
-  container.innerHTML = '';
-  rows.forEach(r => {
-    const item = document.createElement('div');
-    item.className = 'vt-item';
+  // Build horizontal track
+  const track = document.createElement('div');
+  track.className = 'vt-track';
+
+  rows.forEach((r, i) => {
+    const node = document.createElement('div');
+    node.className = 'vt-node';
+
     const imgs = tlImageRegistry[r.imgKey] || [];
-    const imgHtml = imgs.length
-      ? `<div class="vt-imgs">${imgs.map(i=>`<img src="${i.url}" alt="">`).join('')}</div>`
-      : '';
-    item.innerHTML = `
-      <div class="vt-dot"></div>
+    // Image or placeholder at top
+    let imgHtml;
+    if (imgs.length) {
+      // Show first image; rest shown as small stacked overlay count
+      imgHtml = `<div class="vt-img-wrap">`
+        + `<img src="${imgs[0].url}" alt="">`
+        + (imgs.length > 1 ? `<div style="position:absolute;bottom:3px;right:4px;background:rgba(0,0,0,.55);color:white;font-size:.55rem;padding:1px 4px;border-radius:3px;">+${imgs.length-1}</div>` : '')
+        + `</div>`;
+    } else {
+      imgHtml = `<div class="vt-img-placeholder"></div>`;
+    }
+
+    // Line row: left-seg + dot + right-seg
+    const leftSeg  = `<div class="vt-line-seg${i === 0 ? ' first' : ''}"></div>`;
+    const rightSeg = `<div class="vt-line-seg${i === rows.length-1 ? ' last' : ''}"></div>`;
+
+    node.innerHTML = `
+      ${imgHtml}
+      <div class="vt-line-row">${leftSeg}<div class="vt-dot"></div>${rightSeg}</div>
       <div class="vt-year">${esc(r.yr)}</div>
-      <div class="vt-card">
-        <div class="vt-event">${esc(r.evt)}</div>
-        ${imgHtml}
-      </div>`;
-    container.appendChild(item);
+      <div class="vt-event">${esc(r.evt)}</div>`;
+    track.appendChild(node);
   });
+
+  container.innerHTML = '';
+  container.appendChild(track);
 }
 
 function esc(s){ return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
@@ -2071,13 +2097,24 @@ function buildDocumentHTML() {
 
   // ── Timeline from cache ──
   function tlSection() {
-    const rows = (timelineCache||[]).filter(r=>r.year||r.event);
+    const rows = (timelineCache||[]).filter(r=>r.year||r.event).map(r=>({
+      yr: r.year||'', evt: r.event||'',
+      imgs: tlImageRegistry[r.imgKey||'']||[]
+    }));
     if (!rows.length) return '';
-    return sec('Theme Timeline', '7 pts', v('s2-owner'),
-      '<table class="doc-tl">'
-      + rows.map(r=>'<tr><td class="doc-tl-yr">'+e(r.year||'')+'</td><td>'+e(r.event||'')+'</td></tr>').join('')
-      +'</table>'
+    const tlHtml = buildHorizTimelineHTML(
+      rows,
+      '#3d5a2e','#7a9e6a','#a8c896','#6b5544',
+      "'Playfair Display',Georgia,serif",
+      "'DM Sans',Arial,sans-serif"
     );
+    // Render the section header using sec() with empty body, then timeline at full width
+    // (avoids the 8pt left-padding of .doc-sec-body clipping the flex layout)
+    const ownerBadge = v('s2-owner') ? '<span class="doc-owner">&#9998; '+e(v('s2-owner'))+'</span>' : '';
+    return '<div class="doc-section">'
+      + '<div class="doc-sec-hdr"><span class="doc-sec-title">Theme Timeline</span><span class="doc-pts">7 pts</span>'+ownerBadge+'</div>'
+      + '<div style="width:100%;margin-top:4pt;">'+tlHtml+'</div>'
+      + '</div>';
   }
 
   const gn    = v('group-name-input');
@@ -2171,7 +2208,7 @@ function buildDocumentHTML() {
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
 @page{size:A4;margin:18mm 20mm 20mm;}
-body{font-family:'DM Sans',sans-serif;font-size:10pt;color:#222;line-height:1.6;background:white;}
+body{font-family:'DM Sans',sans-serif;font-size:10pt;color:#222;line-height:1.6;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 /* ── Document header ── */
 .doc-cover{text-align:center;padding:24pt 0 20pt;border-bottom:2pt solid #3d5a2e;margin-bottom:18pt;}
 .doc-cover-eyebrow{font-family:'DM Mono',monospace;font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#7a9e6a;margin-bottom:6pt;}
@@ -2245,6 +2282,67 @@ function switchDay(day,btn) {
   btn.classList.add('active');
 }
 
+// ── SHARED HORIZONTAL TIMELINE HTML BUILDER ──────────────────────────────────
+// Used by both the document PDF export and the presentation PDF export.
+// Structure per node: [image] → [dot on line] → [year] → [text]
+// accent / accentLight / tag / subtext: colour hex strings
+// headingFont / bodyFont: CSS font-family strings
+function buildHorizTimelineHTML(rows, accent, accentLight, tag, subtext, headingFont, bodyFont) {
+  if (!rows || !rows.length) return '<p style="font-size:9pt;color:#aaa;font-style:italic;">No timeline entries.</p>';
+
+  function eh(s){ return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  const n = rows.length;
+  // Scale font sizes down gracefully for many entries
+  const yearFS  = n <= 5  ? '8pt'   : n <= 8  ? '7pt'   : '6pt';
+  const evtFS   = n <= 5  ? '7.5pt' : n <= 8  ? '6.5pt' : '5.5pt';
+  // Image height as a percentage of a notional slide/page width — but since
+  // we're in a flex container we use a fixed pt value that scales acceptably
+  const imgH    = n <= 4  ? '80pt'  : n <= 7  ? '60pt'  : n <= 10 ? '48pt' : '38pt';
+  const dotSize = n <= 8  ? '10px'  : '8px';
+
+  const nodes = rows.map((r, i) => {
+    const imgs    = r.imgs || [];
+    const isFirst = i === 0;
+    const isLast  = i === rows.length - 1;
+
+    // Image cell — width 100% of parent flex node, fixed height
+    const imgCell = imgs.length
+      ? `<div style="width:100%;height:${imgH};overflow:hidden;border-radius:4px 4px 0 0;border:1.5px solid ${tag};border-bottom:none;background:${tag}44;position:relative;flex-shrink:0;">`
+          + `<img src="${imgs[0].url}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">`
+          + (imgs.length > 1 ? `<div style="position:absolute;bottom:2px;right:3px;background:rgba(0,0,0,.55);color:white;font-family:monospace;font-size:5.5pt;padding:1pt 3pt;border-radius:2pt;">+${imgs.length-1}</div>` : '')
+          + `</div>`
+      : `<div style="width:100%;height:${imgH};border-radius:4px 4px 0 0;border:1.5px solid ${tag};border-bottom:none;background:${tag}22;flex-shrink:0;"></div>`;
+
+    // Connector line + dot — spans full width of node
+    const lineRow = `<div style="display:flex;align-items:center;width:100%;height:16px;flex-shrink:0;">`
+      + `<div style="flex:1;height:2px;background:${isFirst ? 'transparent' : `linear-gradient(to right,${tag},${accent})`};min-width:0;"></div>`
+      + `<div style="width:${dotSize};height:${dotSize};border-radius:50%;background:${accent};border:2px solid white;box-shadow:0 0 0 2px ${accentLight};flex-shrink:0;"></div>`
+      + `<div style="flex:1;height:2px;background:${isLast ? 'transparent' : `linear-gradient(to right,${accent},${tag})`};min-width:0;"></div>`
+      + `</div>`;
+
+    // Year label
+    const yearLabel = r.yr
+      ? `<div style="font-family:${bodyFont};font-size:${yearFS};font-weight:700;color:${accent};text-align:center;margin-top:2pt;padding:0 2pt;word-break:break-word;">${eh(r.yr)}</div>`
+      : '';
+
+    // Event text
+    const evtText = r.evt
+      ? `<div style="font-family:${bodyFont};font-size:${evtFS};color:${subtext};text-align:center;line-height:1.35;padding:2pt 3pt 0;word-break:break-word;">${eh(r.evt)}</div>`
+      : '';
+
+    // Each node: flex:1 so all nodes share available width equally; min-width:0 allows shrinking
+    return `<div style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;">`
+      + imgCell + lineRow + yearLabel + evtText
+      + `</div>`;
+  }).join('');
+
+  // Outer: full width, no overflow scroll — nodes share the width
+  return `<div style="width:100%;display:flex;align-items:flex-start;-webkit-print-color-adjust:exact;print-color-adjust:exact;">`
+    + nodes
+    + `</div>`;
+}
+
 // ── PRESENTATION BUILDER ──────────────────────────────
 
 let presDay='day1', presScheme='forest', presLayout='clean', presFont='playfair';
@@ -2275,7 +2373,7 @@ function selectFont(f){presFont=f;['playfair','slab','modern','humanist'].forEac
 function val(id){const el=document.getElementById(id);return el?el.value.trim():'';}
 function bulletVals(cid){return Array.from(document.querySelectorAll('#'+cid+' [data-field-id]')).map(e=>e.value.trim()).filter(Boolean);}
 function imgsFor(fk){return(imageRegistry[fk]||[]).filter(i=>i.url);}
-function sketchImgs(){return sketchRegistry.filter(s=>s.url);}
+function sketchImgs(){return sketchRegistry.filter(s=>s.url).map(s=>({...s,caption:s.title||'',author:s.author||''}));}
 function tlImgsFor(ik){return(tlImageRegistry[ik]||[]).filter(i=>i.url);}
 
 function getTimeline(){
@@ -2315,9 +2413,31 @@ function byLines(...ids) {
 }
 
 // ── Slide body helpers ────────────────────────────────
+// imgGridHTML — proper grid layout for multiple images
+// cols: how many columns (auto-calculated if not given)
+function imgGridHTML(imgs, cols){
+  if(!imgs||!imgs.length) return '';
+  const n = imgs.length;
+  const c = cols || (n===1?1 : n===2?2 : n<=4?2 : 3);
+  // Square-ish cells: height depends on number of rows
+  const rows = Math.ceil(n/c);
+  const cellH = rows===1 ? 150 : rows===2 ? 115 : 90;
+  return '<div class="sl-img-grid" style="grid-template-columns:repeat('+c+',1fr);">'
+    + imgs.slice(0,9).map(i=>
+        '<div class="sl-img-cell">'
+        + '<img src="'+i.url+'" alt="'+escH(i.caption||i.name||'')+'" style="height:'+cellH+'px;">'
+        + (i.caption ? '<div class="sl-img-cap">'+escH(i.caption)+'</div>' : '')
+        + (i.author ? '<div class="sl-img-author">'+escH(i.author)+'</div>' : '')
+        + '</div>'
+      ).join('')
+    + '</div>';
+}
+
+// imgRowHTML — row layout for 1-2 images, grid for 3+
 function imgRowHTML(imgs){
   if(!imgs||!imgs.length)return '';
-  const n=imgs.length,h=n<=1?160:n<=2?145:n<=3?120:n<=4?105:85,mw=n<=1?300:n<=2?240:n<=3?190:n<=4?160:130;
+  if(imgs.length>=3) return imgGridHTML(imgs);
+  const n=imgs.length, h=n<=1?170:148, mw=n<=1?310:250;
   return '<div class="sl-imgs">'+imgs.slice(0,6).map(i=>'<div class="sl-img-wrap"><img src="'+i.url+'" alt="'+escH(i.caption||i.name||'')+'" style="height:'+h+'px;max-width:'+mw+'px;">'+(i.caption?'<div class="sl-img-cap">'+escH(i.caption)+'</div>':'')+'</div>').join('')+'</div>';
 }
 function paraH(t){return t?'<p class="sl-para">'+escH(t)+'</p>':'';}
@@ -2341,14 +2461,12 @@ function buildDay1Slides(){
     imgs:imgsFor('tech-overview'),
   });
 
-  // Slide 2 — Timeline
-  const tlBody=tl.length
-    ? tagH('Timeline')+tl.map(r=>'<div class="sl-kv"><span class="sl-kv-label">'+escH(r.yr)+'</span><span class="sl-kv-val">'+escH(r.evt)+'</span></div>').join('')
-    : tagH('Timeline')+'<p class="sl-para sl-muted">No timeline entries yet.</p>';
+  // Slide 2 — Timeline (horizontal graphic, rendered in buildFinalHTML with correct colours)
   slides.push({
     title:'Theme Timeline', sub:'', by:'',
-    body: slideOwner('s2-owner') + tlBody,
-    imgs:tl.flatMap(r=>r.imgs).slice(0,4),
+    body: slideOwner('s2-owner') + tagH('Timeline'),
+    imgs:[],
+    tlData: tl,  // raw rows passed to buildFinalHTML for coloured rendering
   });
 
   // Slide 3 — Article 1 Themes
@@ -2447,10 +2565,11 @@ function buildDay2Slides(){
     body: slideOwner('sp-sketch-owners')
         + tagH('Part 4 \u00b7 Slide 1')
         + authored('sp-sketch-desc-name', paraH(val('sp-sketch-desc'))),
-    imgs:allSk.slice(0,4),
+    imgs: allSk.slice(0,4),
+    useGrid: true,   // flag: render images as grid not row
   });
   for(let s=4;s<allSk.length;s+=4)
-    slides.push({title:'Sketches (cont.)',sub:'',by:'',body:tagH('Sketch Gallery continued'),imgs:allSk.slice(s,s+4)});
+    slides.push({title:'Sketches (cont.)',sub:'',by:'',body:tagH('Sketch Gallery continued'),imgs:allSk.slice(s,s+4),useGrid:true});
 
   // Slide 2 — AI Brainstorming
   slides.push({
@@ -2541,7 +2660,15 @@ function buildFinalHTML(slides){
         +'<div class="cover-group">Group '+currentGroup+'</div>'
         +'</div></div>';
     }
-    const body=sl.body+imgRowHTML(sl.imgs||[]);
+    const tlHtml = sl.tlData
+      ? (sl.tlData.length
+          ? buildHorizTimelineHTML(sl.tlData, sc.accent, sc.accentLight, sc.tag, sc.subtext, fp.heading, fp.body)
+          : '<p class="sl-para sl-muted">No timeline entries yet.</p>')
+      : '';
+    const imgHTML = (sl.useGrid && sl.imgs && sl.imgs.length)
+      ? imgGridHTML(sl.imgs, sl.imgs.length <= 2 ? 2 : 2)
+      : imgRowHTML(sl.imgs||[]);
+    const body=sl.body + tlHtml + imgHTML;
     const n=num+' / '+tot;
     if(lay==='clean')return(
       '<div class="slide">'
@@ -2728,6 +2855,11 @@ function buildFinalHTML(slides){
     +'.sl-imgs{display:flex;gap:8pt;flex-wrap:wrap;margin-top:8pt;align-items:flex-start;}'
     +'.sl-img-wrap{display:flex;flex-direction:column;gap:3pt;}'
     +'.sl-img-cap{font-size:7pt;color:'+sc.subtext+';line-height:1.3;}'
+    // Grid layout for multiple images (sketches, etc.)
+    +'.sl-img-grid{display:grid;gap:5pt;margin-top:8pt;width:100%;}'
+    +'.sl-img-cell{display:flex;flex-direction:column;gap:2pt;overflow:hidden;}'
+    +'.sl-img-cell img{width:100%;height:100%;object-fit:cover;border-radius:3pt;}'
+    +'.sl-img-author{font-size:6.5pt;font-style:italic;color:'+sc.accentLight+';}'
     +'@media print{body{background:none;}.slide{page-break-after:always;break-after:page;}}';
 
   return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">'
