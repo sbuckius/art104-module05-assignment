@@ -1278,11 +1278,42 @@ function loadGroup() {
   currentGroup=sel;
   const {db,doc,onSnapshot}=window._fb;
   setSyncStatus('saving','Loading\u2026');
+  clearAllFields();
   loadFilesFromFirestore().then(()=>setSyncStatus('saving','Loading text data\u2026')).catch(e=>console.warn('File load error:',e));
   unsubscribe=onSnapshot(doc(db,'art104-mod05',`group${sel}`),snap=>{
     if(snap.exists()) applyRemoteData(snap.data());
+    else applyRemoteData({});
     showUI(); setSyncStatus('saved','Live sync active');
   },err=>setSyncStatus('error','Error: '+err.message));
+}
+
+function clearAllFields() {
+  // Clear all text inputs, textareas, selects, checkboxes
+  document.querySelectorAll('[data-field-id]').forEach(el=>{
+    if(el.type==='checkbox') el.checked=false;
+    else if(el.tagName==='SELECT') el.value='';
+    else el.value='';
+  });
+  // Reset due date badges
+  DUE_DATE_IDS.forEach(id=>{
+    const badge=document.getElementById('badge-'+id.replace('due-',''));
+    if(badge){badge.textContent='No date set';badge.className='due-date-badge no-date';}
+  });
+  // Reset done toggles styling
+  document.querySelectorAll('.done-toggle').forEach(el=>el.classList.remove('done-active'));
+  // Clear image grids
+  imageRegistry={};sketchRegistry=[];tlImageRegistry={};techTlImageRegistry={};
+  document.querySelectorAll('.img-upload-grid').forEach(g=>g.innerHTML='');
+  document.querySelectorAll('.img-count-bar').forEach(b=>b.textContent='');
+  // Reset theme/tech chips
+  document.querySelectorAll('.desc-card.theme-chip,.desc-card.tech-s-chip').forEach(c=>c.classList.remove('selected'));
+  // Reset timelines to one blank row
+  buildTimelineRows([{year:'',event:'',imgKey:''}]);
+  buildTechTimelineRows([{year:'',event:'',imgKey:''}]);
+  // Reset bullet groups
+  buildAllBullets();
+  // Reset sketch grid
+  renderSketchGrid();
 }
 
 function applyRemoteData(data) {
