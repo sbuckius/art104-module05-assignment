@@ -2326,151 +2326,100 @@ function buildFinalHTML(slides){
     // Timeline slide: sidebar + full-width timeline in body
     if(sl.tlData){
       const tlHtml=sl.tlData.length?buildHorizTimelineHTML(sl.tlData,sc.accent,sc.accentLight,sc.tag,sc.subtext,fp.heading,fp.body):'<p class="sl-para sl-muted">No timeline entries yet.</p>';
-      return '<div class="slide slide-ed">'+hdrEd+'<div class="sl-body sl-body-ed">'+sl.body+tlHtml+'</div></div>';
+      return '<div class="slide">'+hdrEd+'<div class="sl-body-ed">'+sl.body+tlHtml+'</div></div>';
     }
 
     // Image-grid slides (Sketches, Mood Board, AI): sidebar + grid of images + text below
     if(sl._imgGrid){
       const imgs=sl.imgs||[];
       const n=imgs.length,c=n<=2?n||1:n<=4?2:3;
-      const imgGrid=imgs.length?'<div class="sl-img-grid-top" style="grid-template-columns:repeat('+c+',1fr);">'+imgs.slice(0,9).map(i=>'<div class="sl-img-cell-top"><img src="'+i.url+'" alt="'+escH(i.caption||i.name||'')+'"><div class="sl-img-cap-top">'+(i.caption?escH(i.caption):'')+(i.author?' \u270e '+escH(i.author):'')+'</div></div>').join('')+'</div>':'';
-      return '<div class="slide slide-ed">'+hdrEd+'<div class="sl-body sl-body-ed"><div class="sl-body-grid">'+imgGrid+'<div class="sl-grid-text">'+sl.body+'</div></div></div></div>';
+      const imgGrid=imgs.length?imgs.slice(0,9).map(i=>'<div class="sl-img-cell-top"><img src="'+i.url+'" alt="'+escH(i.caption||i.name||'')+'"><div class="sl-img-cap-top">'+(i.caption?escH(i.caption):'')+(i.author?' \u270e '+escH(i.author):'')+'</div></div>').join(''):'';
+      return '<div class="slide">'+hdrEd+'<div class="sl-body-grid-wrap"><div class="sl-img-grid-top" style="grid-template-columns:repeat('+c+',1fr);">'+imgGrid+'</div><div class="sl-grid-text">'+sl.body+'</div></div></div>';
     }
 
-    // Slides with images: sidebar title + split (text left, image right in body)
+    // Slides with images: text left fixed width, image grid fills right
     const imgs=sl.imgs&&sl.imgs.length?sl.imgs:[];
     if(imgs.length){
-      const imgCol='<div class="sl-img-col-main">'+imgs.slice(0,1).map(i=>'<div class="sl-img-col-main-item"><img src="'+i.url+'" alt="'+escH(i.caption||i.name||'')+'"><div class="sl-img-cap-main">'+escH(i.caption||'')+'</div></div>').join('')+'</div>';
-      return '<div class="slide slide-ed">'+hdrEd+'<div class="sl-body-split"><div class="sl-split-text-main">'+sl.body+'</div>'+imgCol+'</div></div>';
+      const n=imgs.length;
+      const cols=n===1?1:n===2?2:n<=4?2:3;
+      const rows=Math.ceil(n/cols);
+      const imgGrid='<div class="sl-img-col" style="grid-template-columns:repeat('+cols+',1fr);grid-template-rows:repeat('+rows+',1fr);">'+imgs.slice(0,9).map(i=>'<div class="sl-img-cell"><img src="'+i.url+'" alt="'+escH(i.caption||i.name||'')+'"><div class="sl-img-cap">'+escH(i.caption||'')+'</div></div>').join('')+'</div>';
+      return '<div class="slide">'+hdrEd+'<div class="sl-text-col">'+sl.body+'</div>'+imgGrid+'</div>';
     }
 
-    // No-image slides: pure editorial
-    return '<div class="slide slide-ed">'+hdrEd+'<div class="sl-body sl-body-ed">'+sl.body+'</div></div>';
+    // No-image slides
+    return '<div class="slide">'+hdrEd+'<div class="sl-body-ed">'+sl.body+'</div></div>';
   }
 
   const slidesHTML=slides.map((sl,i)=>makeSlide(sl,i+1)).join('\n');
 
-  const editorialCSS='.slide{background:'+sc.bg+';}'+'.slide-ed{display:flex!important;flex-direction:row!important;}'+'.sl-sidebar{width:24%;background:'+sc.accent+';color:#fff;padding:16pt 12pt;display:flex;flex-direction:column;justify-content:flex-end;flex-shrink:0;}'+'.sl-title-ed{font-family:'+fp.heading+';font-size:12pt;font-weight:700;color:#fff;line-height:1.15;margin-top:auto;word-break:break-word;}'+'.sl-sub-ed{font-size:7pt;color:rgba(255,255,255,.72);margin-top:3pt;}'+'.sl-num-ed{font-size:6.5pt;color:rgba(255,255,255,.4);margin-bottom:auto;}'+'.sl-body-ed{background:'+sc.surface+';padding:10pt 14pt!important;flex:1;display:flex;flex-direction:column;gap:2pt;}'+'.sl-body-split{display:flex;flex-direction:row;flex:1;}';
+  const editorialCSS='';
 
-  const commonCSS='*{box-sizing:border-box;margin:0;padding:0;}'
+  const commonCSS=''
+    +'*{box-sizing:border-box;margin:0;padding:0;}'
     +'@page{size:297mm 167mm;margin:0;}'
-    +'html,body{width:297mm;font-family:'+fp.body+';-webkit-print-color-adjust:exact;print-color-adjust:exact;color:'+sc.text+';}'
+    +'html,body{width:297mm;font-size:7.5pt;line-height:1.5;font-family:'+fp.body+';-webkit-print-color-adjust:exact;print-color-adjust:exact;color:'+sc.text+';}'
     +'body{background:#555;}'
-    +'.slide{width:297mm;height:167mm;max-height:167mm;page-break-after:always;break-after:page;display:flex;flex-direction:column;position:relative;overflow:hidden;}'
-    +'.sl-body{flex:1;padding:10pt 16pt;display:flex;flex-direction:column;gap:2pt;min-height:0;}'
-    // Scaler wrapper — content renders at natural size, then we scale it down to fit
-    +'.slide-scaler{position:absolute;top:0;left:0;transform-origin:top left;}'
-    +'.slide-inner{width:297mm;height:167mm;display:flex;flex-direction:column;position:relative;}'
-    +'.slide-cover{background:'+sc.accent+'!important;height:167mm;align-items:center;justify-content:center;}'
-    +'.cover-inner{text-align:center;padding:36pt;}'
-    +'.cover-eyebrow{font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:'+sc.accentLight+';margin-bottom:10pt;font-family:monospace;}'
-    +'.cover-title{font-family:'+fp.heading+';font-size:28pt;font-weight:700;color:#fff;line-height:1.2;margin-bottom:10pt;}'
-    +'.cover-sub{font-size:11pt;color:rgba(255,255,255,.8);}'
-    +'.cover-rule{width:50pt;height:2pt;background:'+sc.accentLight+';margin:12pt auto;}'
-    +'.cover-group{font-size:8pt;letter-spacing:.15em;text-transform:uppercase;color:'+sc.tag+';font-family:monospace;}'
-    +'.sl-by{display:inline-block;font-size:6pt;font-style:italic;color:'+sc.accentLight+';background:'+sc.tag+'33;border-left:2pt solid '+sc.accentLight+';padding:0.5pt 4pt;margin:1pt 0 1pt;}'
-    +'.sl-by-owner{display:block;font-size:6pt;font-style:italic;color:'+sc.accentLight+';margin-bottom:2pt;opacity:.8;}'
-    +'.sl-para{font-size:7.5pt;line-height:1.45;color:'+sc.text+';margin-bottom:2pt;}'
-    +'.sl-bullets{padding-left:10pt;display:flex;flex-direction:column;gap:1pt;}'
-    +'.sl-bullets li{font-size:7.5pt;line-height:1.4;color:'+sc.text+';}'
-    +'.sl-kv{display:flex;gap:5pt;font-size:7pt;line-height:1.4;padding:1.5pt 0;border-bottom:1pt solid '+sc.tag+'66;}'
-    +'.sl-kv-label{font-size:6.5pt;letter-spacing:.05em;color:'+sc.accentLight+';white-space:nowrap;min-width:80pt;text-transform:uppercase;font-family:monospace;flex-shrink:0;}'
+    +'.slide{width:297mm;min-height:167mm;display:flex;flex-direction:row;page-break-after:always;break-after:page;background:'+sc.bg+';}'
+    +'.sl-sidebar{width:60mm;flex-shrink:0;background:'+sc.accent+';color:#fff;padding:12pt 10pt;display:flex;flex-direction:column;justify-content:flex-end;}'
+    +'.sl-num-ed{font-size:5.5pt;color:rgba(255,255,255,.4);margin-bottom:auto;font-family:monospace;}'
+    +'.sl-title-ed{font-family:'+fp.heading+';font-size:12pt;font-weight:700;color:#fff;line-height:1.15;margin-top:auto;word-break:break-word;}'
+    +'.sl-sub-ed{font-size:6pt;color:rgba(255,255,255,.65);margin-top:3pt;}'
+    +'.sl-body-ed{flex:1;background:white;padding:10pt 12pt;}'
+    +'.sl-text-col{width:110mm;flex-shrink:0;background:white;padding:10pt 12pt;}'
+    +'.sl-img-col{flex:1;display:grid;gap:3pt;padding:5pt;background:'+sc.accentDark+';min-width:0;}'
+    +'.sl-img-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:60mm;}'
+    +'.sl-img-cell img{max-width:100%;max-height:100%;object-fit:contain;display:block;}'
+    +'.sl-img-cap{font-size:5pt;color:rgba(255,255,255,.7);text-align:center;padding:1pt 0;font-style:italic;line-height:1.2;}'
+    +'.slide-cover{background:'+sc.accent+'!important;justify-content:center;align-items:center;}'
+    +'.cover-inner{text-align:center;padding:30pt;}'
+    +'.cover-eyebrow{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:'+sc.accentLight+';margin-bottom:8pt;font-family:monospace;}'
+    +'.cover-title{font-family:'+fp.heading+';font-size:26pt;font-weight:700;color:#fff;line-height:1.2;margin-bottom:8pt;}'
+    +'.cover-sub{font-size:10pt;color:rgba(255,255,255,.8);}'
+    +'.cover-rule{width:40pt;height:2pt;background:'+sc.accentLight+';margin:10pt auto;}'
+    +'.cover-group{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:'+sc.tag+';font-family:monospace;}'
+    +'.sl-by{display:inline-block;font-size:5.5pt;font-style:italic;color:'+sc.accentLight+';background:'+sc.tag+'33;border-left:2pt solid '+sc.accentLight+';padding:0.5pt 3pt;margin:1pt 0;}'
+    +'.sl-by-owner{display:block;font-size:5.5pt;font-style:italic;color:'+sc.accentLight+';margin-bottom:1pt;opacity:.8;}'
+    +'.sl-para{line-height:1.45;color:'+sc.text+';margin-bottom:2pt;}'
+    +'.sl-bullets{padding-left:9pt;margin-bottom:2pt;}'
+    +'.sl-bullets li{line-height:1.4;color:'+sc.text+';margin-bottom:1pt;}'
+    +'.sl-kv{display:flex;gap:4pt;padding:1pt 0;border-bottom:0.5pt solid '+sc.tag+'88;}'
+    +'.sl-kv-label{color:'+sc.accentLight+';white-space:nowrap;text-transform:uppercase;font-family:monospace;flex-shrink:0;letter-spacing:.03em;margin-right:3pt;}'
     +'.sl-kv-val{color:'+sc.text+';flex:1;}'
-    +'.sl-section-tag{display:inline-block;font-size:5.5pt;letter-spacing:.1em;text-transform:uppercase;background:'+sc.tag+';color:'+sc.tagText+';border-radius:2pt;padding:0.5pt 3pt;margin-bottom:2pt;font-family:monospace;}'
+    +'.sl-section-tag{display:inline-block;font-size:5pt;letter-spacing:.08em;text-transform:uppercase;background:'+sc.tag+';color:'+sc.tagText+';border-radius:2pt;padding:0.5pt 3pt;margin-bottom:2pt;font-family:monospace;}'
     +'.sl-muted{opacity:.45;}'
-    +'.sl-img-cap{font-size:6.5pt;color:'+sc.subtext+';line-height:1.3;}'
     +'@media print{body{background:none;}.slide{page-break-after:always;break-after:page;}}'
-    +'.sl-split-main{flex:1;display:flex;flex-direction:row;min-height:0;}'
-    +'.sl-img-col-main{width:50%;display:flex;flex-direction:column;background:'+sc.accentDark+';flex-shrink:0;}'
-    +'.sl-img-col-main-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6pt;}'
-    +'.sl-img-col-main-item img{max-width:100%;max-height:100%;object-fit:contain;display:block;}'
-    +'.sl-img-cap-main{font-size:6pt;color:rgba(255,255,255,.7);text-align:center;padding:2pt 6pt;font-style:italic;}'
-    +'.sl-split-text-main{flex:1;padding:8pt 10pt;display:flex;flex-direction:column;gap:2pt;color:'+sc.text+';}'
-    +'.sl-body-grid{flex:1;display:flex;flex-direction:column;min-height:0;}'
-    +'.sl-img-grid-top{display:grid;gap:5pt;padding:6pt 10pt 4pt;flex:1;min-height:0;}'
-    +'.sl-img-cell-top{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;}'
-    +'.sl-img-cell-top img{max-width:100%;max-height:100%;object-fit:contain;display:block;flex:1;min-height:0;}'
-    +'.sl-img-cap-top{font-size:6pt;color:'+sc.subtext+';text-align:center;padding:2pt 0;line-height:1.3;}'
-    +'.sl-grid-text{padding:3pt 10pt 6pt;display:flex;flex-direction:column;gap:2pt;border-top:1pt solid '+sc.tag+';}';
+    +'.sl-body-grid-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;background:white;}'
+    +'.sl-img-grid-top{display:grid;gap:4pt;padding:5pt 10pt 3pt;flex:1;min-height:0;overflow:hidden;}'
+    +'.sl-img-cell-top{display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;min-height:0;}'
+    +'.sl-img-cell-top img{max-width:100%;max-height:100%;object-fit:contain;display:block;}'
+    +'.sl-img-cap-top{font-size:5pt;color:'+sc.subtext+';text-align:center;padding:1pt 0;line-height:1.2;flex-shrink:0;}'
+    +'.sl-grid-text{padding:3pt 10pt 5pt;border-top:0.5pt solid '+sc.tag+';flex-shrink:0;}';
 
-  // Scale-to-fit script: measure each slide's natural content height, then scale it down to fit exactly
   const shrinkScript=`<script>
-var PX_PER_MM = 96 / 25.4;
-var SLIDE_W = Math.round(297 * PX_PER_MM);
-var SLIDE_H = Math.round(167 * PX_PER_MM);
-
-function scaleOne(slide) {
-  if (slide.classList.contains('slide-cover')) return;
-
-  // Reset any previous scaling
-  slide.style.transform = '';
-  slide.style.width = SLIDE_W + 'px';
-  slide.style.height = 'auto';
-  slide.style.minHeight = '0';
-  slide.style.overflow = 'visible';
-
-  // Force layout recalc
-  slide.offsetHeight;
-
-  var naturalH = slide.scrollHeight;
-  var naturalW = slide.scrollWidth;
-
-  // Restore clipping
-  slide.style.overflow = 'hidden';
-  slide.style.height = SLIDE_H + 'px';
-
-  var scaleY = SLIDE_H / Math.max(naturalH, 1);
-  var scaleX = SLIDE_W / Math.max(naturalW, 1);
-  var scale = Math.min(scaleX, scaleY, 1.0);
-
-  if (scale < 0.999) {
-    slide.style.transformOrigin = 'top left';
-    slide.style.transform = 'scale(' + scale.toFixed(4) + ')';
-    slide.style.width = (SLIDE_W / scale) + 'px';
-    slide.style.height = (SLIDE_H / scale) + 'px';
-  }
-}
-
-function scaleSlides() {
-  document.querySelectorAll('.slide').forEach(scaleOne);
-}
-
-function waitForImagesAndScale() {
-  var images = Array.from(document.images);
-  var pending = images.filter(function(img){ return !img.complete; });
-  if (pending.length === 0) {
-    scaleSlides();
-    setTimeout(function(){ scaleSlides(); window.print(); }, 600);
-  } else {
-    var loaded = 0;
-    function onLoad() {
-      loaded++;
-      if (loaded >= pending.length) {
-        scaleSlides();
-        setTimeout(function(){ scaleSlides(); window.print(); }, 600);
-      }
-    }
-    pending.forEach(function(img){
-      img.addEventListener('load', onLoad);
-      img.addEventListener('error', onLoad);
-    });
-    // Safety fallback — don't wait forever
-    setTimeout(function(){ scaleSlides(); window.print(); }, 4000);
-  }
-}
-
 if (document.fonts && document.fonts.ready) {
-  document.fonts.ready.then(waitForImagesAndScale);
+  document.fonts.ready.then(function(){ setTimeout(window.print.bind(window), 400); });
 } else {
-  window.addEventListener('load', waitForImagesAndScale);
+  window.addEventListener('load', function(){ setTimeout(window.print.bind(window), 400); });
 }
 <\/script>`;
+
+  const printBanner=`<div id="print-banner" style="background:#2a3e1f;color:white;padding:14px 24px;font-family:sans-serif;font-size:13px;line-height:1.6;display:flex;align-items:center;gap:16px;">
+  <span style="font-size:22px;">🖨️</span>
+  <div>
+    <strong>Before printing:</strong> In the print dialog, set <strong>Paper size → Custom</strong> (or "Manage custom sizes") to <strong>297mm × 167mm</strong>, set <strong>Margins → None</strong>, and make sure <strong>Scale = 100%</strong>.
+    On Mac: File → Print → Paper Size → Manage Custom Sizes. On Windows: use Microsoft Print to PDF → Preferences → Paper Size → Custom.
+    <br><span style="opacity:.7;font-size:11px;">This banner will not appear in the printed PDF.</span>
+  </div>
+  <button onclick="document.getElementById('print-banner').style.display='none';window.print();" style="margin-left:auto;background:#7a9e6a;color:white;border:none;padding:8px 18px;border-radius:5px;cursor:pointer;font-size:13px;white-space:nowrap;flex-shrink:0;">Print / Save PDF</button>
+</div>
+<style>@media print{#print-banner{display:none!important;}}</style>`;
 
   return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>MODULE 05 Group '+currentGroup+' '+(presDay==='day1'?'Day 1':'Day 2')+'</title>'
     +'<link rel="preconnect" href="https://fonts.googleapis.com">'
     +'<link href="'+fp.import+'" rel="stylesheet">'
     +'<style>'+commonCSS+editorialCSS+'</style>'
-    +'</head><body>'+slidesHTML+shrinkScript+'</body></html>';
+    +'</head><body>'+printBanner+slidesHTML+shrinkScript+'</body></html>';
 }
 
 function previewPresentation(){
