@@ -1297,10 +1297,14 @@ function applyRemoteData(data) {
     if(data[k]!==undefined) el.value=data[k];
   });
   if(data['__timeline']&&!focusedField?.startsWith('tl-')){
-    timelineCache=data['__timeline']; buildTimelineRows(data['__timeline']);
+    const rows=data['__timeline'].filter(r=>r.year||r.event);
+    timelineCache=rows.length?rows:[{year:'',event:'',imgKey:''}];
+    buildTimelineRows(timelineCache);
   }
   if(data['__tech_timeline']&&!focusedField?.startsWith('tech-tl-')){
-    techTimelineCache=data['__tech_timeline']; buildTechTimelineRows(data['__tech_timeline']);
+    const rows=data['__tech_timeline'].filter(r=>r.year||r.event);
+    techTimelineCache=rows.length?rows:[{year:'',event:'',imgKey:''}];
+    buildTechTimelineRows(techTimelineCache);
   }
   const themeEl=document.getElementById('technology');
   if(themeEl) syncThemeChips(themeEl.value);
@@ -1531,7 +1535,8 @@ function saveTimelineField() {
   const tl = [];
   document.querySelectorAll('.timeline-entry').forEach(row => {
     const y = row.querySelector('[data-field-id^="tl-year"]'), e = row.querySelector('[data-field-id^="tl-event"]');
-    tl.push({ year: y?y.value:'', event: e?e.value:'', imgKey:`tl-img-${row.dataset.tlIndex}` });
+    const yr=y?y.value.trim():'', ev=e?e.value.trim():'';
+    if(yr||ev) tl.push({ year: yr, event: ev, imgKey:`tl-img-${row.dataset.tlIndex}` });
   });
   timelineCache = tl; saveField('__timeline', tl);
 }
@@ -1598,7 +1603,8 @@ function saveTechTimelineField() {
   const tl = [];
   document.querySelectorAll('#tech-tl-rows .timeline-entry').forEach(row => {
     const y = row.querySelector('[data-field-id^="tech-tl-year"]'), e = row.querySelector('[data-field-id^="tech-tl-event"]');
-    tl.push({ year: y?y.value:'', event: e?e.value:'', imgKey:`tech-tl-img-${row.dataset.tlIndex}` });
+    const yr=y?y.value.trim():'', ev=e?e.value.trim():'';
+    if(yr||ev) tl.push({ year: yr, event: ev, imgKey:`tech-tl-img-${row.dataset.tlIndex}` });
   });
   techTimelineCache = tl; saveField('__tech_timeline', tl);
 }
