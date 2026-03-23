@@ -2070,12 +2070,12 @@ function buildWorksheetHTML() {
 // ── PLAIN PDF EXPORT ────────────────────────────────────
 function exportPDF() {
   if(!currentGroup){alert('Load a group first.');return;}
-  const win=window.open('','_blank');
-  if(!win){alert('Pop-up blocked \u2014 please allow pop-ups for this page.');return;}
-  win.document.write(buildDocumentHTML());
-  win.document.close();
-  win.onload=()=>setTimeout(()=>{win.focus();win.print();},800);
-  setTimeout(()=>{if(win&&!win.closed){win.focus();win.print();}},2500);
+  const html=buildDocumentHTML();
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const win=window.open(url,'_blank');
+  if(!win){URL.revokeObjectURL(url);alert('Pop-up blocked \u2014 please allow pop-ups for this page.');return;}
+  setTimeout(()=>URL.revokeObjectURL(url),10000);
 }
 
 
@@ -2350,14 +2350,17 @@ function buildFinalHTML(slides){
 
   const slidesHTML=slides.map((sl,i)=>makeSlide(sl,i+1)).join('\n');
 
-  const editorialCSS='.slide{background:'+sc.bg+';}'+'.slide-ed{display:flex!important;flex-direction:row!important;}'+'.sl-sidebar{width:24%;background:'+sc.accent+';color:#fff;padding:16pt 12pt;display:flex;flex-direction:column;justify-content:flex-end;flex-shrink:0;overflow:hidden;}'+'.sl-title-ed{font-family:'+fp.heading+';font-size:12pt;font-weight:700;color:#fff;line-height:1.15;margin-top:auto;word-break:break-word;}'+'.sl-sub-ed{font-size:7pt;color:rgba(255,255,255,.72);margin-top:3pt;}'+'.sl-num-ed{font-size:6.5pt;color:rgba(255,255,255,.4);margin-bottom:auto;}'+'.sl-body-ed{background:'+sc.surface+';padding:10pt 14pt!important;flex:1;overflow:hidden;min-height:0;display:flex;flex-direction:column;gap:2pt;}'+'.sl-body-split{display:flex;flex-direction:row;flex:1;overflow:hidden;min-height:0;}';
+  const editorialCSS='.slide{background:'+sc.bg+';}'+'.slide-ed{display:flex!important;flex-direction:row!important;}'+'.sl-sidebar{width:24%;background:'+sc.accent+';color:#fff;padding:16pt 12pt;display:flex;flex-direction:column;justify-content:flex-end;flex-shrink:0;}'+'.sl-title-ed{font-family:'+fp.heading+';font-size:12pt;font-weight:700;color:#fff;line-height:1.15;margin-top:auto;word-break:break-word;}'+'.sl-sub-ed{font-size:7pt;color:rgba(255,255,255,.72);margin-top:3pt;}'+'.sl-num-ed{font-size:6.5pt;color:rgba(255,255,255,.4);margin-bottom:auto;}'+'.sl-body-ed{background:'+sc.surface+';padding:10pt 14pt!important;flex:1;display:flex;flex-direction:column;gap:2pt;}'+'.sl-body-split{display:flex;flex-direction:row;flex:1;}';
 
   const commonCSS='*{box-sizing:border-box;margin:0;padding:0;}'
     +'@page{size:297mm 167mm;margin:0;}'
     +'html,body{width:297mm;font-family:'+fp.body+';-webkit-print-color-adjust:exact;print-color-adjust:exact;color:'+sc.text+';}'
     +'body{background:#555;}'
     +'.slide{width:297mm;height:167mm;max-height:167mm;page-break-after:always;break-after:page;display:flex;flex-direction:column;position:relative;overflow:hidden;}'
-    +'.sl-body{flex:1;padding:10pt 16pt;display:flex;flex-direction:column;gap:2pt;overflow:hidden;min-height:0;}'
+    +'.sl-body{flex:1;padding:10pt 16pt;display:flex;flex-direction:column;gap:2pt;min-height:0;}'
+    // Scaler wrapper — content renders at natural size, then we scale it down to fit
+    +'.slide-scaler{position:absolute;top:0;left:0;transform-origin:top left;}'
+    +'.slide-inner{width:297mm;height:167mm;display:flex;flex-direction:column;position:relative;}'
     +'.slide-cover{background:'+sc.accent+'!important;height:167mm;align-items:center;justify-content:center;}'
     +'.cover-inner{text-align:center;padding:36pt;}'
     +'.cover-eyebrow{font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:'+sc.accentLight+';margin-bottom:10pt;font-family:monospace;}'
@@ -2377,67 +2380,89 @@ function buildFinalHTML(slides){
     +'.sl-muted{opacity:.45;}'
     +'.sl-img-cap{font-size:6.5pt;color:'+sc.subtext+';line-height:1.3;}'
     +'@media print{body{background:none;}.slide{page-break-after:always;break-after:page;}}'
-    +'.sl-split-main{flex:1;display:flex;flex-direction:row;overflow:hidden;min-height:0;}'
+    +'.sl-split-main{flex:1;display:flex;flex-direction:row;min-height:0;}'
     +'.sl-img-col-main{width:50%;display:flex;flex-direction:column;background:'+sc.accentDark+';flex-shrink:0;}'
-    +'.sl-img-col-main-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6pt;overflow:hidden;}'
+    +'.sl-img-col-main-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6pt;}'
     +'.sl-img-col-main-item img{max-width:100%;max-height:100%;object-fit:contain;display:block;}'
     +'.sl-img-cap-main{font-size:6pt;color:rgba(255,255,255,.7);text-align:center;padding:2pt 6pt;font-style:italic;}'
-    +'.sl-split-text-main{flex:1;padding:8pt 10pt;display:flex;flex-direction:column;gap:2pt;overflow:hidden;color:'+sc.text+';}'
-    +'.sl-body-grid{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}'
+    +'.sl-split-text-main{flex:1;padding:8pt 10pt;display:flex;flex-direction:column;gap:2pt;color:'+sc.text+';}'
+    +'.sl-body-grid{flex:1;display:flex;flex-direction:column;min-height:0;}'
     +'.sl-img-grid-top{display:grid;gap:5pt;padding:6pt 10pt 4pt;flex:1;min-height:0;}'
-    +'.sl-img-cell-top{display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;min-height:0;}'
+    +'.sl-img-cell-top{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;}'
     +'.sl-img-cell-top img{max-width:100%;max-height:100%;object-fit:contain;display:block;flex:1;min-height:0;}'
     +'.sl-img-cap-top{font-size:6pt;color:'+sc.subtext+';text-align:center;padding:2pt 0;line-height:1.3;}'
     +'.sl-grid-text{padding:3pt 10pt 6pt;display:flex;flex-direction:column;gap:2pt;border-top:1pt solid '+sc.tag+';}';
 
-  // Auto-shrink script: shrink font until no element inside the slide overflows its bounds
+  // Scale-to-fit script: measure each slide's natural content height, then scale it down to fit exactly
   const shrinkScript=`<script>
-function getMaxOverflow(slide) {
-  // Temporarily make everything visible so scrollHeight is accurate
-  var all = [slide].concat(Array.from(slide.querySelectorAll('*')));
-  var saved = all.map(function(n) {
-    var s = n.style.overflow;
-    n.style.overflow = 'visible';
-    return s;
-  });
-  // Measure true overflow: compare scrollHeight/scrollWidth vs offsetHeight/offsetWidth
-  var maxRatio = 1;
-  all.forEach(function(n) {
-    if (n.offsetHeight > 0) {
-      var r = n.scrollHeight / n.offsetHeight;
-      if (r > maxRatio) maxRatio = r;
-    }
-  });
-  // Restore
-  all.forEach(function(n, i) { n.style.overflow = saved[i]; });
-  return maxRatio;
+var PX_PER_MM = 96 / 25.4;
+var SLIDE_W = Math.round(297 * PX_PER_MM);
+var SLIDE_H = Math.round(167 * PX_PER_MM);
+
+function scaleOne(slide) {
+  if (slide.classList.contains('slide-cover')) return;
+
+  // Reset any previous scaling
+  slide.style.transform = '';
+  slide.style.width = SLIDE_W + 'px';
+  slide.style.height = 'auto';
+  slide.style.minHeight = '0';
+  slide.style.overflow = 'visible';
+
+  // Force layout recalc
+  slide.offsetHeight;
+
+  var naturalH = slide.scrollHeight;
+  var naturalW = slide.scrollWidth;
+
+  // Restore clipping
+  slide.style.overflow = 'hidden';
+  slide.style.height = SLIDE_H + 'px';
+
+  var scaleY = SLIDE_H / Math.max(naturalH, 1);
+  var scaleX = SLIDE_W / Math.max(naturalW, 1);
+  var scale = Math.min(scaleX, scaleY, 1.0);
+
+  if (scale < 0.999) {
+    slide.style.transformOrigin = 'top left';
+    slide.style.transform = 'scale(' + scale.toFixed(4) + ')';
+    slide.style.width = (SLIDE_W / scale) + 'px';
+    slide.style.height = (SLIDE_H / scale) + 'px';
+  }
 }
 
-function shrinkSlides() {
-  var slides = document.querySelectorAll('.slide');
-  slides.forEach(function(slide) {
-    if (slide.classList.contains('slide-cover')) return; // skip cover
-    var base = parseFloat(window.getComputedStyle(slide).fontSize) || 12;
-    var scale = 1.0;
-    var ratio = getMaxOverflow(slide);
-    while (ratio > 1.02 && scale > 0.28) {
-      scale = Math.max(0.28, scale - 0.02);
-      slide.style.fontSize = (base * scale) + 'px';
-      ratio = getMaxOverflow(slide);
+function scaleSlides() {
+  document.querySelectorAll('.slide').forEach(scaleOne);
+}
+
+function waitForImagesAndScale() {
+  var images = Array.from(document.images);
+  var pending = images.filter(function(img){ return !img.complete; });
+  if (pending.length === 0) {
+    scaleSlides();
+    setTimeout(function(){ scaleSlides(); window.print(); }, 600);
+  } else {
+    var loaded = 0;
+    function onLoad() {
+      loaded++;
+      if (loaded >= pending.length) {
+        scaleSlides();
+        setTimeout(function(){ scaleSlides(); window.print(); }, 600);
+      }
     }
-  });
+    pending.forEach(function(img){
+      img.addEventListener('load', onLoad);
+      img.addEventListener('error', onLoad);
+    });
+    // Safety fallback — don't wait forever
+    setTimeout(function(){ scaleSlides(); window.print(); }, 4000);
+  }
 }
 
 if (document.fonts && document.fonts.ready) {
-  document.fonts.ready.then(function() {
-    shrinkSlides();
-    setTimeout(shrinkSlides, 600);
-  });
+  document.fonts.ready.then(waitForImagesAndScale);
 } else {
-  window.addEventListener('load', function() {
-    shrinkSlides();
-    setTimeout(shrinkSlides, 600);
-  });
+  window.addEventListener('load', waitForImagesAndScale);
 }
 <\/script>`;
 
@@ -2460,12 +2485,12 @@ function previewPresentation(){
 function buildAndPrintPresentation(){
   const slides=presDay==='day1'?buildDay1Slides():buildDay2Slides();
   const html=buildFinalHTML(slides);
-  const win=window.open('','_blank');
-  if(!win){alert('Pop-up blocked \u2014 please allow pop-ups for this page, then try again.');return;}
-  win.document.write(html);
-  win.document.close();
-  win.onload=()=>setTimeout(()=>{win.focus();win.print();},1500);
-  setTimeout(()=>{if(win&&!win.closed){win.focus();win.print();}},3500);
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const win=window.open(url,'_blank');
+  if(!win){URL.revokeObjectURL(url);alert('Pop-up blocked \u2014 please allow pop-ups for this page, then try again.');return;}
+  // Clean up blob URL after window loads
+  setTimeout(()=>URL.revokeObjectURL(url),10000);
   closePresentationModal();
 }
 
