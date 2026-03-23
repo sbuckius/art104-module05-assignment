@@ -2390,46 +2390,53 @@ function buildFinalHTML(slides){
     +'.sl-img-cap-top{font-size:6pt;color:'+sc.subtext+';text-align:center;padding:2pt 0;line-height:1.3;}'
     +'.sl-grid-text{padding:3pt 10pt 6pt;display:flex;flex-direction:column;gap:2pt;border-top:1pt solid '+sc.tag+';}';
 
-  // Auto-shrink script: temporarily unhide overflow to measure true content height, then shrink to fit
+  // Auto-shrink script: shrink font until no element inside the slide overflows its bounds
   const shrinkScript=`<script>
-function shrinkSlides(){
-  var slides=document.querySelectorAll('.slide');
-  slides.forEach(function(slide){
-    // Temporarily reveal true content height for measurement
-    var allNodes=[slide].concat(Array.from(slide.querySelectorAll('*')));
-    var savedOverflow=allNodes.map(function(n){
-      var s=n.style.overflow;
-      n.style.overflow='visible';
-      return s;
-    });
-
-    var slideH=slide.getBoundingClientRect().height||630;
-    var base=parseFloat(window.getComputedStyle(slide).fontSize)||12;
-    var scale=1.0;
-
-    // Shrink until all content fits
-    while(slide.scrollHeight>slideH+2 && scale>0.28){
-      scale=Math.max(0.28,scale-0.02);
-      slide.style.fontSize=(base*scale)+'px';
+function getMaxOverflow(slide) {
+  // Temporarily make everything visible so scrollHeight is accurate
+  var all = [slide].concat(Array.from(slide.querySelectorAll('*')));
+  var saved = all.map(function(n) {
+    var s = n.style.overflow;
+    n.style.overflow = 'visible';
+    return s;
+  });
+  // Measure true overflow: compare scrollHeight/scrollWidth vs offsetHeight/offsetWidth
+  var maxRatio = 1;
+  all.forEach(function(n) {
+    if (n.offsetHeight > 0) {
+      var r = n.scrollHeight / n.offsetHeight;
+      if (r > maxRatio) maxRatio = r;
     }
+  });
+  // Restore
+  all.forEach(function(n, i) { n.style.overflow = saved[i]; });
+  return maxRatio;
+}
 
-    // Restore overflow:hidden on slide and direct children
-    allNodes.forEach(function(n,i){
-      n.style.overflow=savedOverflow[i];
-    });
+function shrinkSlides() {
+  var slides = document.querySelectorAll('.slide');
+  slides.forEach(function(slide) {
+    if (slide.classList.contains('slide-cover')) return; // skip cover
+    var base = parseFloat(window.getComputedStyle(slide).fontSize) || 12;
+    var scale = 1.0;
+    var ratio = getMaxOverflow(slide);
+    while (ratio > 1.02 && scale > 0.28) {
+      scale = Math.max(0.28, scale - 0.02);
+      slide.style.fontSize = (base * scale) + 'px';
+      ratio = getMaxOverflow(slide);
+    }
   });
 }
 
-// Run twice: once after fonts load, once after a 500ms reflow settle
-if(document.fonts&&document.fonts.ready){
-  document.fonts.ready.then(function(){
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(function() {
     shrinkSlides();
-    setTimeout(shrinkSlides,500);
+    setTimeout(shrinkSlides, 600);
   });
 } else {
-  window.addEventListener('load',function(){
+  window.addEventListener('load', function() {
     shrinkSlides();
-    setTimeout(shrinkSlides,500);
+    setTimeout(shrinkSlides, 600);
   });
 }
 <\/script>`;
