@@ -2427,10 +2427,9 @@ function parseSlideToBlocks(slideHTML, slideIndex) {
       if (bySpan) node.appendChild(bySpan);
 
       if (!mainText || cls.includes('sl-empty')) continue;
-      if (curY >= CH - 20) continue;
       const lines = Math.max(2, Math.ceil(mainText.length / 90));
       const nameH = byText ? 17 : 0;
-      const h = Math.min(lines * 20 + 12 + nameH, 156, CH - curY - 8);
+      const h = Math.min(lines * 20 + 12 + nameH, 156);
       if (h < 10) continue;
       // byText stored on block so makeBlockInner renders it attached below the paragraph
       blocks.push({ type:'text', content: mainText, byText: byText||'', x:PAD, y:curY, w:CW-PAD*2, h, fontSize:12, color:'#2b2a25', bold:false, italic:false });
@@ -2439,9 +2438,8 @@ function parseSlideToBlocks(slideHTML, slideIndex) {
     } else if (cls.includes('sl-bullets') || tag === 'ul') {
       const items = [...node.querySelectorAll('li')].map(li => li.textContent.trim()).filter(Boolean);
       if (!items.length) continue;
-      if (curY >= CH - 20) continue;
       const text = items.map(t => '• ' + t).join('\n');
-      const h = Math.min(items.length * 22 + 10, 160, CH - curY - 8);
+      const h = Math.min(items.length * 22 + 10, 160);
       if (h < 10) continue;
       blocks.push({ type:'text', content: text, x:PAD, y:curY, w:CW-PAD*2, h, fontSize:12, color:'#2b2a25', bold:false, italic:false });
       curY += h + 6;
