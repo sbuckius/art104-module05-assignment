@@ -2151,16 +2151,17 @@ function buildDay1Slides() {
     </div>
   </div>`);
 
-  // Slide 5 - Artist 1
+ // Slide 5 - Artist 1
   slides.push(`<div class="slide">
     <div class="slide-header"><span class="slide-num">Slide 5</span><span class="slide-title-text">Artwork Discussion — Artist 1</span>${slideOwner('a1-owner')}</div>
     <div class="slide-content">
       ${val('a1-name')?`<div class="slide-section-title">${escH(val('a1-name'))}</div>`:''}
       ${imgSlide(imgsFor('a1-art'),'')}
-      ${pBlock(val('a1-concepts'),val('a1-concepts-name'))}
-      ${pBlock(val('a1-reality'),val('a1-reality-name'))}
-      ${pBlock(val('a1-tech'),val('a1-tech-name'))}
-      ${pBlock(val('a1-personal'),val('a1-personal-name'))}
+      ${val('a1-concepts')?`<div class="sl-subsection">Digital Media Concepts — Key Themes</div>${pBlock(val('a1-concepts'),val('a1-concepts-name'))}`:''}
+      ${val('a1-history')?`<div class="sl-subsection">Importance in Digital Media Art History</div>${pBlock(val('a1-history'),'')}`:''}
+      ${val('a1-reality')?`<div class="sl-subsection">Nature/Ecology/Environment/Biology Concepts</div>${pBlock(val('a1-reality'),val('a1-reality-name'))}`:''}
+      ${val('a1-tech')?`<div class="sl-subsection">Digital Media Art Technology</div>${pBlock(val('a1-tech'),val('a1-tech-name'))}`:''}
+      ${val('a1-personal')?`<div class="sl-subsection">Personal Response</div>${pBlock(val('a1-personal'),val('a1-personal-name'))}`:''}
     </div>
   </div>`);
 
@@ -2170,10 +2171,11 @@ function buildDay1Slides() {
     <div class="slide-content">
       ${val('a2-name')?`<div class="slide-section-title">${escH(val('a2-name'))}</div>`:''}
       ${imgSlide(imgsFor('a2-art'),'')}
-      ${pBlock(val('a2-concepts'),val('a2-concepts-name'))}
-      ${pBlock(val('a2-reality'),val('a2-reality-name'))}
-      ${pBlock(val('a2-tech'),val('a2-tech-name'))}
-      ${pBlock(val('a2-personal'),val('a2-personal-name'))}
+      ${val('a2-concepts')?`<div class="sl-subsection">Digital Media Concepts — Key Themes</div>${pBlock(val('a2-concepts'),val('a2-concepts-name'))}`:''}
+      ${val('a2-history')?`<div class="sl-subsection">Importance in Digital Media Art History</div>${pBlock(val('a2-history'),'')}`:''}
+      ${val('a2-reality')?`<div class="sl-subsection">Nature/Ecology/Environment/Biology Concepts</div>${pBlock(val('a2-reality'),val('a2-reality-name'))}`:''}
+      ${val('a2-tech')?`<div class="sl-subsection">Digital Media Art Technology</div>${pBlock(val('a2-tech'),val('a2-tech-name'))}`:''}
+      ${val('a2-personal')?`<div class="sl-subsection">Personal Response</div>${pBlock(val('a2-personal'),val('a2-personal-name'))}`:''}
     </div>
   </div>`);
 
